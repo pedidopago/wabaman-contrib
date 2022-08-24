@@ -1,0 +1,59 @@
+package wsapi
+
+import "time"
+
+// ClientMessage is a message that was sent from a client to a WhatsApp business.
+type ClientMessage struct {
+	// Internal ID (bigint)
+	ID uint64 `json:"id"`
+	// Base64 whatsapp message id from graph API.
+	// It is guaranteed to be unique.
+	WABAMessageID string `json:"waba_message_id"`
+	// The id (phone number) of the sender.
+	WABAFromID string `json:"waba_from_id"`
+	// The profile name of the sender.
+	WABAProfileName string    `json:"waba_profile_name"`
+	WABATimestamp   time.Time `json:"waba_timestamp"`
+	Type            string    `json:"type"`
+
+	Text     *Text     `json:"text,omitempty"`
+	Document *Document `json:"document,omitempty"`
+	Video    *Video    `json:"video,omitempty"`
+	Image    *Image    `json:"image,omitempty"`
+
+	CreatedAt time.Time  `json:"created_at"`
+	ReadAt    *time.Time `json:"read_at,omitempty"`
+}
+
+// Text is present in a message if type=text
+type Text struct {
+	Body string `json:"body"`
+}
+
+// Document is present in a message if type=document
+type Document struct {
+	ID        string `json:"id"` // whatsapp ID
+	MimeType  string `json:"mime_type"`
+	Sha256    string `json:"sha256"`
+	Caption   string `json:"caption"`
+	Filename  string `json:"filename"`
+	PublicURL string `json:"public_url"`
+}
+
+// Video is present in a message if type=video
+type Video struct {
+	ID        string `json:"id"` // whatsapp ID
+	MimeType  string `json:"mime_type"`
+	Sha256    string `json:"sha256"`
+	Caption   string `json:"caption"`
+	PublicURL string `json:"public_url"`
+}
+
+// Image is present in a message if type=image
+type Image struct {
+	ID        string `json:"id"` // whatsapp ID
+	MimeType  string `json:"mime_type"`
+	Sha256    string `json:"sha256"`
+	Caption   string `json:"caption"`
+	PublicURL string `json:"public_url"`
+}
