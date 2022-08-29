@@ -16,10 +16,11 @@ type ClientMessage struct {
 	WABATimestamp   time.Time `json:"waba_timestamp"`
 	Type            string    `json:"type"`
 
-	Text     *Text     `json:"text,omitempty"`
-	Document *Document `json:"document,omitempty"`
-	Video    *Video    `json:"video,omitempty"`
-	Image    *Image    `json:"image,omitempty"`
+	Text        *Text        `json:"text,omitempty"`
+	Document    *Document    `json:"document,omitempty"`
+	Video       *Video       `json:"video,omitempty"`
+	Image       *Image       `json:"image,omitempty"`
+	Interactive *Interactive `json:"interactive,omitempty"`
 
 	CreatedAt time.Time  `json:"created_at"`
 	ReadAt    *time.Time `json:"read_at,omitempty"`
@@ -56,4 +57,19 @@ type Image struct {
 	Sha256    string `json:"sha256"`
 	Caption   string `json:"caption"`
 	PublicURL string `json:"public_url"`
+}
+
+type InteractiveType string
+
+const (
+	InteractiveButtonReply InteractiveType = "button_reply"
+	InteractiveListReply   InteractiveType = "list_reply"
+)
+
+// Interactive is present in a message if type=interactive
+type Interactive struct {
+	Type        InteractiveType `json:"type"`
+	ID          string          `json:"id"`
+	Title       string          `json:"title"`
+	Description string          `json:"description"` // if type=list_reply
 }
