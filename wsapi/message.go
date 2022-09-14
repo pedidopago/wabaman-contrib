@@ -17,6 +17,6 @@ type Message struct {
 	Type          MessageType    `json:"type"`
 	Error         *Error         `json:"error,omitempty"`
 	ClientMessage *ClientMessage `json:"client_message,omitempty"`
-	HostMessage   *ClientMessage `json:"host_message,omitempty"`
+	HostMessage   *HostMessage   `json:"host_message,omitempty"`
 	Metadata      *Metadata      `json:"metadata,omitempty"`
 }
