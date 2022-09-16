@@ -1,0 +1,47 @@
+name: PR CIs
+
+on:
+  push:
+    branches: ["*"]
+jobs:
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Retrieve Git Tokens
+        env:
+          USER: ${{ secrets.GIT_USER }}
+          TOKEN: ${{ secrets.GIT_TOKEN }}
+        run: |
+          git config --global url."https://${USER}:${TOKEN}@github.com/pedidopago".insteadOf "git+ssh://git@github.com/pedidopago" --replace-all
+          git config --global url."https://${USER}:${TOKEN}@github.com/pedidopago".insteadOf "https://github.com/pedidopago" --add
+      - name: Install Go
+        uses: WillAbides/setup-go-faster@v1.5.0
+        with:
+          go-version: 1.18.x
+      - uses: actions/cache@v2
+        with:
+          # In order: [download modcache] [Linux] [Mac] [Windows]
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+            ~/Library/Caches/go-build
+            %LocalAppData%\go-build
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - name: Run Tests
+        env:
+          DATABASE_URL: 
+        run: |
+          go test ./...
+      - name: Run static analysis
+        run: |
+          go vet ./...
+          go install honnef.co/go/tools/cmd/staticcheck@latest
+          staticcheck -go 1.18 ./...

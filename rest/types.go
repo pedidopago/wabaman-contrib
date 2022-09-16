@@ -1,6 +1,10 @@
 package rest
 
-import "github.com/pedidopago/wabaman-contrib/fbgraph"
+import (
+	"fmt"
+
+	"github.com/pedidopago/wabaman-contrib/fbgraph"
+)
 
 type MessageType string
 
@@ -31,4 +35,26 @@ type NewMessageRequest struct {
 type NewMessageResponse struct {
 	MessageID         string           `json:"message_id"`
 	SendMessageStatus NewMessageStatus `json:"send_message_status"`
+}
+
+type ErrorResponse struct {
+	Message    string `json:"message"`
+	StatusCode int    `json:"status_code,omitempty"`
+	Raw        string `json:"raw,omitempty"`
+}
+
+func (e *ErrorResponse) Error() string {
+	if e.StatusCode > 0 && e.Message != "" {
+		return fmt.Sprintf("status: %d message: %s", e.StatusCode, e.Message)
+	}
+	if e.Message != "" {
+		return e.Message
+	}
+	if e.StatusCode != 0 && e.Raw != "" {
+		return fmt.Sprintf("status: %d raw: %s", e.StatusCode, e.Raw)
+	}
+	if e.Raw != "" {
+		return "raw response: " + e.Raw
+	}
+	return "unknown error"
 }
