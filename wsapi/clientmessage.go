@@ -21,6 +21,7 @@ type ClientMessage struct {
 	Video       *Video       `json:"video,omitempty"`
 	Image       *Image       `json:"image,omitempty"`
 	Interactive *Interactive `json:"interactive,omitempty"`
+	Button      *Button      `json:"button,omitempty"`
 
 	CreatedAt time.Time  `json:"created_at"`
 	ReadAt    *time.Time `json:"read_at,omitempty"`
@@ -72,4 +73,10 @@ type Interactive struct {
 	ID          string          `json:"id"`
 	Title       string          `json:"title"`
 	Description string          `json:"description"` // if type=list_reply
+}
+
+// Button is present in a message if type=button
+type Button struct {
+	Payload string `json:"payload"`
+	Text    string `json:"text"`
 }
