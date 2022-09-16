@@ -18,7 +18,7 @@ const (
 	NewMessageStatusUnknown           NewMessageStatus = "unknown"
 )
 
-type NewMessage struct {
+type NewMessageRequest struct {
 	BranchID         string                  `json:"branch_id" validate:"required"`
 	FromNumber       string                  `json:"from_number"`
 	ToNumber         string                  `json:"to_number"`
