@@ -9,8 +9,9 @@ import (
 type MessageType string
 
 const (
-	MessageText     MessageType = "text"
-	MessageTemplate MessageType = "template"
+	MessageText        MessageType = "text"
+	MessageTemplate    MessageType = "template"
+	MessageInteractive MessageType = "interactive"
 )
 
 type NewMessageStatus string
@@ -23,13 +24,14 @@ const (
 )
 
 type NewMessageRequest struct {
-	BranchID         string                  `json:"branch_id" validate:"required"`
-	FromNumber       string                  `json:"from_number"`
-	ToNumber         string                  `json:"to_number"`
-	Type             MessageType             `json:"type"`
-	Text             *fbgraph.TextObject     `json:"text,omitempty"`
-	Template         *fbgraph.TemplateObject `json:"template,omitempty"`
-	FallbackTemplate string                  `json:"fallback_template,omitempty"`
+	BranchID         string                            `json:"branch_id" validate:"required"`
+	FromNumber       string                            `json:"from_number"`
+	ToNumber         string                            `json:"to_number"`
+	Type             MessageType                       `json:"type"`
+	Text             *fbgraph.TextObject               `json:"text,omitempty"`
+	Template         *fbgraph.TemplateObject           `json:"template,omitempty"`
+	Interactive      *fbgraph.InteractiveMessageObject `json:"interactive,omitempty"`
+	FallbackTemplate string                            `json:"fallback_template,omitempty"`
 }
 
 type NewMessageResponse struct {
