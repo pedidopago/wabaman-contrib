@@ -11,15 +11,16 @@ import (
 //      audio
 //      document
 //      template
-//      hsm
+//      hsm (interactive)
 
 type MessageObject struct {
-	MessagingProduct string          `json:"messaging_product"`
-	To               string          `json:"to"`
-	Type             string          `json:"type"`
-	RecipientType    string          `json:"recipient_type"` // default: individual
-	Text             *TextObject     `json:"text,omitempty"`
-	Template         *TemplateObject `json:"template,omitempty"`
+	MessagingProduct string                    `json:"messaging_product"`
+	To               string                    `json:"to"`
+	Type             string                    `json:"type"`
+	RecipientType    string                    `json:"recipient_type"` // default: individual
+	Text             *TextObject               `json:"text,omitempty"`
+	Template         *TemplateObject           `json:"template,omitempty"`
+	Interactive      *InteractiveMessageObject `json:"interactive,omitempty"`
 	// TODO: add more objects at:
 	// https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages#text-object
 }
