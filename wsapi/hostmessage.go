@@ -1,5 +1,7 @@
 package wsapi
 
+import "time"
+
 type HostMessage struct {
 	// Internal ID (bigint)
 	ID uint64 `json:"id"`
@@ -11,6 +13,7 @@ type HostMessage struct {
 	HostPhoneNumber string `json:"host_phone_number"`
 	// The id (phone number) of the recipient (client).
 	WABARecipientID string        `json:"waba_recipient_id"`
+	WABATimestamp   time.Time     `json:"waba_timestamp"`
 	Type            string        `json:"type"`
 	Text            *Text         `json:"text,omitempty"`
 	Template        *HostTemplate `json:"template,omitempty"`
