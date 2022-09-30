@@ -39,6 +39,10 @@ type NewMessageResponse struct {
 	SendMessageStatus NewMessageStatus `json:"send_message_status"`
 }
 
+type NewMediaResponse struct {
+	MediaID string `json:"media_id"`
+}
+
 type ErrorResponse struct {
 	Message    string `json:"message"`
 	StatusCode int    `json:"status_code,omitempty"`
