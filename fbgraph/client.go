@@ -11,6 +11,10 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+var (
+	DebugTrace bool
+)
+
 var DefaultHTTPClient = &http.Client{
 	Timeout: time.Second * 120,
 }
@@ -35,6 +39,9 @@ func (c *Client) SendMessage(phoneID string, msg *MessageObject) (*MessageObject
 	buf := new(bytes.Buffer)
 	if err := json.NewEncoder(buf).Encode(msg); err != nil {
 		return nil, fmt.Errorf("encode message: %w", err)
+	}
+	if DebugTrace {
+		println("fbgraph SendMessage", url, "\n", buf.String())
 	}
 	req, err := http.NewRequest(http.MethodPost, url, buf)
 	if err != nil {
