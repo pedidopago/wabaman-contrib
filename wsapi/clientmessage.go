@@ -20,6 +20,7 @@ type ClientMessage struct {
 	Document    *Document    `json:"document,omitempty"`
 	Video       *Video       `json:"video,omitempty"`
 	Image       *Image       `json:"image,omitempty"`
+	Audio       *Audio       `json:"audio,omitempty"`
 	Interactive *Interactive `json:"interactive,omitempty"`
 	Button      *Button      `json:"button,omitempty"`
 
@@ -39,6 +40,13 @@ type Document struct {
 	Sha256    string `json:"sha256"`
 	Caption   string `json:"caption"`
 	Filename  string `json:"filename"`
+	PublicURL string `json:"public_url"`
+}
+
+// Audio is present in a message if type=audio
+type Audio struct {
+	ID        string `json:"id"` // whatsapp ID
+	MimeType  string `json:"mime_type"`
 	PublicURL string `json:"public_url"`
 }
 
