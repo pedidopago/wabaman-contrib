@@ -73,7 +73,7 @@ type InteractiveMessageAction struct {
 	Button string `json:"button,omitempty"`
 	// Required for Reply Buttons.
 	// You can have up to 3 buttons. You cannot have leading or trailing spaces when setting the ID.
-	Buttons []InteractiveReplyButton `json:"buttons,omitempty"`
+	Buttons []InteractiveButton `json:"buttons,omitempty"`
 	// Required for Single Product Messages and Multi-Product Messages.
 	// Unique identifier of the Facebook catalog linked to your WhatsApp Business
 	// Account. This ID can be retrieved via the [Meta Commerce Manager](https://business.facebook.com/commerce/).
@@ -92,8 +92,12 @@ type InteractiveMessageAction struct {
 	Sections []InteractiveMessageSection `json:"sections,omitempty"`
 }
 
+type InteractiveButton struct {
+	Type  string                  `json:"type"` // type: only supported type is reply (for Reply Button)
+	Reply *InteractiveReplyButton `json:"reply"`
+}
+
 type InteractiveReplyButton struct {
-	Type string `json:"type"` // type: only supported type is reply (for Reply Button)
 	// Button title. It cannot be an empty string and must be unique within
 	// the message. Emojis are supported, markdown is not. Maximum length: 20 characters.
 	Title string `json:"title"`
