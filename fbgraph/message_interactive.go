@@ -62,7 +62,20 @@ type InteractiveHeaderObject struct {
 }
 
 type MediaObject struct {
-	//TODO: this
+	// Required when type is audio, document, image, sticker, or video and you are not using a link.
+	ID string `json:"id,omitempty"`
+	// Required when type is audio, document, image, sticker, or video and you are not using an uploaded media ID.
+	Link string `json:"link,omitempty"`
+	// Optional.
+	// Describes the specified image or video media.
+	// Do not use with audio, document, or sticker media.
+	Caption string `json:"caption,omitempty"`
+	// Optional.
+	// Describes the filename for the specific document. Use only with document media.
+	// The extension of the filename will specify what format the document is displayed as in WhatsApp.
+	Filename string `json:"filename,omitempty"`
+	// Optional. Only used for On-Premises API.
+	Provider string `json:"provider,omitempty"`
 }
 
 type InteractiveMessageAction struct {

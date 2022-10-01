@@ -9,6 +9,7 @@ import (
 // 		text
 // 		image
 //      audio
+//      video
 //      document
 //      template
 //      hsm (interactive)
@@ -21,6 +22,10 @@ type MessageObject struct {
 	Text             *TextObject               `json:"text,omitempty"`
 	Template         *TemplateObject           `json:"template,omitempty"`
 	Interactive      *InteractiveMessageObject `json:"interactive,omitempty"`
+	Image            *MediaObject              `json:"image,omitempty"`
+	Audio            *MediaObject              `json:"audio,omitempty"`
+	Document         *MediaObject              `json:"document,omitempty"`
+	Video            *MediaObject              `json:"video,omitempty"`
 	// TODO: add more objects at:
 	// https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages#text-object
 }
