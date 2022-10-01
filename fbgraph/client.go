@@ -5,7 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"mime/multipart"
 	"net/http"
+	"net/textproto"
+	"strings"
 	"time"
 
 	"github.com/rs/zerolog/log"
@@ -62,6 +65,82 @@ func (c *Client) SendMessage(phoneID string, msg *MessageObject) (*MessageObject
 		return nil, fmt.Errorf("decode response: %w", err)
 	}
 	return result, nil
+}
+
+var quoteEscaper = strings.NewReplacer("\\", "\\\\", `"`, "\\\"")
+
+func escapeQuotes(s string) string {
+	return quoteEscaper.Replace(s)
+}
+
+func (c *Client) UploadMedia(phoneID string, mimeType string, r io.Reader, fsize int64, filename string) (id string, err error) {
+	pr, pw := io.Pipe()
+	mw := multipart.NewWriter(pw)
+
+	url := fmt.Sprintf("https://graph.facebook.com/v14.0/%s/media", phoneID)
+
+	// do the request concurrently
+	var resp *http.Response
+	done := make(chan error)
+	go func() {
+		req, err := http.NewRequest(http.MethodPost, url, pr)
+		if err != nil {
+			done <- fmt.Errorf("new request: %w", err)
+			return
+		}
+		req.ContentLength = -1
+		//TODO: calculate content length like in https://gist.github.com/cryptix/9dd094008b6236f4fc57
+		req.Header.Set("Content-Type", mw.FormDataContentType())
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken))
+		resp, err = c.HTTPClient.Do(req)
+		if err != nil {
+			done <- fmt.Errorf("request failed: %w", err)
+			return
+		}
+		done <- nil
+	}()
+	allok := false
+	defer func() {
+		if !allok {
+			mw.Close()
+			pw.Close()
+		}
+	}()
+
+	fh := make(textproto.MIMEHeader)
+	fh.Set("Content-Type", mimeType)
+	fh.Set("Content-Disposition", fmt.Sprintf(`form-data; name="%s"; filename="%s"`, escapeQuotes("file"), escapeQuotes(filename)))
+	fpart, err := mw.CreatePart(fh)
+	if err != nil {
+		return "", fmt.Errorf("create form file: %w", err)
+	}
+	if _, err := io.Copy(fpart, r); err != nil {
+		return "", fmt.Errorf("copy file: %w", err)
+	}
+	if err := mw.WriteField("messaging_product", "whatsapp"); err != nil {
+		return "", fmt.Errorf("write field: %w", err)
+	}
+	allok = true
+	if err := mw.Close(); err != nil {
+		return "", fmt.Errorf("close multipart writer: %w", err)
+	}
+	if err := pw.Close(); err != nil {
+		return "", fmt.Errorf("close pipe writer: %w", err)
+	}
+	if err := <-done; err != nil {
+		return "", fmt.Errorf("request: %w", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return "", c.errorFromResponse(resp)
+	}
+	idstruct := struct {
+		ID string `json:"id"`
+	}{}
+	if err := json.NewDecoder(resp.Body).Decode(&idstruct); err != nil {
+		return "", fmt.Errorf("decode response: %w", err)
+	}
+	return idstruct.ID, nil
 }
 
 func (c *Client) GetMedia(mediaID string) (*GetMediaResult, error) {
