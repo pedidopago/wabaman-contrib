@@ -31,6 +31,10 @@ type NewMessageRequest struct {
 	Text             *fbgraph.TextObject               `json:"text,omitempty"`
 	Template         *fbgraph.TemplateObject           `json:"template,omitempty"`
 	Interactive      *fbgraph.InteractiveMessageObject `json:"interactive,omitempty"`
+	Image            *fbgraph.MediaObject              `json:"image,omitempty"`
+	Audio            *fbgraph.MediaObject              `json:"audio,omitempty"`
+	Document         *fbgraph.MediaObject              `json:"document,omitempty"`
+	Video            *fbgraph.MediaObject              `json:"video,omitempty"`
 	FallbackTemplate string                            `json:"fallback_template,omitempty"`
 }
 
