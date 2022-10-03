@@ -16,6 +16,10 @@ type HostMessage struct {
 	WABATimestamp   time.Time     `json:"waba_timestamp"`
 	Type            string        `json:"type"`
 	Text            *Text         `json:"text,omitempty"`
+	Document        *Document     `json:"document,omitempty"`
+	Video           *Video        `json:"video,omitempty"`
+	Image           *Image        `json:"image,omitempty"`
+	Audio           *Audio        `json:"audio,omitempty"`
 	Template        *HostTemplate `json:"template,omitempty"`
 }
 
