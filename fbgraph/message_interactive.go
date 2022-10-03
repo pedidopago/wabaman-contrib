@@ -76,6 +76,10 @@ type MediaObject struct {
 	Filename string `json:"filename,omitempty"`
 	// Optional. Only used for On-Premises API.
 	Provider string `json:"provider,omitempty"`
+
+	InternalMetadata struct {
+		WabamanIDHex string `json:"-"`
+	} `json:"-"`
 }
 
 type InteractiveMessageAction struct {
