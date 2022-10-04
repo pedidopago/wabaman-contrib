@@ -56,7 +56,7 @@ type UpdateContactRequest struct {
 	CustomerID string `json:"customer_id"`
 }
 
-type UpdateClientResponse struct {
+type UpdateContactResponse struct {
 	Contact *Contact `json:"contact"`
 }
 

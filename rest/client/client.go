@@ -29,8 +29,8 @@ func (c *Client) NewMessage(ctx context.Context, req *rest.NewMessageRequest) (*
 	return output, nil
 }
 
-func (c *Client) UpdateContact(ctx context.Context, contactID uint64, req *rest.UpdateContactRequest) (*rest.UpdateClientResponse, error) {
-	resp := &rest.UpdateClientResponse{}
+func (c *Client) UpdateContact(ctx context.Context, contactID uint64, req *rest.UpdateContactRequest) (*rest.UpdateContactResponse, error) {
+	resp := &rest.UpdateContactResponse{}
 	if err := c.put(ctx, fmt.Sprintf("/api/v1/contact/%d", contactID), req, resp); err != nil {
 		return nil, err
 	}
