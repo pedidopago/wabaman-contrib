@@ -21,6 +21,7 @@ type ClientMessage struct {
 	Video       *Video       `json:"video,omitempty"`
 	Image       *Image       `json:"image,omitempty"`
 	Audio       *Audio       `json:"audio,omitempty"`
+	Sticker     *Sticker     `json:"sticker,omitempty"`
 	Interactive *Interactive `json:"interactive,omitempty"`
 	Button      *Button      `json:"button,omitempty"`
 
