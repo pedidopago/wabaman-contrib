@@ -68,6 +68,14 @@ type Image struct {
 	PublicURL string `json:"public_url"`
 }
 
+// Sticker is present in a message if type=sticker
+type Sticker struct {
+	ID        string `json:"id"` // whatsapp ID
+	MimeType  string `json:"mime_type"`
+	Sha256    string `json:"sha256"`
+	PublicURL string `json:"public_url"`
+}
+
 type InteractiveType string
 
 const (

@@ -17,6 +17,7 @@ const (
 	MessageVideo       MessageType = "video"
 	MessageAudio       MessageType = "audio"
 	MessageDocument    MessageType = "document"
+	MessageSticker     MessageType = "sticker"
 )
 
 type NewMessageStatus string
@@ -40,6 +41,7 @@ type NewMessageRequest struct {
 	Audio            *fbgraph.MediaObject              `json:"audio,omitempty"`
 	Document         *fbgraph.MediaObject              `json:"document,omitempty"`
 	Video            *fbgraph.MediaObject              `json:"video,omitempty"`
+	Sticker          *fbgraph.MediaObject              `json:"sticker,omitempty"`
 	FallbackTemplate string                            `json:"fallback_template,omitempty"`
 }
 

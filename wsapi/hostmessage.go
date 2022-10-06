@@ -20,6 +20,7 @@ type HostMessage struct {
 	Video           *Video        `json:"video,omitempty"`
 	Image           *Image        `json:"image,omitempty"`
 	Audio           *Audio        `json:"audio,omitempty"`
+	Sticker         *Sticker      `json:"sticker,omitempty"`
 	Template        *HostTemplate `json:"template,omitempty"`
 }
 

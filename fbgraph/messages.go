@@ -26,6 +26,7 @@ type MessageObject struct {
 	Audio            *MediaObject              `json:"audio,omitempty"`
 	Document         *MediaObject              `json:"document,omitempty"`
 	Video            *MediaObject              `json:"video,omitempty"`
+	Sticker          *MediaObject              `json:"sticker,omitempty"`
 	// TODO: add more objects at:
 	// https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages#text-object
 }
