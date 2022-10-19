@@ -55,7 +55,7 @@ type ClientReceipt struct {
 
 type ContactUpdate struct {
 	ContactID       uint64                 `json:"contact_id"`
-	PhoneID         uint                   `json:"phone_id"`
+	HostPhoneID     uint                   `json:"host_phone_id"`
 	WABAContactID   string                 `json:"waba_contact_id"`
 	WABAProfileName string                 `json:"waba_profile_name"`
 	CustomerID      string                 `json:"customer_id"`
