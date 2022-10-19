@@ -40,11 +40,13 @@ type ClientMockData struct {
 }
 
 type ReadByHostReceipt struct {
-	ReadAt   time.Time `json:"read_at"`
-	Metadata string    `json:"metadata"`
+	MessageID uint64    `json:"message_id"`
+	ReadAt    time.Time `json:"read_at"`
+	Metadata  string    `json:"metadata"`
 }
 
 type ClientReceipt struct {
 	Type      string    `json:"type"` // sent, read, delivered
+	MessageID uint64    `json:"message_id"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
