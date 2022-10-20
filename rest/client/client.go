@@ -37,24 +37,41 @@ func (c *Client) UpdateContact(ctx context.Context, contactID uint64, req *rest.
 	return resp, nil
 }
 
+func (c *Client) GetContacts(ctx context.Context, req *rest.GetContactsRequest) (*rest.GetContactsResponse, error) {
+	q := req.BuildQuery()
+	resp := &rest.GetContactsResponse{}
+	if err := c.get(ctx, fmt.Sprintf("/api/v1/contact?%s", q.Encode()), resp); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (c *Client) urlPrefix() string {
 	return util.Default(c.BaseURL, DefaultBaseURL)
 }
 
+func (c *Client) get(ctx context.Context, suffix string, output any) error {
+	return c.doRequest(ctx, http.MethodGet, suffix, nil, output)
+}
+
 func (c *Client) put(ctx context.Context, suffix string, input, output any) error {
-	return c.postOrPut(ctx, http.MethodPut, suffix, input, output)
+	return c.doRequest(ctx, http.MethodPut, suffix, input, output)
 }
 
 func (c *Client) post(ctx context.Context, suffix string, input, output any) error {
-	return c.postOrPut(ctx, http.MethodPost, suffix, input, output)
+	return c.doRequest(ctx, http.MethodPost, suffix, input, output)
 }
 
-func (c *Client) postOrPut(ctx context.Context, method, suffix string, input, output any) error {
-	d, err := json.Marshal(input)
-	if err != nil {
-		return fmt.Errorf("marshal input: %w", err)
+func (c *Client) doRequest(ctx context.Context, method, suffix string, input, output any) error {
+	var rdr *bytes.Reader
+	if input != nil {
+		d, err := json.Marshal(input)
+		if err != nil {
+			return fmt.Errorf("marshal input: %w", err)
+		}
+		rdr = bytes.NewReader(d)
 	}
-	req, err := http.NewRequest(method, c.urlPrefix()+suffix, bytes.NewReader(d))
+	req, err := http.NewRequest(method, c.urlPrefix()+suffix, rdr)
 	if err != nil {
 		return fmt.Errorf("new request: %w", err)
 	}

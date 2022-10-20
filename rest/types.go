@@ -2,8 +2,10 @@ package rest
 
 import (
 	"fmt"
+	"net/url"
 	"time"
 
+	"github.com/pedidopago/go-common/util"
 	"github.com/pedidopago/wabaman-contrib/fbgraph"
 )
 
@@ -60,6 +62,65 @@ type UpdateContactRequest struct {
 
 type UpdateContactResponse struct {
 	Contact *Contact `json:"contact"`
+}
+
+type GetContactsRequest struct {
+	BusinessID      uint     `query:"business_id"`
+	BranchID        string   `query:"branch_id"`
+	PhoneID         uint     `query:"phone_id"`
+	CustomerIDs     []string `query:"customer_id"`
+	WABAContactIDs  []string `query:"waba_contact_id"`
+	HostPhoneNumber string   `query:"host_phone_number"`
+	MaxResults      uint64   `query:"max_results"`
+	Page            uint     `query:"page"`
+	FetchMessages   bool     `query:"fetch_messages"`
+	FetchLastPage   bool     `query:"fetch_last_page"`
+}
+
+func (req GetContactsRequest) BuildQuery() url.Values {
+	q := url.Values{}
+	if iszero, _ := util.IsZero(req.BusinessID); !iszero {
+		q.Set("business_id", fmt.Sprintf("%d", req.BusinessID))
+	}
+	if iszero, _ := util.IsZero(req.BranchID); !iszero {
+		q.Set("branch_id", req.BranchID)
+	}
+	if iszero, _ := util.IsZero(req.PhoneID); !iszero {
+		q.Set("phone_id", fmt.Sprintf("%d", req.PhoneID))
+	}
+	if iszero, _ := util.IsZero(req.CustomerIDs); !iszero {
+		for _, id := range req.CustomerIDs {
+			q.Add("customer_id", id)
+		}
+	}
+	if iszero, _ := util.IsZero(req.WABAContactIDs); !iszero {
+		for _, id := range req.WABAContactIDs {
+			q.Add("waba_contact_id", id)
+		}
+	}
+	if iszero, _ := util.IsZero(req.HostPhoneNumber); !iszero {
+		q.Set("host_phone_number", req.HostPhoneNumber)
+	}
+	if iszero, _ := util.IsZero(req.MaxResults); !iszero {
+		q.Set("max_results", fmt.Sprintf("%d", req.MaxResults))
+	}
+	if iszero, _ := util.IsZero(req.Page); !iszero {
+		q.Set("page", fmt.Sprintf("%d", req.Page))
+	}
+	if iszero, _ := util.IsZero(req.FetchMessages); !iszero {
+		q.Set("fetch_messages", fmt.Sprintf("%t", req.FetchMessages))
+	}
+	if iszero, _ := util.IsZero(req.FetchLastPage); !iszero {
+		q.Set("fetch_last_page", fmt.Sprintf("%t", req.FetchLastPage))
+	}
+	return q
+}
+
+type GetContactsResponse struct {
+	Contacts   []*Contact `json:"contacts"`
+	MaxResults uint64     `json:"max_results"`
+	Page       uint       `json:"page"`
+	LastPage   uint       `json:"last_page,omitempty"`
 }
 
 type ErrorResponse struct {
