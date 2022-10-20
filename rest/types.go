@@ -79,7 +79,7 @@ type GetContactsRequest struct {
 }
 
 func (req GetContactsRequest) BuildQuery() url.Values {
-	q := url.Values{}
+	q := make(url.Values)
 	if iszero, _ := util.IsZero(req.BusinessID); !iszero {
 		q.Set("business_id", fmt.Sprintf("%d", req.BusinessID))
 	}
