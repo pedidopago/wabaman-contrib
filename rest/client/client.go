@@ -41,10 +41,8 @@ func (c *Client) GetContacts(ctx context.Context, req *rest.GetContactsRequest) 
 	if c == nil {
 		return nil, fmt.Errorf("nil client")
 	}
-	fmt.Println("will run req.BuildQuery")
 	q := req.BuildQuery()
 	qenc := q.Encode()
-	fmt.Println("ran req.BuildQuery", q, qenc)
 	resp := &rest.GetContactsResponse{}
 	if err := c.get(ctx, fmt.Sprintf("/api/v1/contacts?%s", qenc), resp); err != nil {
 		return nil, err
@@ -80,7 +78,7 @@ func (c *Client) doRequest(ctx context.Context, method, suffix string, input, ou
 	if c == nil {
 		return fmt.Errorf("nil client inside doRequest")
 	}
-	fmt.Println("will create request", method, c.urlPrefix()+suffix, rdr)
+	// fmt.Println("will create request", method, c.urlPrefix()+suffix, rdr)
 	req, err := http.NewRequest(method, c.urlPrefix()+suffix, rdr)
 	if err != nil {
 		return fmt.Errorf("new request: %w", err)
