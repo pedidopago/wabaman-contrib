@@ -114,6 +114,7 @@ func (req GetContactsRequest) BuildQuery() url.Values {
 	if iszero, _ := util.IsZero(req.FetchLastPage); !iszero {
 		q.Set("fetch_last_page", fmt.Sprintf("%t", req.FetchLastPage))
 	}
+	fmt.Println("QQQ:", q)
 	return q
 }
 
