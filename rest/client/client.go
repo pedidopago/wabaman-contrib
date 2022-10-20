@@ -69,7 +69,7 @@ func (c *Client) post(ctx context.Context, suffix string, input, output any) err
 }
 
 func (c *Client) doRequest(ctx context.Context, method, suffix string, input, output any) error {
-	var rdr *bytes.Reader
+	var rdr io.Reader
 	if input != nil {
 		d, err := json.Marshal(input)
 		if err != nil {
@@ -80,6 +80,7 @@ func (c *Client) doRequest(ctx context.Context, method, suffix string, input, ou
 	if c == nil {
 		return fmt.Errorf("nil client inside doRequest")
 	}
+	fmt.Println("will create request", method, c.urlPrefix()+suffix, rdr)
 	req, err := http.NewRequest(method, c.urlPrefix()+suffix, rdr)
 	if err != nil {
 		return fmt.Errorf("new request: %w", err)
