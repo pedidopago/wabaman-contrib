@@ -38,6 +38,9 @@ func (c *Client) UpdateContact(ctx context.Context, contactID uint64, req *rest.
 }
 
 func (c *Client) GetContacts(ctx context.Context, req *rest.GetContactsRequest) (*rest.GetContactsResponse, error) {
+	if c == nil {
+		return nil, fmt.Errorf("nil client")
+	}
 	q := req.BuildQuery()
 	resp := &rest.GetContactsResponse{}
 	if err := c.get(ctx, fmt.Sprintf("/api/v1/contact?%s", q.Encode()), resp); err != nil {
