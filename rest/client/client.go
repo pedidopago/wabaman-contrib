@@ -43,7 +43,7 @@ func (c *Client) GetContacts(ctx context.Context, req *rest.GetContactsRequest) 
 	}
 	q := req.BuildQuery()
 	resp := &rest.GetContactsResponse{}
-	if err := c.get(ctx, fmt.Sprintf("/api/v1/contact?%s", q.Encode()), resp); err != nil {
+	if err := c.get(ctx, fmt.Sprintf("/api/v1/contacts?%s", q.Encode()), resp); err != nil {
 		return nil, err
 	}
 	return resp, nil
@@ -73,6 +73,9 @@ func (c *Client) doRequest(ctx context.Context, method, suffix string, input, ou
 			return fmt.Errorf("marshal input: %w", err)
 		}
 		rdr = bytes.NewReader(d)
+	}
+	if c == nil {
+		return fmt.Errorf("nil client inside doRequest")
 	}
 	req, err := http.NewRequest(method, c.urlPrefix()+suffix, rdr)
 	if err != nil {
