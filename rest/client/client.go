@@ -41,9 +41,12 @@ func (c *Client) GetContacts(ctx context.Context, req *rest.GetContactsRequest) 
 	if c == nil {
 		return nil, fmt.Errorf("nil client")
 	}
+	fmt.Println("will run req.BuildQuery")
 	q := req.BuildQuery()
+	qenc := q.Encode()
+	fmt.Println("ran req.BuildQuery", q, qenc)
 	resp := &rest.GetContactsResponse{}
-	if err := c.get(ctx, fmt.Sprintf("/api/v1/contacts?%s", q.Encode()), resp); err != nil {
+	if err := c.get(ctx, fmt.Sprintf("/api/v1/contacts?%s", qenc), resp); err != nil {
 		return nil, err
 	}
 	return resp, nil
@@ -82,7 +85,9 @@ func (c *Client) doRequest(ctx context.Context, method, suffix string, input, ou
 		return fmt.Errorf("new request: %w", err)
 	}
 	req = req.WithContext(ctx)
-	req.Header.Set("Content-Type", "application/json")
+	if input != nil {
+		req.Header.Set("Content-Type", "application/json")
+	}
 	if c.JWT != "" {
 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.JWT))
 	}
