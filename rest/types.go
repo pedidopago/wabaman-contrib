@@ -57,7 +57,8 @@ type NewMediaResponse struct {
 }
 
 type UpdateContactRequest struct {
-	CustomerID string `json:"customer_id"`
+	CustomerID string         `json:"customer_id"`
+	Metadata   map[string]any `json:"metadata,omitempty"`
 }
 
 type UpdateContactResponse struct {
