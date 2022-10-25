@@ -124,6 +124,17 @@ type GetContactsResponse struct {
 	LastPage   uint       `json:"last_page,omitempty"`
 }
 
+type CheckIntegrationRequest struct {
+	BranchID           string
+	ContactPhoneNumber string
+}
+
+type CheckIntegrationResponse struct {
+	BusinessID uint     `json:"business_id"`
+	PhoneIDs   []uint   `json:"phone_ids,omitempty"`
+	ContactIDs []uint64 `json:"contact_ids,omitempty"`
+}
+
 type ErrorResponse struct {
 	Message    string `json:"message"`
 	StatusCode int    `json:"status_code,omitempty"`

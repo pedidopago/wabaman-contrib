@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 
 	"github.com/pedidopago/go-common/util"
 	"github.com/pedidopago/wabaman-contrib/rest"
@@ -45,6 +46,22 @@ func (c *Client) GetContacts(ctx context.Context, req *rest.GetContactsRequest) 
 	qenc := q.Encode()
 	resp := &rest.GetContactsResponse{}
 	if err := c.get(ctx, fmt.Sprintf("/api/v1/contacts?%s", qenc), resp); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *Client) CheckIntegration(ctx context.Context, req *rest.CheckIntegrationRequest) (*rest.CheckIntegrationResponse, error) {
+	q := make(url.Values)
+	if req.BranchID != "" {
+		q.Set("branch_id", req.BranchID)
+	}
+	if req.ContactPhoneNumber != "" {
+		q.Set("contact_phone_number", req.ContactPhoneNumber)
+	}
+	qenc := q.Encode()
+	resp := &rest.CheckIntegrationResponse{}
+	if err := c.get(ctx, fmt.Sprintf("/api/v1/check-integration?%s", qenc), resp); err != nil {
 		return nil, err
 	}
 	return resp, nil
