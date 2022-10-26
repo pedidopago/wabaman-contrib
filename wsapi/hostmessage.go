@@ -30,5 +30,52 @@ type HostMessage struct {
 }
 
 type HostTemplate struct {
-	Name string `json:"name"`
+	//Deprecated: use GraphObject.Name
+	Name        string                  `json:"name"`
+	GraphObject *fbgraph.TemplateObject `json:"graph_object"`
+	Original    *TemplateRef            `json:"original"`
+}
+
+type TemplateRef struct {
+	ID         uint64    `json:"id"`
+	BusinessID uint      `json:"business_id"`
+	Name       string    `json:"name"`
+	Category   string    `json:"category"`
+	CreatedAt  time.Time `json:"created_at"`
+
+	Languages []*TemplateRefLanguage `json:"languages"`
+}
+
+type TemplateRefLanguage struct {
+	LanguageCode string `json:"language_code"`
+
+	Header      *TplRefHeader `json:"header"`
+	Body        string        `json:"body"`
+	Footer      string        `json:"footer"`
+	ButtonsType string        `json:"buttons_type"`
+
+	QuickReplyButtons   []TplQuickReplyButton   `json:"quick_reply_buttons"`
+	CallToActionButtons []TplCallToActionButton `json:"call_to_action_buttons"`
+}
+
+type TplRefHeader struct {
+	Type           string `json:"header_type"`
+	ContentExample string `json:"content_example"`
+}
+
+type TplQuickReplyButton struct {
+	Text string `json:"text"`
+}
+
+type TplCallToActionButton struct {
+	Type string `json:"type"`
+	Text string `json:"text"`
+	URL  struct {
+		Type string `json:"type"` // static,dynamic
+		Href string `json:"href"`
+	} `json:"url,omitempty"`
+	Call struct {
+		CC    string `json:"cc"`
+		Phone string `json:"phone"`
+	} `json:"call,omitempty"`
 }
