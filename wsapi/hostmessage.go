@@ -99,10 +99,10 @@ type TplQuickReplyButton struct {
 }
 
 type TplCallToActionButton struct {
-	Type string               `json:"type"`
-	Text string               `json:"text"`
-	URL  *TplCallToActionURL  `json:"url,omitempty"`
-	Call *TplCallToActionCall `json:"call,omitempty"`
+	Type TemplateCTAButtonType `json:"type"`
+	Text string                `json:"text"`
+	URL  *TplCallToActionURL   `json:"url,omitempty"`
+	Call *TplCallToActionCall  `json:"call,omitempty"`
 }
 
 type TplCallToActionURL struct {
