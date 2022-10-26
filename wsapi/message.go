@@ -48,9 +48,11 @@ type ReadByHostReceipt struct {
 }
 
 type ClientReceipt struct {
-	Type      string    `json:"type"` // sent, read, delivered
-	MessageID uint64    `json:"message_id"`
-	UpdatedAt time.Time `json:"updated_at"`
+	Type            string    `json:"type"` // sent, read, delivered
+	MessageID       uint64    `json:"message_id"`
+	WABAContactID   string    `json:"waba_contact_id"`
+	WABAProfileName string    `json:"waba_profile_name"`
+	UpdatedAt       time.Time `json:"updated_at"`
 }
 
 type ContactUpdate struct {
