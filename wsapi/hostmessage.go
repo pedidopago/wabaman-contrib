@@ -13,7 +13,7 @@ type HostMessage struct {
 	// It is guaranteed to be unique.
 	WABAMessageID string `json:"waba_message_id"`
 	// Internal Phone ID
-	PhoneID         uint
+	PhoneID         uint   `json:"phone_id"`
 	HostPhoneNumber string `json:"host_phone_number"`
 	// The id (phone number) of the recipient (client).
 	WABARecipientID string                            `json:"waba_recipient_id"`

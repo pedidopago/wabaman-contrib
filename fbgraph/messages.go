@@ -37,6 +37,7 @@ type TextObject struct {
 }
 
 type TemplateObject struct {
+	Namespace  string              `json:"namespace,omitempty"`
 	Name       string              `json:"name"`
 	Language   *LanguageObject     `json:"language,omitempty"`
 	Components []TemplateComponent `json:"components,omitempty"`
@@ -56,6 +57,8 @@ type TemplateComponentParameter struct {
 	Image    *ImageParameters    `json:"image,omitempty"`
 	Text     string              `json:"text,omitempty"`
 	Currency *CurrencyParameters `json:"currency,omitempty"`
+	DateTime *DateTimeParameters `json:"date_time,omitempty"`
+	Video    *MediaObject        `json:"video,omitempty"`
 }
 
 // ImageParameters is present when type = "image"
@@ -63,11 +66,19 @@ type ImageParameters struct {
 	Link string `json:"link,omitempty"`
 }
 
+// VideoParameters is present when type = "video"
+type VideoParameters struct {
+}
+
 type CurrencyParameters struct {
 	FallbackValue string `json:"fallback_value"`
 	Code          string `json:"code"`
 	// Amount multiplied by 1000
 	Amount1000 float64 `json:"amount_1000"`
+}
+
+type DateTimeParameters struct {
+	FallbackValue string `json:"fallback_value"`
 }
 
 type MessageObjectResult struct {
