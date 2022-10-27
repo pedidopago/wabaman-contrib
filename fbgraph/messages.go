@@ -37,7 +37,8 @@ type TextObject struct {
 }
 
 type TemplateObject struct {
-	Namespace  string              `json:"namespace,omitempty"`
+	// Namespace  string              `json:"namespace,omitempty"`
+	Namespace  string              `json:"-"`
 	Name       string              `json:"name"`
 	Language   *LanguageObject     `json:"language,omitempty"`
 	Components []TemplateComponent `json:"components,omitempty"`
