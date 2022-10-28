@@ -183,17 +183,17 @@ export class ParsedTemplateHeader implements TplRefHeader {
 export class ParsedTemplate {
     template_name: string;
     language_code: string;
-    header: ParsedTemplateHeader | null;
+    header: ParsedTemplateHeader | undefined;
     body: string;
     footer: string;
     buttons_type: string; // none, call_to_action, quick_reply
     quick_reply_buttons: TplQuickReplyButton[];
     call_to_action_buttons: TplCallToActionButton[];
 
-    constructor(tpl: HostTemplate | null){
+    constructor(tpl: HostTemplate | undefined){
         this.template_name = "";
         this.language_code = "";
-        this.header = null;
+        this.header = undefined;
         this.body = "";
         this.footer = "";
         this.buttons_type = "";
@@ -219,6 +219,9 @@ function doTemplate(tpl: HostTemplate, out: ParsedTemplate) {
         llang = tpl.graph_object.language.code;
     }
 
+    if(!tpl.original.languages || tpl.original.languages.length === 0){
+        return;
+    }
     tpl.original.languages.forEach((lang) => {
         if (lang.language_code === llang) {
             out.language_code = lang.language_code;
