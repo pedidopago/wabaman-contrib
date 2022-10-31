@@ -4,6 +4,7 @@ type Metadata struct {
 	Account  *AccountMetadata  `json:"account,omitempty"`
 	Business *BusinessMetadata `json:"business,omitempty"`
 	Phone    *PhoneMetadata    `json:"phone,omitempty"`
+	Contact  *ContactMetadata  `json:"contact,omitempty"`
 }
 
 type AccountMetadata struct {
@@ -25,4 +26,11 @@ type PhoneMetadata struct {
 	WhatsAppID  string `json:"whatsapp_id,omitempty"`
 	PhoneNumber string `json:"phone_number,omitempty"`
 	BranchID    string `json:"branch_id,omitempty"`
+}
+
+type ContactMetadata struct {
+	ID            uint64         `json:"id,omitempty"`
+	CustomerID    string         `json:"customer_id,omitempty"`
+	WABAContactID string         `json:"waba_contact_id,omitempty"`
+	Metadata      map[string]any `json:"metadata,omitempty"`
 }
