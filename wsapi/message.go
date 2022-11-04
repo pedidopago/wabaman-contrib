@@ -14,6 +14,7 @@ const (
 	MessageTypeReadByHostReceipt  MessageType = 4
 	MessageTypeClientReceipt      MessageType = 5
 	MessageTypeContactUpdate      MessageType = 6
+	MessageTypeNewContact         MessageType = 7
 	MessageTypeMockClientMessages MessageType = 230
 	MessageTypeCloseError         MessageType = 240
 )
@@ -27,6 +28,7 @@ type Message struct {
 	ReadByHostReceipt *ReadByHostReceipt `json:"read_by_host_receipt,omitempty"`
 	ClientReceipt     *ClientReceipt     `json:"client_receipt,omitempty"`
 	ContactUpdate     *ContactUpdate     `json:"contact_update,omitempty"`
+	NewContact        *NewContact        `json:"new_contact,omitempty"`
 	Metadata          *Metadata          `json:"metadata,omitempty"`
 	ClientMockData    *ClientMockData    `json:"client_mock_data,omitempty"`
 }
@@ -63,4 +65,13 @@ type ContactUpdate struct {
 	CustomerID      string                 `json:"customer_id"`
 	Metadata        map[string]interface{} `json:"metadata"`
 	UpdatedFields   []string               `json:"updated_fields"`
+}
+
+type NewContact struct {
+	ContactID       uint64                 `json:"contact_id"`
+	HostPhoneID     uint                   `json:"host_phone_id"`
+	WABAContactID   string                 `json:"waba_contact_id"`
+	WABAProfileName string                 `json:"waba_profile_name"`
+	CustomerID      string                 `json:"customer_id"`
+	Metadata        map[string]interface{} `json:"metadata"`
 }
