@@ -172,11 +172,22 @@ export class ParsedTemplateHeader implements TplRefHeader {
     header_type: string; // none, text, media
     content_example: string;
     content: string;
+    type: string;
 
-    constructor(header: TplRefHeader, content: string) {
+    constructor(header: TplRefHeader, content: string, graph_object?: FBGraphTemplate) {
         this.header_type = header.header_type;
         this.content_example = header.content_example;
         this.content = content;
+        this.type = '';
+        if(graph_object && graph_object.components) {
+            graph_object.components.forEach(element => {
+                if(element.type == FBGraphTemplateComponentType.Header) {
+                    if(element.parameters && element.parameters.length > 0) {
+                        this.type = element.parameters[0].type;
+                    }
+                }
+            });
+        }
     }
 }
 
@@ -252,7 +263,7 @@ function doTemplate(tpl: HostTemplate, out: ParsedTemplate) {
                             break;
                     }
                 }
-                out.header = new ParsedTemplateHeader(lang.header, content);
+                out.header = new ParsedTemplateHeader(lang.header, content, tpl.graph_object);
             }
             if (lang.call_to_action_buttons) {
                 out.call_to_action_buttons = lang.call_to_action_buttons;
