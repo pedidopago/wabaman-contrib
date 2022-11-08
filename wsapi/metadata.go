@@ -29,8 +29,10 @@ type PhoneMetadata struct {
 }
 
 type ContactMetadata struct {
-	ID            uint64         `json:"id,omitempty"`
-	CustomerID    string         `json:"customer_id,omitempty"`
-	WABAContactID string         `json:"waba_contact_id,omitempty"`
-	Metadata      map[string]any `json:"metadata,omitempty"`
+	ID              uint64         `json:"id,omitempty"`
+	CustomerID      string         `json:"customer_id,omitempty"`
+	WABAContactID   string         `json:"waba_contact_id,omitempty"`
+	WABAProfileName string         `json:"waba_profile_name,omitempty"`
+	IsNewContact    bool           `json:"is_new_contact,omitempty"`
+	Metadata        map[string]any `json:"metadata,omitempty"`
 }
