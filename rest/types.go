@@ -76,6 +76,7 @@ type GetContactsRequest struct {
 	Page            uint     `query:"page"`
 	FetchMessages   bool     `query:"fetch_messages"`
 	FetchLastPage   bool     `query:"fetch_last_page"`
+	Origin          string   `query:"origin"`
 }
 
 func (req GetContactsRequest) BuildQuery() url.Values {
@@ -113,6 +114,9 @@ func (req GetContactsRequest) BuildQuery() url.Values {
 	}
 	if iszero, _ := util.IsZero(req.FetchLastPage); !iszero {
 		q.Set("fetch_last_page", fmt.Sprintf("%t", req.FetchLastPage))
+	}
+	if iszero, _ := util.IsZero(req.Origin); !iszero {
+		q.Set("origin", req.Origin)
 	}
 	return q
 }
