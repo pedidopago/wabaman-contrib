@@ -57,8 +57,9 @@ type NewMediaResponse struct {
 }
 
 type UpdateContactRequest struct {
-	CustomerID string         `json:"customer_id,omitempty"`
-	Metadata   map[string]any `json:"metadata,omitempty"`
+	CustomerID      string         `json:"customer_id,omitempty"`
+	WABAProfileName string         `json:"waba_profile_name,omitempty"`
+	Metadata        map[string]any `json:"metadata,omitempty"`
 }
 
 type UpdateContactResponse struct {
