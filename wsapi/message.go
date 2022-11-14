@@ -63,6 +63,8 @@ type ContactUpdate struct {
 	WABAContactID   string                 `json:"waba_contact_id"`
 	WABAProfileName string                 `json:"waba_profile_name"`
 	CustomerID      string                 `json:"customer_id"`
+	CustomerName    string                 `json:"customer_name"`
+	Name            string                 `json:"name"`
 	Metadata        map[string]interface{} `json:"metadata"`
 	UpdatedFields   []string               `json:"updated_fields"`
 }
