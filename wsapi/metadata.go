@@ -31,6 +31,7 @@ type PhoneMetadata struct {
 type ContactMetadata struct {
 	ID              uint64         `json:"id,omitempty"`
 	CustomerID      string         `json:"customer_id,omitempty"`
+	CustomerName    string         `json:"customer_name,omitempty"`
 	WABAContactID   string         `json:"waba_contact_id,omitempty"`
 	WABAProfileName string         `json:"waba_profile_name,omitempty"`
 	Name            string         `json:"name,omitempty"`
