@@ -177,6 +177,8 @@ type Contact struct {
 	CustomerID                   string    `json:"customer_id,omitempty"`                     // "customer_id": "01F5E1TNWH1TCTGJ1VW71X1NA8",
 	CreatedAt                    time.Time `json:"created_at,omitempty"`                      // "created_at": "2022-09-02T14:04:08Z",
 	UpdatedAt                    time.Time `json:"updated_at,omitempty"`                      // "updated_at": "2022-10-04T02:30:26Z",
+
+	Metadata map[string]any `json:"metadata,omitempty"`
 	//TODO: add fields below
 	// HostMessages string `json:"host_messages,omitempty"` // "host_messages": null,
 	// ClientMessages string `json:"client_messages,omitempty"` // "client_messages": null
