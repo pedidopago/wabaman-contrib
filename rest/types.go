@@ -45,6 +45,7 @@ type NewMessageRequest struct {
 	Video            *fbgraph.MediaObject              `json:"video,omitempty"`
 	Sticker          *fbgraph.MediaObject              `json:"sticker,omitempty"`
 	FallbackTemplate string                            `json:"fallback_template,omitempty"`
+	SkipWelcome      bool                              `json:"skip_welcome,omitempty"`
 }
 
 type NewMessageResponse struct {
