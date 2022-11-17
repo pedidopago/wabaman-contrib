@@ -22,10 +22,11 @@ type BusinessMetadata struct {
 }
 
 type PhoneMetadata struct {
-	ID          uint   `json:"id,omitempty"`
-	WhatsAppID  string `json:"whatsapp_id,omitempty"`
-	PhoneNumber string `json:"phone_number,omitempty"`
-	BranchID    string `json:"branch_id,omitempty"`
+	ID                        uint   `json:"id,omitempty"`
+	WhatsAppID                string `json:"whatsapp_id,omitempty"`
+	WhatsAppBusinessAccountID string `json:"whatsapp_business_account_id,omitempty"`
+	PhoneNumber               string `json:"phone_number,omitempty"`
+	BranchID                  string `json:"branch_id,omitempty"`
 }
 
 type ContactMetadata struct {
