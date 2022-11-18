@@ -81,9 +81,10 @@ type NewContact struct {
 }
 
 type HostNote struct {
-	Text      string    `json:"text"`
-	AgentID   string    `json:"agent_id"`
-	AgentName string    `json:"agent_name,omitempty"`
-	Origin    string    `json:"origin,omitempty"`
-	CreatedAt time.Time `json:"created_at"`
+	Text          string    `json:"text"`
+	AgentID       string    `json:"agent_id"`
+	AgentName     string    `json:"agent_name,omitempty"`
+	Origin        string    `json:"origin,omitempty"`
+	CreatedAt     time.Time `json:"created_at"`
+	CreatedAtNano int64     `json:"created_at_nano"`
 }
