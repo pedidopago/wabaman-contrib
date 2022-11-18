@@ -27,6 +27,7 @@ type HostMessage struct {
 	Sticker         *Sticker                          `json:"sticker,omitempty"`
 	Template        *HostTemplate                     `json:"template,omitempty"`
 	Interactive     *fbgraph.InteractiveMessageObject `json:"interactive,omitempty"`
+	ObjectType      string                            `json:"object_type,omitempty"`
 }
 
 type HostTemplate struct {

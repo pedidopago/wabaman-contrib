@@ -25,8 +25,9 @@ type ClientMessage struct {
 	Interactive *Interactive `json:"interactive,omitempty"`
 	Button      *Button      `json:"button,omitempty"`
 
-	CreatedAt time.Time  `json:"created_at"`
-	ReadAt    *time.Time `json:"read_at,omitempty"`
+	CreatedAt  time.Time  `json:"created_at"`
+	ReadAt     *time.Time `json:"read_at,omitempty"`
+	ObjectType string     `json:"object_type,omitempty"`
 }
 
 // Text is present in a message if type=text
