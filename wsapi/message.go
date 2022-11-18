@@ -81,6 +81,10 @@ type NewContact struct {
 }
 
 type HostNote struct {
+	ID            uint64    `json:"id"`
+	ContactID     uint64    `json:"contact_id"`
+	WABAContactID string    `json:"waba_contact_id"`
+	PhoneID       uint      `json:"phone_id"`
 	Text          string    `json:"text"`
 	AgentID       string    `json:"agent_id"`
 	AgentName     string    `json:"agent_name,omitempty"`
