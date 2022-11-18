@@ -15,6 +15,7 @@ const (
 	MessageTypeClientReceipt      MessageType = 5
 	MessageTypeContactUpdate      MessageType = 6
 	MessageTypeNewContact         MessageType = 7
+	MessageTypeHostNote           MessageType = 8
 	MessageTypeMockClientMessages MessageType = 230
 	MessageTypeCloseError         MessageType = 240
 )
@@ -29,6 +30,7 @@ type Message struct {
 	ClientReceipt     *ClientReceipt     `json:"client_receipt,omitempty"`
 	ContactUpdate     *ContactUpdate     `json:"contact_update,omitempty"`
 	NewContact        *NewContact        `json:"new_contact,omitempty"`
+	HostNote          *HostNote          `json:"host_note,omitempty"`
 	Metadata          *Metadata          `json:"metadata,omitempty"`
 	ClientMockData    *ClientMockData    `json:"client_mock_data,omitempty"`
 }
@@ -76,4 +78,12 @@ type NewContact struct {
 	WABAProfileName string                 `json:"waba_profile_name"`
 	CustomerID      string                 `json:"customer_id"`
 	Metadata        map[string]interface{} `json:"metadata"`
+}
+
+type HostNote struct {
+	Text      string    `json:"text"`
+	AgentID   string    `json:"agent_id"`
+	AgentName string    `json:"agent_name,omitempty"`
+	Origin    string    `json:"origin,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
 }
