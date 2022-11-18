@@ -91,4 +91,5 @@ type HostNote struct {
 	Origin        string    `json:"origin,omitempty"`
 	CreatedAt     time.Time `json:"created_at"`
 	CreatedAtNano int64     `json:"created_at_nano"`
+	ObjectType    string    `json:"object_type"`
 }
