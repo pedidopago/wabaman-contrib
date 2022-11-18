@@ -93,3 +93,18 @@ type HostNote struct {
 	CreatedAtNano int64     `json:"created_at_nano"`
 	ObjectType    string    `json:"object_type,omitempty"`
 }
+
+func (m *HostNote) GetID() uint64 {
+	return m.ID
+}
+
+func (m *HostNote) GetCreatedAtNano() int64 {
+	return m.CreatedAtNano
+}
+
+func (m *HostNote) GetObjectType() string {
+	if m.ObjectType == "" {
+		return "host_note"
+	}
+	return m.ObjectType
+}
