@@ -81,18 +81,19 @@ type NewContact struct {
 }
 
 type HostNote struct {
-	ID            uint64    `json:"id"`
-	ContactID     uint64    `json:"contact_id"`
-	WABAContactID string    `json:"waba_contact_id"`
-	PhoneID       uint      `json:"phone_id"`
-	Text          string    `json:"text"`
-	AgentID       string    `json:"agent_id"`
-	AgentName     string    `json:"agent_name,omitempty"`
-	Origin        string    `json:"origin,omitempty"`
-	CreatedAt     time.Time `json:"created_at"`
-	CreatedAtNano int64     `json:"created_at_nano"`
-	Type          string    `json:"type"`
-	ObjectType    string    `json:"object_type,omitempty"`
+	ID            uint64         `json:"id"`
+	ContactID     uint64         `json:"contact_id"`
+	WABAContactID string         `json:"waba_contact_id"`
+	PhoneID       uint           `json:"phone_id"`
+	Text          string         `json:"text"`
+	AgentID       string         `json:"agent_id"`
+	AgentName     string         `json:"agent_name,omitempty"`
+	Origin        string         `json:"origin,omitempty"`
+	CreatedAt     time.Time      `json:"created_at"`
+	CreatedAtNano int64          `json:"created_at_nano"`
+	Type          string         `json:"type"`
+	Metadata      map[string]any `json:"metadata,omitempty"`
+	ObjectType    string         `json:"object_type,omitempty"`
 }
 
 func (m *HostNote) GetID() uint64 {
