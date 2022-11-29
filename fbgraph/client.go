@@ -211,12 +211,17 @@ func (mr *GetMediaResult) VerifyChecksum(r io.Reader) bool {
 }
 
 func (c *Client) errorFromResponse(resp *http.Response) error {
-	herr := &GraphError{}
+	eparent := struct {
+		Error GraphError `json:"error"`
+	}{}
 	jbdbuff := new(bytes.Buffer)
 	io.Copy(jbdbuff, resp.Body)
-	if err := json.Unmarshal(jbdbuff.Bytes(), herr); err != nil {
+	if err := json.Unmarshal(jbdbuff.Bytes(), &eparent); err != nil {
 		return fmt.Errorf("http status: %d (%s); %w - %s", resp.StatusCode, resp.Status, err, jbdbuff.String())
 	}
-	herr.HTTPStatusCode = resp.StatusCode
-	return herr
+	if eparent.Error.Code == 0 {
+		return fmt.Errorf("http status: %d (%s); %s", resp.StatusCode, resp.Status, jbdbuff.String())
+	}
+	eparent.Error.HTTPStatusCode = resp.StatusCode
+	return &eparent.Error
 }
