@@ -49,6 +49,7 @@ type NewMessageRequest struct {
 	Origin           string                            `json:"origin,omitempty"`
 	ReadMessages     bool                              `json:"read_messages,omitempty"`
 	Verbose          bool                              `json:"verbose,omitempty"`
+	ContactMetadata  map[string]any                    `json:"contact_metadata,omitempty"`
 }
 
 type NewMessageResponse struct {
