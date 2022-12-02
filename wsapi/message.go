@@ -46,10 +46,11 @@ type ClientMockData struct {
 }
 
 type ReadByHostReceipt struct {
-	MessageID uint64    `json:"message_id"`
-	ContactID uint64    `json:"contact_id"`
-	ReadAt    time.Time `json:"read_at"`
-	Metadata  string    `json:"metadata"`
+	MessageID     uint64    `json:"message_id"`
+	ContactID     uint64    `json:"contact_id,omitempty"`
+	WABAContactID string    `json:"waba_contact_id,omitempty"`
+	ReadAt        time.Time `json:"read_at"`
+	Metadata      string    `json:"metadata"`
 }
 
 type ClientReceipt struct {
