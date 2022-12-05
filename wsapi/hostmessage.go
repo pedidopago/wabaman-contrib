@@ -31,10 +31,11 @@ type HostMessage struct {
 }
 
 type HostTemplate struct {
-	//Deprecated: use GraphObject.Name
-	Name        string                  `json:"name"`
-	GraphObject *fbgraph.TemplateObject `json:"graph_object"`
-	Original    *TemplateRef            `json:"original"`
+	//Deprecated: use GraphObject.Name or Parsed.TemplateName
+	Name        string                  `json:"name,omitempty"`
+	GraphObject *fbgraph.TemplateObject `json:"graph_object,omitempty"`
+	Original    *TemplateRef            `json:"original,omitempty"`
+	Parsed      *ParsedTemplate         `json:"parsed,omitempty"`
 }
 
 type TemplateCategory string
@@ -114,4 +115,22 @@ type TplCallToActionURL struct {
 type TplCallToActionCall struct {
 	CC    string `json:"cc"`
 	Phone string `json:"phone"`
+}
+
+type ParsedTemplate struct {
+	TemplateName        string                  `json:"template_name"`
+	LanguageCode        string                  `json:"language_code"`
+	Header              *ParsedTemplateHeader   `json:"header,omitempty"`
+	Body                string                  `json:"body"`
+	Footer              string                  `json:"footer"`
+	ButtonsType         TemplateButtonsType     `json:"buttons_type"`
+	QuickReplyButtons   []TplQuickReplyButton   `json:"quick_reply_buttons"`
+	CallToActionButtons []TplCallToActionButton `json:"call_to_action_buttons"`
+}
+
+type ParsedTemplateHeader struct {
+	HeaderType     TemplateHeaderType `json:"header_type"`
+	ContentExample string             `json:"content_example"`
+	Content        string             `json:"content"`
+	Type           string             `json:"type"`
 }
