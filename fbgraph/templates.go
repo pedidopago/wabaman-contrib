@@ -87,8 +87,8 @@ type MessageTemplateComponent struct {
 }
 
 type MessageTemplateExample struct {
-	HeaderHandle Slice[string] `json:"header_handle"`
-	BodyText     Slice[string] `json:"body_text"`
+	HeaderHandle []string   `json:"header_handle"`
+	BodyText     [][]string `json:"body_text"`
 }
 
 type MessageTemplateButton struct {
