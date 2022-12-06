@@ -110,6 +110,32 @@ type MessageTemplatesCursors struct {
 	After  string `json:"after,omitempty"`
 }
 
+func (c *Client) GetMessageTemplate(ctx context.Context, id string) (*MessageTemplate, error) {
+	url := fmt.Sprintf("https://graph.facebook.com/v15.0/%s", id)
+
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("new request: %w", err)
+	}
+	req = req.WithContext(ctx)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken))
+
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("request failed: %w", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return nil, c.errorFromResponse(resp)
+	}
+	result := &MessageTemplate{}
+	if err := json.NewDecoder(resp.Body).Decode(result); err != nil {
+		return nil, fmt.Errorf("decode response: %w", err)
+	}
+	return result, nil
+}
+
 func (c *Client) GetMessageTemplates(ctx context.Context, params GetMessageTemplatesParameters) (*GetMessageTemplatesResponse, error) {
 	if params.Fields == nil {
 		params.Fields = templateParamsDefaultFields
