@@ -75,9 +75,53 @@ const wabaman_template_json2 = `
 
 const wabaman_obj2 = JSON.parse(wabaman_template_json2) as HostTemplate;
 
+const wabaman_template_json3 = `
+{
+    "parsed": {
+        "template_name": "orcamento",
+        "language_code": "pt_BR",
+        "header": {
+            "header_type": "media",
+            "content_example": "example",
+            "content": "https://ppv2-development.s3.sa-east-1.amazonaws.com/01EM2CNQFJG4VWS5BMT8B2H6YF/01GK513EJFKGCZ49B1KW4TFY6N/01GKKW56E564W8ZMNG24S7FT5W.jpg",
+            "type": "image"
+        },
+        "body": "Solicitação: *32329*  R$ 1.061,00 no PIX Itens: 6 Expira em 10 dias corridos Clique para aprovar agora",
+        "footer": "",
+        "buttons_type": "call_to_action",
+        "quick_reply_buttons": null,
+        "call_to_action_buttons": [
+            {
+                "type": "url",
+                "text": "Frete e pagamento",
+                "url": {
+                    "type": "dynamic",
+                    "href": "https://staging.loja.pedidopago.com.br/s?inquiry=01GKKS950H3R0DXVCZVN844J50"
+                }
+            },
+            {
+                "type": "call",
+                "text": "Ligar!",
+                "call": {
+                    "cc": "",
+                    "phone": "+5511993903535"
+                }
+            }
+        ]
+    }
+}`
+
+const wabaman_obj3 = JSON.parse(wabaman_template_json3) as HostTemplate;
+
 describe("should parse a template v2", () => {
     it("should parse a template v2", () => {
         const parsed = new ParsedTemplate(wabaman_obj2);
         expect(parsed.body).to.be.equal("Bem-vindo(a) ao Pharmer2!");
+    });
+    it("should parse a template v2 with header and buttons", () => {
+        const parsed = new ParsedTemplate(wabaman_obj3);
+        expect(parsed.call_to_action_buttons[0].text).to.be.equal("Frete e pagamento");
+        expect(parsed.call_to_action_buttons[1].text).to.be.equal("Ligar!");
+        expect(parsed.header?.content_example).to.be.equal("example");
     });
 })

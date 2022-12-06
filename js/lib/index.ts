@@ -169,16 +169,34 @@ export interface TplCallToActionCall {
     phone: string;
 }
 
+export interface IParsedTemplateHeader {
+    header_type: string; // none, text, media
+    content_example: string;
+    content: string;
+    type: string;
+}
+
 export class ParsedTemplateHeader implements TplRefHeader {
     header_type: string; // none, text, media
     content_example: string;
     content: string;
     type: string;
 
-    constructor(header: TplRefHeader, content: string, graph_object?: FBGraphTemplate) {
+    constructor(header?: TplRefHeader, content?: string, graph_object?: FBGraphTemplate) {
+        if (!header) {
+            this.header_type = "";
+            this.content_example = "";
+            this.content = "";
+            this.type = "";
+            return;
+        }
         this.header_type = header.header_type;
         this.content_example = header.content_example;
-        this.content = content;
+        if(content){
+            this.content = content;
+        } else {
+            this.content = "";
+        }
         this.type = '';
         if(graph_object && graph_object.components) {
             graph_object.components.forEach(element => {
@@ -195,7 +213,7 @@ export class ParsedTemplateHeader implements TplRefHeader {
 export interface IParsedTemplate {
     template_name: string;
     language_code: string;
-    header: ParsedTemplateHeader | undefined;
+    header: IParsedTemplateHeader | undefined;
     body: string;
     footer: string;
     buttons_type: string; // none, call_to_action, quick_reply
@@ -226,12 +244,19 @@ export class ParsedTemplate {
             if(tpl.parsed && tpl.parsed.template_name !== ""){
                 this.template_name = tpl.parsed.template_name;
                 this.language_code = tpl.parsed.language_code;
-                this.header = tpl.parsed.header;
                 this.body = tpl.parsed.body;
                 this.footer = tpl.parsed.footer;
                 this.buttons_type = tpl.parsed.buttons_type;
                 this.quick_reply_buttons = tpl.parsed.quick_reply_buttons;
                 this.call_to_action_buttons = tpl.parsed.call_to_action_buttons;
+
+                if (tpl.parsed.header) {
+                    this.header = new ParsedTemplateHeader();
+                    this.header.header_type = tpl.parsed.header.header_type;
+                    this.header.content_example = tpl.parsed.header.content_example;
+                    this.header.content = tpl.parsed.header.content;
+                    this.header.type = tpl.parsed.header.type;
+                }
             } else {
                 doTemplate(tpl, this);
             }
