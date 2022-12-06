@@ -60,6 +60,7 @@ export interface TextMessage {
 export interface HostTemplate {
     graph_object?: FBGraphTemplate;
     original?: TemplateRef;
+    parsed?: IParsedTemplate;
 }
 
 export interface FBGraphTemplate {
@@ -191,6 +192,17 @@ export class ParsedTemplateHeader implements TplRefHeader {
     }
 }
 
+export interface IParsedTemplate {
+    template_name: string;
+    language_code: string;
+    header: ParsedTemplateHeader | undefined;
+    body: string;
+    footer: string;
+    buttons_type: string; // none, call_to_action, quick_reply
+    quick_reply_buttons: TplQuickReplyButton[];
+    call_to_action_buttons: TplCallToActionButton[];
+}
+
 export class ParsedTemplate {
     template_name: string;
     language_code: string;
@@ -211,7 +223,18 @@ export class ParsedTemplate {
         this.quick_reply_buttons = [];
         this.call_to_action_buttons = [];
         if(tpl){
-            doTemplate(tpl, this);
+            if(tpl.parsed && tpl.parsed.template_name !== ""){
+                this.template_name = tpl.parsed.template_name;
+                this.language_code = tpl.parsed.language_code;
+                this.header = tpl.parsed.header;
+                this.body = tpl.parsed.body;
+                this.footer = tpl.parsed.footer;
+                this.buttons_type = tpl.parsed.buttons_type;
+                this.quick_reply_buttons = tpl.parsed.quick_reply_buttons;
+                this.call_to_action_buttons = tpl.parsed.call_to_action_buttons;
+            } else {
+                doTemplate(tpl, this);
+            }
         }
     }
 }

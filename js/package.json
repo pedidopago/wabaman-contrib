@@ -1,6 +1,6 @@
 {
   "name": "@pedidopago/wabaman-contrib",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Helper libraries for WABAMan Ts/Js clients",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

@@ -63,3 +63,21 @@ describe("should parse a template", () => {
         expect(parsed.body).to.be.equal("Bem-vindo(a) ao Pharmer!");
     });
 })
+
+const wabaman_template_json2 = `
+{
+    "parsed": {
+        "template_name": "erp_welcome",
+        "language_code": "pt_BR",
+        "body": "Bem-vindo(a) ao Pharmer2!"
+    }
+}`
+
+const wabaman_obj2 = JSON.parse(wabaman_template_json2) as HostTemplate;
+
+describe("should parse a template v2", () => {
+    it("should parse a template v2", () => {
+        const parsed = new ParsedTemplate(wabaman_obj2);
+        expect(parsed.body).to.be.equal("Bem-vindo(a) ao Pharmer2!");
+    });
+})
