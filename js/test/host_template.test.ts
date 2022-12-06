@@ -113,6 +113,116 @@ const wabaman_template_json3 = `
 
 const wabaman_obj3 = JSON.parse(wabaman_template_json3) as HostTemplate;
 
+const wabaman_template_json4 = `{
+    "graph_object": {
+      "name": "orcamento",
+      "language": {
+        "code": "pt_BR"
+      },
+      "components": [
+        {
+          "type": "header",
+          "parameters": [
+            {
+              "type": "image",
+              "image": {
+                "link": "https://ppv2-development.s3.sa-east-1.amazonaws.com/01EM2CNQFJG4VWS5BMT8B2H6YF/01GK9RBE8DYZJVSNWCHJ2NHSN1/01GKM83P93V93TZBDZGNP9A9AZ.jpg"
+              }
+            }
+          ]
+        },
+        {
+          "type": "body",
+          "parameters": [
+            {
+              "type": "text",
+              "text": "32322"
+            },
+            {
+              "type": "text",
+              "text": "R$ 1.669,00 no PIX"
+            },
+            {
+              "type": "text",
+              "text": "3"
+            }
+          ]
+        },
+        {
+          "type": "button",
+          "sub_type": "url",
+          "parameters": [
+            {
+              "type": "text",
+              "text": "s?inquiry=01GKA2SSYWTJV30ZFVASBFVTTH"
+            }
+          ],
+          "index": 0
+        }
+      ]
+    },
+    "original": {
+      "id": 0,
+      "business_id": 0,
+      "name": "orcamento",
+      "category": "transactional",
+      "created_at": "0001-01-01T00:00:00Z",
+      "languages": [
+        {
+          "template_ref_id": 0,
+          "language_code": "pt_BR",
+          "header": {
+            "header_type": "media",
+            "content_example": "https://scontent.whatsapp.net/v/t61.29466-34/316467224_1460837674743763_2615426465772862050_n.jpg?ccb=1-7&_nc_sid=57045b&_nc_ohc=WqcFW--tsmkAX-cRVUS&_nc_ht=scontent.whatsapp.net&edm=AH51TzQEAAAA&oh=01_AdRsOccxSwYUf1cBdCJt03Lu8OeU6o1sVXlNJNVSmACyYw&oe=63B6D157"
+          },
+          "body": "Solicitação: *{{1}}* 💰 {{2}} 💊 Itens: {{3}} 🗓️ Expira em 10 dias corridos Clique para aprovar agora👇",
+          "footer": null,
+          "buttons_type": "",
+          "quick_reply_buttons": null,
+          "call_to_action_buttons": null,
+          "last_status": null,
+          "created_at": "0001-01-01T00:00:00Z",
+          "header_parameter_type": "",
+          "header_content_default": null
+        }
+      ]
+    },
+    "parsed": {
+      "template_name": "orcamento",
+      "language_code": "pt_BR",
+      "header": {
+        "header_type": "media",
+        "content_example": "https://scontent.whatsapp.net/v/t61.29466-34/316467224_1460837674743763_2615426465772862050_n.jpg?ccb=1-7&_nc_sid=57045b&_nc_ohc=WqcFW--tsmkAX-cRVUS&_nc_ht=scontent.whatsapp.net&edm=AH51TzQEAAAA&oh=01_AdRsOccxSwYUf1cBdCJt03Lu8OeU6o1sVXlNJNVSmACyYw&oe=63B6D157",
+        "content": "https://ppv2-development.s3.sa-east-1.amazonaws.com/01EM2CNQFJG4VWS5BMT8B2H6YF/01GK9RBE8DYZJVSNWCHJ2NHSN1/01GKM83P93V93TZBDZGNP9A9AZ.jpg",
+        "type": "image"
+      },
+      "body": "Solicitação: *32322* 💰 R$ 1.669,00 no PIX 💊 Itens: 3 🗓️ Expira em 10 dias corridos Clique para aprovar agora👇",
+      "footer": "",
+      "buttons_type": "call_to_action",
+      "quick_reply_buttons": null,
+      "call_to_action_buttons": [
+        {
+          "type": "url",
+          "text": "Frete e pagamento",
+          "url": {
+            "type": "dynamic",
+            "href": "https://staging.loja.pedidopago.com.br/s?inquiry=01GKA2SSYWTJV30ZFVASBFVTTH"
+          }
+        },
+        {
+          "type": "call",
+          "text": "Fale conosco",
+          "call": {
+            "cc": "",
+            "phone": "+5511993903535"
+          }
+        }
+      ]
+    }
+  }`
+
+const wabaman_obj4 = JSON.parse(wabaman_template_json4) as HostTemplate;
+
 describe("should parse a template v2", () => {
     it("should parse a template v2", () => {
         const parsed = new ParsedTemplate(wabaman_obj2);
@@ -123,5 +233,11 @@ describe("should parse a template v2", () => {
         expect(parsed.call_to_action_buttons[0].text).to.be.equal("Frete e pagamento");
         expect(parsed.call_to_action_buttons[1].text).to.be.equal("Ligar!");
         expect(parsed.header?.content_example).to.be.equal("example");
+    });
+    it("should parse a template v2 with legacy options", () => {
+        const parsed = new ParsedTemplate(wabaman_obj4);
+        expect(parsed.call_to_action_buttons[0].text).to.be.equal("Frete e pagamento");
+        expect(parsed.call_to_action_buttons[1].text).to.be.equal("Fale conosco");
+        expect(parsed.body).to.be.equal("Solicitação: *32322* 💰 R$ 1.669,00 no PIX 💊 Itens: 3 🗓️ Expira em 10 dias corridos Clique para aprovar agora👇");
     });
 })
