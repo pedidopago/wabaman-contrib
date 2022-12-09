@@ -32,11 +32,11 @@ type TokenInfo struct {
 	UserID              string          `json:"user_id,omitempty"`
 }
 
-func (c *Client) DebugToken(ctx context.Context, inputToken, accessToken string) (TokenInfo, error) {
+func (c *Client) DebugToken(ctx context.Context, inputToken string) (TokenInfo, error) {
 
 	emptyd := TokenInfo{}
 
-	url := fmt.Sprintf("https://graph.facebook.com/v15.0/debug_token?input_token=%s&access_token=%s", inputToken, accessToken)
+	url := fmt.Sprintf("https://graph.facebook.com/v15.0/debug_token?input_token=%s&access_token=%s", inputToken, c.AccessToken)
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
