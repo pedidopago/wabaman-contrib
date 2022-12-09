@@ -60,3 +60,32 @@ func (c *Client) DebugToken(ctx context.Context, inputToken string) (TokenInfo, 
 	}
 	return result.Data, nil
 }
+
+func (c *Client) NewPermanentAccessToken(ctx context.Context, appID, appSecret, tempToken string) (string, error) {
+
+	url := fmt.Sprintf("https://graph.facebook.com/v13.0/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s", appID, appSecret, tempToken)
+
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return "", fmt.Errorf("new request: %w", err)
+	}
+	req = req.WithContext(ctx)
+
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("request failed: %w", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return "", c.errorFromResponse(resp)
+	}
+	result := struct {
+		AccessToken string `json:"access_token"`
+		TokenType   string `json:"token_type"`
+		ExpiresIn   int    `json:"expires_in"`
+	}{}
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return "", fmt.Errorf("decode response: %w", err)
+	}
+	return result.AccessToken, nil
+}
