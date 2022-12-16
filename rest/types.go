@@ -50,6 +50,8 @@ type NewMessageRequest struct {
 	ReadMessages     bool                              `json:"read_messages,omitempty"`
 	Verbose          bool                              `json:"verbose,omitempty"`
 	ContactMetadata  map[string]any                    `json:"contact_metadata,omitempty"`
+	AgentID          string                            `json:"agent_id,omitempty"`
+	AgentName        string                            `json:"agent_name,omitempty"`
 }
 
 type NewMessageResponse struct {
