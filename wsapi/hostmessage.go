@@ -28,6 +28,8 @@ type HostMessage struct {
 	Template        *HostTemplate                     `json:"template,omitempty"`
 	Interactive     *fbgraph.InteractiveMessageObject `json:"interactive,omitempty"`
 	ObjectType      string                            `json:"object_type,omitempty"`
+	AgentID         string                            `json:"agent_id,omitempty"`
+	AgentName       string                            `json:"agent_name,omitempty"`
 }
 
 type HostTemplate struct {
