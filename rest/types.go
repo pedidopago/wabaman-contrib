@@ -198,6 +198,32 @@ type GetBusinessesResponse struct {
 	Businesses []*Business `json:"businesses"`
 }
 
+type NewBusinessRequest struct {
+	StoreID           string `json:"store_id" validate:"required"`
+	StoreName         string `json:"store_name" validate:"required"`
+	AccessToken       string `json:"access_token"`
+	FacebookAppID     string `json:"facebook_app_id"`
+	FacebookAppSecret string `json:"facebook_app_secret"`
+	// Phones            []??? `json:"phones,omitempty"`
+}
+
+type NewPhoneRequest struct {
+	BusinessID                uint              `json:"business_id" validate:"required"`
+	WhatsAppID                string            `json:"whatsapp_id" validate:"required"`
+	WhatsAppBusinessAccountID string            `json:"whatsapp_business_account_id" validate:"required"`
+	TemplateNamespace         string            `json:"template_namespace"`
+	PhoneNumber               string            `json:"phone_number" validate:"required"`
+	BranchID                  string            `json:"branch_id" validate:"required"`
+	AccessToken               util.SecretString `json:"access_token"`
+	DefaultTplHeaderImage     string            `json:"default_tpl_header_image"`
+	DefaultTplHeaderVideo     string            `json:"default_tpl_header_video"`
+	DefaultReheatTemplateName string            `json:"default_reheat_template_name"`
+	FbAppID                   string            `json:"fb_app_id"`
+	FbAppSecret               string            `json:"fb_app_secret"`
+	AlertEmail                string            `json:"alert_email"`
+	AlertDiscord              string            `json:"alert_discord"`
+}
+
 type Business struct {
 	ID                uint      `json:"id"`
 	AccountID         uint      `json:"account_id"`
