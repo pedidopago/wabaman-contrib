@@ -189,3 +189,42 @@ type Contact struct {
 	// HostMessages string `json:"host_messages,omitempty"` // "host_messages": null,
 	// ClientMessages string `json:"client_messages,omitempty"` // "client_messages": null
 }
+
+type GetBusinessesRequest struct {
+	StoreID string `json:"store_id,omitempty"`
+}
+
+type GetBusinessesResponse struct {
+	Businesses []*Business `json:"businesses"`
+}
+
+type Business struct {
+	ID                uint      `json:"id"`
+	AccountID         uint      `json:"account_id"`
+	StoreID           string    `json:"store_id"`
+	StoreName         string    `json:"store_name"`
+	FBAppID           string    `json:"fb_app_id"`
+	APIKey            string    `json:"api_key"`
+	UseTemplate24Rule bool      `json:"use_template_24_rule"`
+	CreatedAt         time.Time `json:"created_at"`
+	UpdatedAt         time.Time `json:"updated_at"`
+	Phones            []*Phone  `json:"phones,omitempty"`
+}
+
+type Phone struct {
+	ID                        uint      `json:"id"`
+	BusinessID                uint      `json:"business_id"`
+	WhatsAppID                string    `json:"whatsapp_id"`
+	WhatsAppBusinessAccountID string    `json:"whatsapp_business_account_id"`
+	PhoneNumber               string    `json:"phone_number"`
+	BranchID                  string    `json:"branch_id"`
+	TemplateNamespace         string    `json:"template_namespace,omitempty"`
+	DefaultTplHeaderImage     string    `json:"default_tpl_header_image,omitempty"`
+	DefaultTplHeaderVideo     string    `json:"default_tpl_header_video,omitempty"`
+	DefaultReheatTemplate     string    `json:"default_reheat_template,omitempty"`
+	FBAppID                   string    `json:"fb_app_id"`
+	AlertEmail                string    `json:"alert_email,omitempty"`
+	AlertDiscord              string    `json:"alert_discord,omitempty"`
+	CreatedAt                 time.Time `json:"created_at"`
+	UpdatedAt                 time.Time `json:"updated_at"`
+}

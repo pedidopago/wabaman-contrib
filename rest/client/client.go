@@ -67,6 +67,18 @@ func (c *Client) CheckIntegration(ctx context.Context, req *rest.CheckIntegratio
 	return resp, nil
 }
 
+func (c *Client) GetBusinesses(ctx context.Context, req *rest.GetBusinessesRequest) (*rest.GetBusinessesResponse, error) {
+	q := make(url.Values)
+	if req.StoreID != "" {
+		q.Set("store_id", req.StoreID)
+	}
+	resp := &rest.GetBusinessesResponse{}
+	if err := c.get(ctx, fmt.Sprintf("/api/v1/business?%s", q.Encode()), resp); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (c *Client) urlPrefix() string {
 	return util.Default(c.BaseURL, DefaultBaseURL)
 }
