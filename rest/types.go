@@ -198,6 +198,17 @@ type GetBusinessesResponse struct {
 	Businesses []*Business `json:"businesses"`
 }
 
+type GetPhonesRequest struct {
+	ID          uint   `json:"id,omitempty"`
+	BusinessID  uint   `json:"business_id,omitempty"`
+	PhoneNumber string `json:"phone_number,omitempty"`
+	BranchID    string `json:"branch_id,omitempty"`
+}
+
+type GetPhonesResponse struct {
+	Phone []*Phone `json:"phone"`
+}
+
 type NewBusinessRequest struct {
 	StoreID           string `json:"store_id" validate:"required"`
 	StoreName         string `json:"store_name" validate:"required"`

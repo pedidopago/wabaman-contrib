@@ -79,6 +79,27 @@ func (c *Client) GetBusinesses(ctx context.Context, req *rest.GetBusinessesReque
 	return resp, nil
 }
 
+func (c *Client) GetPhones(ctx context.Context, req *rest.GetPhonesRequest) (*rest.GetPhonesResponse, error) {
+	q := make(url.Values)
+	if req.ID != 0 {
+		q.Set("id", fmt.Sprint(req.ID))
+	}
+	if req.BranchID != "" {
+		q.Set("branch_id", req.BranchID)
+	}
+	if req.BusinessID != 0 {
+		q.Set("business_id", fmt.Sprint(req.BusinessID))
+	}
+	if req.PhoneNumber != "" {
+		q.Set("phone_number", req.PhoneNumber)
+	}
+	resp := &rest.GetPhonesResponse{}
+	if err := c.get(ctx, fmt.Sprintf("/api/v1/phones?%s", q.Encode()), resp); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (c *Client) urlPrefix() string {
 	return util.Default(c.BaseURL, DefaultBaseURL)
 }
