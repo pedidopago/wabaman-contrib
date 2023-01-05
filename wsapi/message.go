@@ -16,6 +16,7 @@ const (
 	MessageTypeContactUpdate      MessageType = 6
 	MessageTypeNewContact         MessageType = 7
 	MessageTypeHostNote           MessageType = 8
+	MessageTypeHostNoteUpdated    MessageType = 9
 	MessageTypeMockClientMessages MessageType = 230
 	MessageTypeCloseError         MessageType = 240
 )
@@ -31,6 +32,7 @@ type Message struct {
 	ContactUpdate     *ContactUpdate     `json:"contact_update,omitempty"`
 	NewContact        *NewContact        `json:"new_contact,omitempty"`
 	HostNote          *HostNote          `json:"host_note,omitempty"`
+	HostNoteUpdated   *HostNoteUpdated   `json:"host_note_updated,omitempty"`
 	Metadata          *Metadata          `json:"metadata,omitempty"`
 	ClientMockData    *ClientMockData    `json:"client_mock_data,omitempty"`
 }
@@ -134,4 +136,11 @@ type HostNoteButton struct {
 		AgentName string `json:"agent_name,omitempty"`
 	} `json:"selected_by,omitempty"`
 	SelectedAt time.Time `json:"selected_at,omitempty"`
+}
+
+type HostNoteUpdated struct {
+	HostNote         *HostNote `json:"host_note"`
+	SelectedButtonID string    `json:"selected_button_id,omitempty"`
+	AgentID          string    `json:"agent_id,omitempty"`
+	AgentName        string    `json:"agent_name,omitempty"`
 }
