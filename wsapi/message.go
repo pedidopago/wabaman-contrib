@@ -82,20 +82,32 @@ type NewContact struct {
 	Metadata        map[string]interface{} `json:"metadata"`
 }
 
+type HostNoteFormat string
+
+const (
+	HostNoteFormatText    HostNoteFormat = "TEXT"
+	HostNoteFormatButtons HostNoteFormat = "BUTTONS"
+)
+
 type HostNote struct {
-	ID            uint64         `json:"id"`
-	ContactID     uint64         `json:"contact_id"`
-	WABAContactID string         `json:"waba_contact_id"`
-	PhoneID       uint           `json:"phone_id"`
-	Text          string         `json:"text"`
-	AgentID       string         `json:"agent_id"`
-	AgentName     string         `json:"agent_name,omitempty"`
-	Origin        string         `json:"origin,omitempty"`
-	CreatedAt     time.Time      `json:"created_at"`
-	CreatedAtNano int64          `json:"created_at_nano"`
-	Type          string         `json:"type"`
-	Metadata      map[string]any `json:"metadata,omitempty"`
-	ObjectType    string         `json:"object_type,omitempty"`
+	ID            uint64           `json:"id"`
+	ContactID     uint64           `json:"contact_id"`
+	WABAContactID string           `json:"waba_contact_id"`
+	PhoneID       uint             `json:"phone_id"`
+	Format        HostNoteFormat   `json:"format"`
+	Title         string           `json:"title"`
+	TitleIcon     string           `json:"title_icon"`
+	Description   string           `json:"description"`
+	Text          string           `json:"text"`
+	Buttons       []HostNoteButton `json:"buttons,omitempty"`
+	AgentID       string           `json:"agent_id"`
+	AgentName     string           `json:"agent_name,omitempty"`
+	Origin        string           `json:"origin,omitempty"`
+	Type          string           `json:"type"`
+	CreatedAt     time.Time        `json:"created_at"`
+	CreatedAtNano int64            `json:"created_at_nano"`
+	Metadata      map[string]any   `json:"metadata,omitempty"`
+	ObjectType    string           `json:"object_type,omitempty"`
 }
 
 func (m *HostNote) GetID() uint64 {
@@ -111,4 +123,15 @@ func (m *HostNote) GetObjectType() string {
 		return "host_note"
 	}
 	return m.ObjectType
+}
+
+type HostNoteButton struct {
+	ID         string `json:"id"`
+	Text       string `json:"text"`
+	Selected   bool   `json:"selected"`
+	SelectedBy struct {
+		AgentID   string `json:"agent_id,omitempty"`
+		AgentName string `json:"agent_name,omitempty"`
+	} `json:"selected_by,omitempty"`
+	SelectedAt time.Time `json:"selected_at,omitempty"`
 }
