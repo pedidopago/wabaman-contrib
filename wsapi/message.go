@@ -56,11 +56,12 @@ type ReadByHostReceipt struct {
 }
 
 type ClientReceipt struct {
-	Type            string    `json:"type"` // sent, read, delivered
-	MessageID       uint64    `json:"message_id"`
-	WABAContactID   string    `json:"waba_contact_id"`
-	WABAProfileName string    `json:"waba_profile_name"`
-	UpdatedAt       time.Time `json:"updated_at"`
+	Type            string                   `json:"type"` // sent, read, delivered, failed
+	MessageID       uint64                   `json:"message_id"`
+	WABAContactID   string                   `json:"waba_contact_id"`
+	WABAProfileName string                   `json:"waba_profile_name"`
+	UpdatedAt       time.Time                `json:"updated_at"`
+	FailedMessage   *SentMessageFailedReason `json:"failed_message,omitempty"`
 }
 
 type ContactUpdate struct {
