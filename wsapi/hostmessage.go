@@ -30,7 +30,7 @@ type HostMessage struct {
 	ObjectType      string                            `json:"object_type,omitempty"`
 	AgentID         string                            `json:"agent_id,omitempty"`
 	AgentName       string                            `json:"agent_name,omitempty"`
-	FailedMessage   *SentMessageFailedReason          `json:"failed_message,omitempty"`
+	FailedReason    *SentMessageFailedReason          `json:"failed_reason,omitempty"`
 }
 
 type FBStatusObjectError struct {

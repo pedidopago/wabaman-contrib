@@ -61,7 +61,7 @@ type ClientReceipt struct {
 	WABAContactID   string                   `json:"waba_contact_id"`
 	WABAProfileName string                   `json:"waba_profile_name"`
 	UpdatedAt       time.Time                `json:"updated_at"`
-	FailedMessage   *SentMessageFailedReason `json:"failed_message,omitempty"`
+	FailedReason    *SentMessageFailedReason `json:"failed_reason,omitempty"`
 }
 
 type ContactUpdate struct {
