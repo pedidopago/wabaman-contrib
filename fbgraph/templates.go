@@ -87,7 +87,7 @@ type MessageTemplateComponent struct {
 }
 
 type MessageTemplateExample struct {
-	HeaderHandle []string   `json:"header_handle,omitempty"`
+	HeaderHandle []any      `json:"header_handle,omitempty"`
 	BodyText     [][]string `json:"body_text,omitempty"`
 }
 
