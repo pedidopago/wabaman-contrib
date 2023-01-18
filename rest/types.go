@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/pedidopago/go-common/mariadb"
 	"github.com/pedidopago/go-common/util"
 	"github.com/pedidopago/wabaman-contrib/fbgraph"
 )
@@ -137,6 +138,51 @@ type GetContactsResponse struct {
 	LastPage   uint       `json:"last_page,omitempty"`
 }
 
+type GetContactsV2Request struct {
+	BusinessID               uint     `query:"business_id"`
+	StoreID                  string   `query:"store_id"`
+	BranchID                 string   `query:"branch_id"`
+	PhoneID                  uint     `query:"phone_id"`
+	ContactIDs               []uint64 `query:"contact_id"`
+	CustomerIDs              []string `query:"customer_id"`
+	WABAContactIDs           []string `query:"waba_contact_id"`
+	ExactNames               []string `query:"exact_name"`
+	Name                     string   `query:"name"`
+	HostPhoneNumber          string   `query:"host_phone_number" `
+	Tags                     []string `query:"tag"`
+	LastMessagePreviewStatus string   `query:"last_message_preview_status"`
+	MaxResults               uint64   `query:"max_results"`
+	Page                     uint     `query:"page"`
+	Origin                   string   `query:"origin"`
+
+	Fixed          bool `query:"fixed"`
+	UnreadMessages bool `query:"unread_messages"`
+
+	// metadata items
+
+	MetaInquiryStatus     string `query:"md_inquiry_status"`
+	MetaSellerName        string `query:"md_seller_name"`
+	MetaActiveChatbot     *bool  `query:"md_active_chatbot"`
+	MetaLastCouponOffered string `query:"md_last_coupon_offered"`
+	MetaCPF               string `query:"md_cpf"`
+
+	// ranges
+
+	LastMessageReceivedFrom time.Time `query:"last_message_received_from"`
+	LastMessageReceivedTo   time.Time `query:"last_message_received_to"`
+	LastMessageSentFrom     time.Time `query:"last_message_sent_from"`
+	LastMessageSentTo       time.Time `query:"last_message_sent_to"`
+	LastMessageFrom         time.Time `query:"last_message_from"`
+	LastMessageTo           time.Time `query:"last_message_to"`
+}
+
+type GetContactsV2Response struct {
+	Contacts   []*ContactV2 `json:"contacts"`
+	MaxResults uint64       `json:"max_results"`
+	Page       uint         `json:"page"`
+	LastPage   uint         `json:"last_page,omitempty"`
+}
+
 type CheckIntegrationRequest struct {
 	BranchID           string
 	ContactPhoneNumber string
@@ -171,23 +217,54 @@ func (e *ErrorResponse) Error() string {
 }
 
 type Contact struct {
-	ID                           uint64    `json:"id,omitempty"`                              // "id": 1,
-	PhoneID                      uint      `json:"phone_id,omitempty"`                        // "phone_id": 1,
-	WabaContactID                string    `json:"waba_contact_id,omitempty"`                 // "waba_contact_id": "5511941011935",
-	WabaProfileName              string    `json:"waba_profile_name,omitempty"`               // "waba_profile_name": "Gabriel Ochsenhofer",
-	LastActivity                 time.Time `json:"last_activity,omitempty"`                   // "last_activity": "2022-10-03T19:32:19Z",
-	LastMessageReceivedID        uint64    `json:"last_message_received_id,omitempty"`        // "last_message_received_id": 145,
-	LastMessageSentId            uint64    `json:"last_message_sent_id,omitempty"`            // "last_message_sent_id": 918,
-	LastMessageReceivedTimestamp time.Time `json:"last_message_received_timestamp,omitempty"` // "last_message_received_timestamp": "2022-10-03T19:32:19Z",
-	LastMessageSentTimestamp     time.Time `json:"last_message_sent_timestamp,omitempty"`     // "last_message_sent_timestamp": "2022-10-04T02:30:23Z",
-	CustomerID                   string    `json:"customer_id,omitempty"`                     // "customer_id": "01F5E1TNWH1TCTGJ1VW71X1NA8",
-	CreatedAt                    time.Time `json:"created_at,omitempty"`                      // "created_at": "2022-09-02T14:04:08Z",
-	UpdatedAt                    time.Time `json:"updated_at,omitempty"`                      // "updated_at": "2022-10-04T02:30:26Z",
+	ID uint64 `json:"id"`
+	// The id of the phone object (table phone -> phone.id)
+	PhoneID uint `json:"phone_id"`
+	// The whatsapp id (phone number) of the contact.
+	WABAContactID string `json:"waba_contact_id"`
+	// The profile name of the contact.
+	WABAProfileName mariadb.NullString `json:"waba_profile_name"`
+	// The timestamp of the last time the contact was 'seen' online.
+	LastActivity mariadb.NullTime `json:"last_activity"`
+	// The ID of the last message received from the contact.
+	LastMessageReceivedID mariadb.NullInt64 `json:"last_message_received_id"`
+	// The ID of the last message sent to the contact.
+	LastMessageSentID mariadb.NullInt64 `json:"last_message_sent_id"`
+	// The timestamp of the last message received from the contact.
+	LastMessageReceivedTimestamp mariadb.NullTime `json:"last_message_received_timestamp"`
+	// The timestamp of the last message sent to the contact.
+	LastMessageSentTimestamp mariadb.NullTime `json:"last_message_sent_timestamp"`
+	// The short version of the last message sent/received
+	LastMessagePreview mariadb.NullString `json:"last_message_preview"`
+	// The mariadb enum if the message was sent from the contact to the host or viceversa (host|client)
+	LastMessagePreviewOrigin     mariadb.NullString `json:"last_message_preview_origin"`
+	LastMessagePreviewStatus     string             `json:"last_message_preview_status"`
+	LastMessagePreviewWhatsAppID mariadb.NullString `json:"last_message_preview_whatsapp_id,omitempty"`
+	// Contact Metadata
+	Metadata map[string]any `json:"metadata"`
+	// The customer_id of ms_customer
+	CustomerID mariadb.NullString `json:"customer_id"`
+	// The customer_name of ms_customer
+	CustomerName mariadb.NullString `json:"customer_name"`
+	// The datetime this contact was created on the database.
+	CreatedAt time.Time `json:"created_at"`
+	// The datetime this contact was last updated on the database.
+	UpdatedAt      time.Time `json:"updated_at"`
+	UnreadMessages *int      `json:"unread_messages,omitempty"`
+	Name           string    `json:"name,omitempty"`
+}
 
-	Metadata map[string]any `json:"metadata,omitempty"`
-	//TODO: add fields below
-	// HostMessages string `json:"host_messages,omitempty"` // "host_messages": null,
-	// ClientMessages string `json:"client_messages,omitempty"` // "client_messages": null
+type ContactV2 struct {
+	*Contact        `json:",inline"`
+	AccountID       uint      `json:"account_id"`
+	BusinessID      uint      `json:"business_id"`
+	StoreID         string    `json:"store_id"`
+	BranchID        string    `json:"branch_id"`
+	HostPhoneNumber string    `json:"host_phone_number"`
+	Tags            []string  `json:"tags"`
+	AgentTags       []string  `json:"agent_tags"`
+	LastMessage     time.Time `json:"last_message_timestamp,omitempty"`
+	UnreadMessages  int       `json:"unread_messages"`
 }
 
 type GetBusinessesRequest struct {

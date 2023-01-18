@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/google/go-querystring/query"
 	"github.com/pedidopago/go-common/util"
 	"github.com/pedidopago/wabaman-contrib/rest"
 )
@@ -49,6 +50,21 @@ func (c *Client) GetContacts(ctx context.Context, req *rest.GetContactsRequest) 
 		return nil, err
 	}
 	return resp, nil
+}
+
+func (c *Client) GetContactsV2(ctx context.Context, req rest.GetContactsV2Request) (rest.GetContactsV2Response, error) {
+	uresp := rest.GetContactsV2Response{}
+	if c == nil {
+		return uresp, fmt.Errorf("nil client")
+	}
+	urlv, err := query.Values(req)
+	if err != nil {
+		return uresp, fmt.Errorf("query values: %w", err)
+	}
+	if err := c.get(ctx, fmt.Sprintf("/api/v2/contacts?%s", urlv.Encode()), &uresp); err != nil {
+		return uresp, err
+	}
+	return uresp, nil
 }
 
 func (c *Client) CheckIntegration(ctx context.Context, req *rest.CheckIntegrationRequest) (*rest.CheckIntegrationResponse, error) {
