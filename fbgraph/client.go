@@ -255,6 +255,33 @@ func (c *Client) NewUploadSession(ownerID string, params NewUploadSessionParams)
 	return idstruct.ID, nil
 }
 
+func (c *Client) UploadHeaderHandle(uploadSessionID string, r io.Reader) (h string, err error) {
+	url := fmt.Sprintf("https://graph.facebook.com/v14.0/%s", uploadSessionID)
+	req, err := http.NewRequest(http.MethodPost, url, r)
+	if err != nil {
+		return "", fmt.Errorf("new request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/octet-stream")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken))
+	req.Header.Set("Content-Range", "bytes 0-0/*")
+	req.Header.Set("file_offset", "0")
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("request failed: %w", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return "", c.errorFromResponse(resp)
+	}
+	hstruct := struct {
+		H string `json:"h"`
+	}{}
+	if err := json.NewDecoder(resp.Body).Decode(&hstruct); err != nil {
+		return "", fmt.Errorf("decode response: %w", err)
+	}
+	return hstruct.H, nil
+}
+
 func (c *Client) errorFromResponse(resp *http.Response) error {
 	eparent := struct {
 		Error GraphError `json:"error"`
