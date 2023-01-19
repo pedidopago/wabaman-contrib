@@ -210,6 +210,51 @@ func (mr *GetMediaResult) VerifyChecksum(r io.Reader) bool {
 	return true
 }
 
+type NewUploadSessionParams struct {
+	// The file length in bytes
+	FileLength int64 `json:"file_length"`
+	// The name of the file to be uploaded
+	FileName string `json:"file_name"`
+	// The MIME type of the file to be uploaded
+	FileType string `json:"file_type"`
+	// The type of upload session that is being requested by the app
+	//
+	// default: attachment
+	SessionType string `json:"session_type"`
+}
+
+func (c *Client) NewUploadSession(ownerID string, params NewUploadSessionParams) (id string, err error) {
+	if params.SessionType == "" {
+		params.SessionType = "attachment"
+	}
+	url := fmt.Sprintf("https://graph.facebook.com/v14.0/%s/uploads", ownerID)
+	buf := new(bytes.Buffer)
+	if err := json.NewEncoder(buf).Encode(params); err != nil {
+		return "", fmt.Errorf("encode message: %w", err)
+	}
+	req, err := http.NewRequest(http.MethodPost, url, buf)
+	if err != nil {
+		return "", fmt.Errorf("new request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken))
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("request failed: %w", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return "", c.errorFromResponse(resp)
+	}
+	idstruct := struct {
+		ID string `json:"id"`
+	}{}
+	if err := json.NewDecoder(resp.Body).Decode(&idstruct); err != nil {
+		return "", fmt.Errorf("decode response: %w", err)
+	}
+	return idstruct.ID, nil
+}
+
 func (c *Client) errorFromResponse(resp *http.Response) error {
 	eparent := struct {
 		Error GraphError `json:"error"`

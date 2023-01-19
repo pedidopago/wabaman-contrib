@@ -104,6 +104,7 @@ type GraphError struct {
 	Message        string    `json:"message"`
 	Type           string    `json:"type"`
 	Code           int       `json:"code"`
+	ErrorSubcode   int       `json:"error_subcode"`
 	ErrorData      ErrorData `json:"error_data"`
 	FBTraceID      string    `json:"fbtrace_id"`
 	HTTPStatusCode int       `json:"http_status_code"` // this is not originally in the response
