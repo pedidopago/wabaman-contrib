@@ -262,7 +262,7 @@ func (c *Client) UploadHeaderHandle(uploadSessionID string, r io.Reader) (h stri
 		return "", fmt.Errorf("new request: %w", err)
 	}
 	req.Header.Set("Content-Type", "application/octet-stream")
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken))
+	req.Header.Set("Authorization", fmt.Sprintf("OAuth %s", c.AccessToken))
 	req.Header.Set("Content-Range", "bytes 0-0/*")
 	req.Header.Set("file_offset", "0")
 	resp, err := c.HTTPClient.Do(req)
