@@ -169,4 +169,5 @@ type TagEventData struct {
 	Color         string         `json:"color,omitempty"`
 	PreviousColor string         `json:"previous_color,omitempty"`
 	NewColor      string         `json:"new_color,omitempty"`
+	ID            uint64         `json:"id,omitempty"`
 }
