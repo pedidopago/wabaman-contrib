@@ -17,6 +17,8 @@ const (
 	MessageTypeNewContact         MessageType = 7
 	MessageTypeHostNote           MessageType = 8
 	MessageTypeHostNoteUpdated    MessageType = 9
+	MessageTypeTag                MessageType = 10
+	MessageTypeTagGroup           MessageType = 11
 	MessageTypeMockClientMessages MessageType = 230
 	MessageTypeCloseError         MessageType = 240
 )
@@ -35,6 +37,8 @@ type Message struct {
 	HostNoteUpdated   *HostNoteUpdated   `json:"host_note_updated,omitempty"`
 	Metadata          *Metadata          `json:"metadata,omitempty"`
 	ClientMockData    *ClientMockData    `json:"client_mock_data,omitempty"`
+	Tag               *TagEventData      `json:"tag,omitempty"`
+	TagGroup          *TagEventData      `json:"tag_group,omitempty"`
 }
 
 type ClientMockData struct {
@@ -145,4 +149,21 @@ type HostNoteUpdated struct {
 	SelectedButtonID string    `json:"selected_button_id,omitempty"`
 	AgentID          string    `json:"agent_id,omitempty"`
 	AgentName        string    `json:"agent_name,omitempty"`
+}
+
+type TagEventAction string
+
+const (
+	TagEventActionCreated TagEventAction = "created"
+	TagEventActionUpdated TagEventAction = "updated"
+	TagEventActionDeleted TagEventAction = "deleted"
+)
+
+type TagEventData struct {
+	BusinessID   uint           `json:"business_id,omitempty"`
+	StoreID      string         `json:"store_id,omitempty"`
+	Action       TagEventAction `json:"action,omitempty"`
+	PreviousName string         `json:"previous_name,omitempty"`
+	NewName      string         `json:"new_name,omitempty"`
+	Name         string         `json:"name,omitempty"`
 }
