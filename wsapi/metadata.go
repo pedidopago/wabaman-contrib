@@ -37,5 +37,6 @@ type ContactMetadata struct {
 	WABAProfileName string         `json:"waba_profile_name,omitempty"`
 	Name            string         `json:"name,omitempty"`
 	IsNewContact    bool           `json:"is_new_contact,omitempty"`
+	Tags            []string       `json:"tags,omitempty"`
 	Metadata        map[string]any `json:"metadata,omitempty"`
 }
