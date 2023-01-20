@@ -160,14 +160,16 @@ const (
 )
 
 type TagEventData struct {
-	BusinessID    uint           `json:"business_id,omitempty"`
-	StoreID       string         `json:"store_id,omitempty"`
-	Action        TagEventAction `json:"action,omitempty"`
-	PreviousName  string         `json:"previous_name,omitempty"`
-	NewName       string         `json:"new_name,omitempty"`
-	Name          string         `json:"name,omitempty"`
-	Color         string         `json:"color,omitempty"`
-	PreviousColor string         `json:"previous_color,omitempty"`
-	NewColor      string         `json:"new_color,omitempty"`
-	ID            uint64         `json:"id,omitempty"`
+	BusinessID        uint           `json:"business_id,omitempty"`
+	StoreID           string         `json:"store_id,omitempty"`
+	Action            TagEventAction `json:"action,omitempty"`
+	PreviousName      string         `json:"previous_name,omitempty"`
+	NewName           string         `json:"new_name,omitempty"`
+	Name              string         `json:"name,omitempty"`
+	Color             string         `json:"color,omitempty"`
+	PreviousColor     string         `json:"previous_color,omitempty"`
+	NewColor          string         `json:"new_color,omitempty"`
+	ID                uint64         `json:"id,omitempty"`
+	IsVisible         *bool          `json:"is_visible,omitempty"`
+	PreviousIsVisible *bool          `json:"previous_is_visible,omitempty"`
 }
