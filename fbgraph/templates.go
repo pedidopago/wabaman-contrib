@@ -242,8 +242,10 @@ func (c *Client) UpdateMessageTemplate(ctx context.Context, templateID string, c
 	return nil
 }
 
-func (c *Client) DeleteMessageTemplate(ctx context.Context, templateID string) error {
-	url := fmt.Sprintf("https://graph.facebook.com/v15.0/%s", templateID)
+func (c *Client) DeleteMessageTemplate(ctx context.Context, whatsappBusinessAccountID, templateName string) error {
+	urlv := make(url.Values)
+	urlv.Set("name", templateName)
+	url := fmt.Sprintf("https://graph.facebook.com/v15.0/%s/message_templates?%s", whatsappBusinessAccountID, urlv.Encode())
 
 	req, err := http.NewRequest(http.MethodDelete, url, nil)
 	if err != nil {
