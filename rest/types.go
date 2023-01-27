@@ -33,7 +33,8 @@ const (
 )
 
 type NewMessageRequest struct {
-	BranchID         string                            `json:"branch_id" validate:"required"`
+	PhoneID          uint                              `json:"phone_id"`
+	BranchID         string                            `json:"branch_id"`
 	FromNumber       string                            `json:"from_number"`
 	ToNumber         string                            `json:"to_number"`
 	Type             MessageType                       `json:"type"`
