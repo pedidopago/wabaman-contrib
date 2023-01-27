@@ -62,7 +62,8 @@ type NewMessageResponse struct {
 
 type NewMessageRequestForRedisQueue struct {
 	NewMessageRequest `json:",inline"`
-	JWT               string `json:"jwt"`
+	AccountID         uint   `json:"account_id"`
+	Origin            string `json:"origin"`
 }
 
 type NewMediaResponse struct {
