@@ -60,6 +60,11 @@ type NewMessageResponse struct {
 	SendMessageStatus NewMessageStatus `json:"send_message_status"`
 }
 
+type NewMessageRequestForRedisQueue struct {
+	NewMessageRequest `json:",inline"`
+	JWT               string `json:"jwt"`
+}
+
 type NewMediaResponse struct {
 	MediaID string `json:"media_id"`
 }
