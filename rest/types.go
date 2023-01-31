@@ -63,8 +63,7 @@ type NewMessageResponse struct {
 
 type NewMessageRequestForRedisQueue struct {
 	NewMessageRequest `json:",inline"`
-	AccountID         uint   `json:"account_id"`
-	Origin            string `json:"origin"`
+	AccountID         uint `json:"account_id"`
 }
 
 type NewMediaResponse struct {
