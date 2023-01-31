@@ -31,6 +31,7 @@ type HostMessage struct {
 	AgentID         string                            `json:"agent_id,omitempty"`
 	AgentName       string                            `json:"agent_name,omitempty"`
 	FailedReason    *SentMessageFailedReason          `json:"failed_reason,omitempty"`
+	Preview         string                            `json:"preview,omitempty"`
 	CreatedAt       time.Time                         `json:"created_at,omitempty"`
 	CreatedAtNano   int64                             `json:"created_at_nano,omitempty"`
 }

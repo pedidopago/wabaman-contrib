@@ -24,6 +24,7 @@ type ClientMessage struct {
 	Sticker     *Sticker     `json:"sticker,omitempty"`
 	Interactive *Interactive `json:"interactive,omitempty"`
 	Button      *Button      `json:"button,omitempty"`
+	Preview     string       `json:"preview,omitempty"`
 
 	CreatedAt     time.Time  `json:"created_at"`
 	CreatedAtNano int64      `json:"created_at_nano,omitempty"`
