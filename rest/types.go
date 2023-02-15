@@ -57,6 +57,7 @@ type NewMessageRequest struct {
 }
 
 type NewMessageResponse struct {
+	ID                uint64           `json:"id,omitempty"`
 	MessageID         string           `json:"message_id"`
 	SendMessageStatus NewMessageStatus `json:"send_message_status"`
 }
