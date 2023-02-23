@@ -339,6 +339,7 @@ type Phone struct {
 	WhatsAppBusinessAccountID   string    `json:"whatsapp_business_account_id"`
 	PhoneNumber                 string    `json:"phone_number"`
 	BranchID                    string    `json:"branch_id"`
+	BranchName                  string    `json:"branch_name,omitempty"`
 	TemplateNamespace           string    `json:"template_namespace,omitempty"`
 	DefaultTplHeaderImage       string    `json:"default_tpl_header_image,omitempty"`
 	DefaultTplHeaderVideo       string    `json:"default_tpl_header_video,omitempty"`
