@@ -333,19 +333,22 @@ type Business struct {
 }
 
 type Phone struct {
-	ID                        uint      `json:"id"`
-	BusinessID                uint      `json:"business_id"`
-	WhatsAppID                string    `json:"whatsapp_id"`
-	WhatsAppBusinessAccountID string    `json:"whatsapp_business_account_id"`
-	PhoneNumber               string    `json:"phone_number"`
-	BranchID                  string    `json:"branch_id"`
-	TemplateNamespace         string    `json:"template_namespace,omitempty"`
-	DefaultTplHeaderImage     string    `json:"default_tpl_header_image,omitempty"`
-	DefaultTplHeaderVideo     string    `json:"default_tpl_header_video,omitempty"`
-	DefaultReheatTemplate     string    `json:"default_reheat_template,omitempty"`
-	FBAppID                   string    `json:"fb_app_id"`
-	AlertEmail                string    `json:"alert_email,omitempty"`
-	AlertDiscord              string    `json:"alert_discord,omitempty"`
-	CreatedAt                 time.Time `json:"created_at"`
-	UpdatedAt                 time.Time `json:"updated_at"`
+	ID                          uint      `json:"id"`
+	BusinessID                  uint      `json:"business_id"`
+	WhatsAppID                  string    `json:"whatsapp_id"`
+	WhatsAppBusinessAccountID   string    `json:"whatsapp_business_account_id"`
+	PhoneNumber                 string    `json:"phone_number"`
+	BranchID                    string    `json:"branch_id"`
+	TemplateNamespace           string    `json:"template_namespace,omitempty"`
+	DefaultTplHeaderImage       string    `json:"default_tpl_header_image,omitempty"`
+	DefaultTplHeaderVideo       string    `json:"default_tpl_header_video,omitempty"`
+	DefaultReheatTemplate       string    `json:"default_reheat_template,omitempty"`
+	FBAppID                     string    `json:"fb_app_id"`
+	AlertEmail                  string    `json:"alert_email,omitempty"`
+	AlertDiscord                string    `json:"alert_discord,omitempty"`
+	TemplateDefaultCompanyName  string    `json:"template_default_company_name,omitempty"`
+	TemplateDefaultStoreURL     string    `json:"template_default_store_url,omitempty"`
+	TemplateDefaultContactPhone string    `json:"template_default_contact_phone,omitempty"`
+	CreatedAt                   time.Time `json:"created_at"`
+	UpdatedAt                   time.Time `json:"updated_at"`
 }
