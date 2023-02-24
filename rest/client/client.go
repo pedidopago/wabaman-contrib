@@ -109,6 +109,9 @@ func (c *Client) GetPhones(ctx context.Context, req *rest.GetPhonesRequest) (*re
 	if req.PhoneNumber != "" {
 		q.Set("phone_number", req.PhoneNumber)
 	}
+	if req.WithStatistics {
+		q.Set("with_statistics", "true")
+	}
 	resp := &rest.GetPhonesResponse{}
 	if err := c.get(ctx, fmt.Sprintf("/api/v1/phones?%s", q.Encode()), resp); err != nil {
 		return nil, err

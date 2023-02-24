@@ -287,6 +287,8 @@ type GetPhonesRequest struct {
 	BusinessID  uint   `json:"business_id,omitempty"`
 	PhoneNumber string `json:"phone_number,omitempty"`
 	BranchID    string `json:"branch_id,omitempty"`
+
+	WithStatistics bool `json:"with_statistics,omitempty"`
 }
 
 type GetPhonesResponse struct {
@@ -352,4 +354,10 @@ type Phone struct {
 	TemplateDefaultContactPhone string    `json:"template_default_contact_phone,omitempty"`
 	CreatedAt                   time.Time `json:"created_at"`
 	UpdatedAt                   time.Time `json:"updated_at"`
+
+	Statistics *PhoneStatistics `json:"statistics,omitempty"`
+}
+
+type PhoneStatistics struct {
+	TotalContacts int `json:"total_contacts"`
 }
