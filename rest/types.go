@@ -275,6 +275,7 @@ type ContactV2 struct {
 }
 
 type GetBusinessesRequest struct {
+	ID      uint   `json:"id,omitempty"`
 	StoreID string `json:"store_id,omitempty"`
 }
 

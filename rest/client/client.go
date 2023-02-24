@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
 
 	"github.com/google/go-querystring/query"
 	"github.com/pedidopago/go-common/util"
@@ -87,6 +88,9 @@ func (c *Client) GetBusinesses(ctx context.Context, req *rest.GetBusinessesReque
 	q := make(url.Values)
 	if req.StoreID != "" {
 		q.Set("store_id", req.StoreID)
+	}
+	if req.ID != 0 {
+		q.Set("id", strconv.Itoa(int(req.ID)))
 	}
 	resp := &rest.GetBusinessesResponse{}
 	if err := c.get(ctx, fmt.Sprintf("/api/v1/business?%s", q.Encode()), resp); err != nil {
