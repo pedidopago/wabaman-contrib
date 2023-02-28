@@ -154,6 +154,7 @@ type GetContactsV2Request struct {
 	ContactIDs               []uint64 `query:"contact_id"`
 	CustomerIDs              []string `query:"customer_id"`
 	WABAContactIDs           []string `query:"waba_contact_id"`
+	ExactWABAContactIDs      bool     `query:"exact_waba_contact_ids"`
 	ExactNames               []string `query:"exact_name"`
 	Name                     string   `query:"name"`
 	HostPhoneNumber          string   `query:"host_phone_number" `
