@@ -68,6 +68,12 @@ type NewMessageRequestForRedisQueue struct {
 	CallbackRedisChannel string `json:"callback_redis_channel"`
 }
 
+type NewMessageRequestForRedisQueueResponse struct {
+	Status       int                 `json:"status"`
+	ErrorMessage string              `json:"error_message"`
+	Response     *NewMessageResponse `json:"response"`
+}
+
 type NewMediaResponse struct {
 	MediaID string `json:"media_id"`
 }
