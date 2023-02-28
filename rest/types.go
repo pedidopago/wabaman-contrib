@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/url"
 	"time"
@@ -72,6 +73,14 @@ type NewMessageRequestForRedisQueueResponse struct {
 	Status       int                 `json:"status"`
 	ErrorMessage string              `json:"error_message"`
 	Response     *NewMessageResponse `json:"response"`
+}
+
+func (r NewMessageRequestForRedisQueueResponse) JSONString() string {
+	d, _ := json.Marshal(r)
+	if d == nil {
+		return ""
+	}
+	return string(d)
 }
 
 type NewMediaResponse struct {
