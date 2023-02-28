@@ -63,8 +63,9 @@ type NewMessageResponse struct {
 }
 
 type NewMessageRequestForRedisQueue struct {
-	NewMessageRequest `json:",inline"`
-	AccountID         uint `json:"account_id"`
+	NewMessageRequest    `json:",inline"`
+	AccountID            uint   `json:"account_id"`
+	CallbackRedisChannel string `json:"callback_redis_channel"`
 }
 
 type NewMediaResponse struct {
