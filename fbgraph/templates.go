@@ -38,10 +38,20 @@ const (
 type MessageTemplateCategory string
 
 const (
-	MTCategoryTransactional        MessageTemplateCategory = "TRANSACTIONAL"
-	MTCategoryMarketing            MessageTemplateCategory = "MARKETING"
-	MTCategoryTicketUpdate         MessageTemplateCategory = "TICKET_UPDATE"
-	MTCategoryIssueResolution      MessageTemplateCategory = "ISSUE_RESOLUTION"
+	MTCategoryUtility         MessageTemplateCategory = "UTILITY"
+	MTCategoryMarketing       MessageTemplateCategory = "MARKETING"
+	MTCategoryTicketUpdate    MessageTemplateCategory = "TICKET_UPDATE"
+	MTCategoryIssueResolution MessageTemplateCategory = "ISSUE_RESOLUTION"
+	MTCategoryAuthentication  MessageTemplateCategory = "AUTHENTICATION"
+
+	// TRANSACTIONAL
+	//
+	//Deprecated: use MTCategoryUtility
+	MTCategoryTransactional MessageTemplateCategory = "TRANSACTIONAL"
+
+	// OTP
+	//
+	//Deprecated: use MTCategoryAuthentication
 	MTCategoryIssueOneTimePassword MessageTemplateCategory = "OTP"
 )
 
