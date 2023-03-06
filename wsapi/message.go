@@ -77,7 +77,7 @@ type ContactUpdate struct {
 	CustomerName    string                 `json:"customer_name"`
 	Name            string                 `json:"name"`
 	Metadata        map[string]interface{} `json:"metadata"`
-	Tags            []string               `json:"tags,omitempty"`
+	ColorTags       []ColorTag             `json:"color_tags,omitempty"`
 	UpdatedFields   []string               `json:"updated_fields"`
 }
 
