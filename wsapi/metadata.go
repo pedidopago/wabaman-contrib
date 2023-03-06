@@ -48,8 +48,6 @@ type ContactMetadata struct {
 	UnreadMessages           *int               `json:"unread_messages,omitempty"`
 	ERPLastSync              mariadb.NullTime   `json:"erp_last_sync,omitempty"`
 	ColorTags                []ColorTag         `json:"color_tags,omitempty"`
-	//Deprecated: use ColorTags
-	Tags []string `json:"tags,omitempty"`
 }
 
 // ColorTag is a simplification of CTag
