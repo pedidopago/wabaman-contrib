@@ -1,5 +1,7 @@
 package wsapi
 
+import "github.com/pedidopago/go-common/mariadb"
+
 type Metadata struct {
 	Account  *AccountMetadata  `json:"account,omitempty"`
 	Business *BusinessMetadata `json:"business,omitempty"`
@@ -30,13 +32,27 @@ type PhoneMetadata struct {
 }
 
 type ContactMetadata struct {
-	ID              uint64         `json:"id,omitempty"`
-	CustomerID      string         `json:"customer_id,omitempty"`
-	CustomerName    string         `json:"customer_name,omitempty"`
-	WABAContactID   string         `json:"waba_contact_id,omitempty"`
-	WABAProfileName string         `json:"waba_profile_name,omitempty"`
-	Name            string         `json:"name,omitempty"`
-	IsNewContact    bool           `json:"is_new_contact,omitempty"`
-	Tags            []string       `json:"tags,omitempty"`
-	Metadata        map[string]any `json:"metadata,omitempty"`
+	ID                       uint64             `json:"id,omitempty"`
+	CustomerID               string             `json:"customer_id,omitempty"`
+	CustomerName             string             `json:"customer_name,omitempty"`
+	WABAContactID            string             `json:"waba_contact_id,omitempty"`
+	WABAProfileName          string             `json:"waba_profile_name,omitempty"`
+	Name                     string             `json:"name,omitempty"`
+	IsNewContact             bool               `json:"is_new_contact,omitempty"`
+	Tags                     []string           `json:"tags,omitempty"`
+	Metadata                 map[string]any     `json:"metadata,omitempty"`
+	LastActivity             mariadb.NullTime   `json:"last_activity,omitempty"`
+	LastMessagePreview       mariadb.NullString `json:"last_message_preview,omitempty"`
+	LastMessagePreviewOrigin string             `json:"last_message_preview_origin,omitempty"`
+	LastMessagePreviewStatus string             `json:"last_message_preview_status,omitempty"`
+	LastMessageTimestamp     mariadb.NullTime   `json:"last_message_timestamp,omitempty"`
+	UnreadMessages           *int               `json:"unread_messages,omitempty"`
+	ERPLastSync              mariadb.NullTime   `json:"erp_last_sync,omitempty"`
+	ColorTags                []ColorTag         `json:"color_tags,omitempty"`
+}
+
+// ColorTag is a simplification of CTag
+type ColorTag struct {
+	Name  string `json:"name"`
+	Color string `json:"color"`
 }
