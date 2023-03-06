@@ -39,7 +39,6 @@ type ContactMetadata struct {
 	WABAProfileName          string             `json:"waba_profile_name,omitempty"`
 	Name                     string             `json:"name,omitempty"`
 	IsNewContact             bool               `json:"is_new_contact,omitempty"`
-	Tags                     []string           `json:"tags,omitempty"`
 	Metadata                 map[string]any     `json:"metadata,omitempty"`
 	LastActivity             mariadb.NullTime   `json:"last_activity,omitempty"`
 	LastMessagePreview       mariadb.NullString `json:"last_message_preview,omitempty"`
@@ -49,6 +48,8 @@ type ContactMetadata struct {
 	UnreadMessages           *int               `json:"unread_messages,omitempty"`
 	ERPLastSync              mariadb.NullTime   `json:"erp_last_sync,omitempty"`
 	ColorTags                []ColorTag         `json:"color_tags,omitempty"`
+	//Deprecated: use ColorTags
+	Tags []string `json:"tags,omitempty"`
 }
 
 // ColorTag is a simplification of CTag
