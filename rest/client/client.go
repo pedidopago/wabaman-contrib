@@ -32,9 +32,63 @@ func (c *Client) NewMessage(ctx context.Context, req *rest.NewMessageRequest) (*
 	return output, nil
 }
 
-func (c *Client) UpdateContact(ctx context.Context, contactID uint64, req *rest.UpdateContactRequest) (*rest.UpdateContactResponse, error) {
+type updateContactOptions struct {
+	WABAContactID string
+	BranchID      string
+	Silent        bool
+	Async         bool
+}
+
+type UpdateContactOption func(*updateContactOptions)
+
+func UCWithWABAContactID(id string) UpdateContactOption {
+	return func(o *updateContactOptions) {
+		o.WABAContactID = id
+	}
+}
+
+func UCWithBranchID(id string) UpdateContactOption {
+	return func(o *updateContactOptions) {
+		o.BranchID = id
+	}
+}
+
+func UCWithSilent(silent bool) UpdateContactOption {
+	return func(o *updateContactOptions) {
+		o.Silent = silent
+	}
+}
+
+func UCWithAsync(async bool) UpdateContactOption {
+	return func(o *updateContactOptions) {
+		o.Async = async
+	}
+}
+
+func (c *Client) UpdateContact(ctx context.Context, contactID uint64, req *rest.UpdateContactRequest, opts ...UpdateContactOption) (*rest.UpdateContactResponse, error) {
+	op := &updateContactOptions{}
+	for _, opt := range opts {
+		opt(op)
+	}
 	resp := &rest.UpdateContactResponse{}
-	if err := c.put(ctx, fmt.Sprintf("/api/v1/contact/%d", contactID), req, resp); err != nil {
+	rawURI := fmt.Sprintf("/api/v1/contact/%d", contactID)
+	urlx := url.Values{}
+	if op.WABAContactID != "" {
+		urlx.Set("waba_contact_id", op.WABAContactID)
+	}
+	if op.BranchID != "" {
+		urlx.Set("branch_id", op.BranchID)
+	}
+	if op.Silent {
+		urlx.Set("silent", "true")
+	}
+	if op.Async {
+		urlx.Set("async", "true")
+	}
+	if len(urlx) > 0 {
+		rawURI = fmt.Sprintf("%s?%s", rawURI, urlx.Encode())
+	}
+	if err := c.put(ctx, rawURI, req, resp); err != nil {
 		return nil, err
 	}
 	return resp, nil

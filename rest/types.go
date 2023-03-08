@@ -93,8 +93,6 @@ type UpdateContactRequest struct {
 	WABAProfileName string         `json:"waba_profile_name,omitempty"`
 	Metadata        map[string]any `json:"metadata,omitempty"`
 	Origin          string         `json:"origin,omitempty"`
-	Silent          bool           `json:"silent"`
-	Async           bool           `json:"async"`
 }
 
 type UpdateContactResponse struct {
