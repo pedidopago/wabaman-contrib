@@ -164,49 +164,49 @@ type GetContactsResponse struct {
 }
 
 type GetContactsV2Request struct {
-	BusinessID               uint     `query:"business_id"`
-	StoreID                  string   `query:"store_id"`
-	BranchID                 string   `query:"branch_id"`
-	PhoneID                  uint     `query:"phone_id"`
-	ContactIDs               []uint64 `query:"contact_id"`
-	CustomerIDs              []string `query:"customer_id"`
-	WABAContactIDs           []string `query:"waba_contact_id"`
-	ExactWABAContactIDs      bool     `query:"exact_waba_contact_ids"`
-	ExactNames               []string `query:"exact_name"`
-	Name                     string   `query:"name"`
-	HostPhoneNumber          string   `query:"host_phone_number" `
-	Tags                     []string `query:"tag"`
-	LastMessagePreviewStatus string   `query:"last_message_preview_status"`
-	MaxResults               uint64   `query:"max_results"`
-	Page                     uint     `query:"page"`
-	Origin                   string   `query:"origin"`
+	BusinessID               uint     `url:"business_id,omitempty"`
+	StoreID                  string   `url:"store_id,omitempty"`
+	BranchID                 string   `url:"branch_id,omitempty"`
+	PhoneID                  uint     `url:"phone_id,omitempty"`
+	ContactIDs               []uint64 `url:"contact_id,omitempty"`
+	CustomerIDs              []string `url:"customer_id,omitempty"`
+	WABAContactIDs           []string `url:"waba_contact_id,omitempty"`
+	ExactWABAContactIDs      bool     `url:"exact_waba_contact_ids,omitempty"`
+	ExactNames               []string `url:"exact_name,omitempty"`
+	Name                     string   `url:"name,omitempty"`
+	HostPhoneNumber          string   `url:"host_phone_number,omitempty"`
+	Tags                     []string `url:"tag,omitempty"`
+	LastMessagePreviewStatus string   `url:"last_message_preview_status,omitempty"`
+	MaxResults               uint64   `url:"max_results,omitempty"`
+	Page                     uint     `url:"page,omitempty"`
+	Origin                   string   `url:"origin,omitempty"`
 
-	Fixed          bool `query:"fixed"`
-	UnreadMessages bool `query:"unread_messages"`
+	Fixed          bool `url:"fixed,omitempty"`
+	UnreadMessages bool `url:"unread_messages,omitempty"`
 
 	// metadata items
 
-	MetaInquiryStatus     string `query:"md_inquiry_status"`
-	MetaSellerName        string `query:"md_seller_name"`
-	MetaActiveChatbot     *bool  `query:"md_active_chatbot"`
-	MetaLastCouponOffered string `query:"md_last_coupon_offered"`
-	MetaCPF               string `query:"md_cpf"`
+	MetaInquiryStatus     string `url:"md_inquiry_status,omitempty"`
+	MetaSellerName        string `url:"md_seller_name,omitempty"`
+	MetaActiveChatbot     *bool  `url:"md_active_chatbot,omitempty"`
+	MetaLastCouponOffered string `url:"md_last_coupon_offered,omitempty"`
+	MetaCPF               string `url:"md_cpf,omitempty"`
 
 	// ranges
 
-	LastMessageReceivedFrom time.Time `query:"last_message_received_from"`
-	LastMessageReceivedTo   time.Time `query:"last_message_received_to"`
-	LastMessageSentFrom     time.Time `query:"last_message_sent_from"`
-	LastMessageSentTo       time.Time `query:"last_message_sent_to"`
-	LastMessageFrom         time.Time `query:"last_message_from"`
-	LastMessageTo           time.Time `query:"last_message_to"`
+	LastMessageReceivedFrom time.Time `url:"last_message_received_from,omitempty"`
+	LastMessageReceivedTo   time.Time `url:"last_message_received_to,omitempty"`
+	LastMessageSentFrom     time.Time `url:"last_message_sent_from,omitempty"`
+	LastMessageSentTo       time.Time `url:"last_message_sent_to,omitempty"`
+	LastMessageFrom         time.Time `url:"last_message_from,omitempty"`
+	LastMessageTo           time.Time `url:"last_message_to,omitempty"`
 
 	// expert options
 
 	// If true, no sorting is applied. Do not use this unless you know what you are doing.
-	NoSorting bool `query:"no_sorting"`
+	NoSorting bool `url:"no_sorting,omitempty"`
 	// If true, no cache is used. Do not use this unless you know what you are doing.
-	NoCache bool `query:"no_cache"`
+	NoCache bool `url:"no_cache,omitempty"`
 }
 
 type GetContactsV2Response struct {
