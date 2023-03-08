@@ -201,6 +201,13 @@ type GetContactsV2Request struct {
 	LastMessageSentTo       time.Time `query:"last_message_sent_to"`
 	LastMessageFrom         time.Time `query:"last_message_from"`
 	LastMessageTo           time.Time `query:"last_message_to"`
+
+	// expert options
+
+	// If true, no sorting is applied. Do not use this unless you know what you are doing.
+	NoSorting bool `query:"no_sorting"`
+	// If true, no cache is used. Do not use this unless you know what you are doing.
+	NoCache bool `query:"no_cache"`
 }
 
 type GetContactsV2Response struct {
