@@ -32,41 +32,8 @@ func (c *Client) NewMessage(ctx context.Context, req *rest.NewMessageRequest) (*
 	return output, nil
 }
 
-type updateContactOptions struct {
-	WABAContactID string
-	BranchID      string
-	Silent        bool
-	Async         bool
-}
-
-type UpdateContactOption func(*updateContactOptions)
-
-func UCWithWABAContactID(id string) UpdateContactOption {
-	return func(o *updateContactOptions) {
-		o.WABAContactID = id
-	}
-}
-
-func UCWithBranchID(id string) UpdateContactOption {
-	return func(o *updateContactOptions) {
-		o.BranchID = id
-	}
-}
-
-func UCWithSilent(silent bool) UpdateContactOption {
-	return func(o *updateContactOptions) {
-		o.Silent = silent
-	}
-}
-
-func UCWithAsync(async bool) UpdateContactOption {
-	return func(o *updateContactOptions) {
-		o.Async = async
-	}
-}
-
-func (c *Client) UpdateContact(ctx context.Context, contactID uint64, req *rest.UpdateContactRequest, opts ...UpdateContactOption) (*rest.UpdateContactResponse, error) {
-	op := &updateContactOptions{}
+func (c *Client) UpdateContact(ctx context.Context, contactID uint64, req *rest.UpdateContactRequest, opts ...rest.UpdateContactOption) (*rest.UpdateContactResponse, error) {
+	op := &rest.UpdateContactOptions{}
 	for _, opt := range opts {
 		opt(op)
 	}

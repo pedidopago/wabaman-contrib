@@ -387,3 +387,36 @@ type Phone struct {
 type PhoneStatistics struct {
 	TotalContacts int `json:"total_contacts"`
 }
+
+type UpdateContactOptions struct {
+	WABAContactID string
+	BranchID      string
+	Silent        bool
+	Async         bool
+}
+
+type UpdateContactOption func(*UpdateContactOptions)
+
+func UCWithWABAContactID(id string) UpdateContactOption {
+	return func(o *UpdateContactOptions) {
+		o.WABAContactID = id
+	}
+}
+
+func UCWithBranchID(id string) UpdateContactOption {
+	return func(o *UpdateContactOptions) {
+		o.BranchID = id
+	}
+}
+
+func UCWithSilent(silent bool) UpdateContactOption {
+	return func(o *UpdateContactOptions) {
+		o.Silent = silent
+	}
+}
+
+func UCWithAsync(async bool) UpdateContactOption {
+	return func(o *UpdateContactOptions) {
+		o.Async = async
+	}
+}
