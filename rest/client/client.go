@@ -144,6 +144,14 @@ func (c *Client) GetPhones(ctx context.Context, req *rest.GetPhonesRequest) (*re
 	return resp, nil
 }
 
+func (c *Client) NewNote(ctx context.Context, req *rest.NewNoteRequest) (*rest.NewNoteResponse, error) {
+	output := &rest.NewNoteResponse{}
+	if err := c.post(ctx, "/api/v1/notes", req, output); err != nil {
+		return nil, err
+	}
+	return output, nil
+}
+
 func (c *Client) urlPrefix() string {
 	return util.Default(c.BaseURL, DefaultBaseURL)
 }

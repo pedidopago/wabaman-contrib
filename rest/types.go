@@ -9,6 +9,7 @@ import (
 	"github.com/pedidopago/go-common/mariadb"
 	"github.com/pedidopago/go-common/util"
 	"github.com/pedidopago/wabaman-contrib/fbgraph"
+	"github.com/pedidopago/wabaman-contrib/wsapi"
 )
 
 type MessageType string
@@ -421,3 +422,21 @@ func UCWithAsync(async bool) UpdateContactOption {
 		o.Async = async
 	}
 }
+
+type NewNoteRequest struct {
+	ContactID     uint64                 `json:"contact_id,omitempty"`
+	WABAContactID string                 `json:"waba_contact_id,omitempty"`
+	BranchID      string                 `json:"branch_id,omitempty"`
+	PhoneID       uint                   `json:"phone_id,omitempty"`
+	Text          string                 `json:"text"`
+	Origin        string                 `json:"origin,omitempty"`
+	Format        wsapi.HostNoteFormat   `json:"format,omitempty"`
+	Type          string                 `json:"type"`
+	Buttons       []wsapi.HostNoteButton `json:"buttons,omitempty"`
+	Title         string                 `json:"title,omitempty"`
+	TitleIcon     string                 `json:"title_icon,omitempty"`
+	Description   string                 `json:"description,omitempty"`
+	Metadata      map[string]any         `json:"metadata,omitempty"`
+}
+
+type NewNoteResponse wsapi.HostNote
