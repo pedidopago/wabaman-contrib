@@ -428,6 +428,7 @@ type NewNoteRequest struct {
 	WABAContactID string                 `json:"waba_contact_id,omitempty"`
 	BranchID      string                 `json:"branch_id,omitempty"`
 	PhoneID       uint                   `json:"phone_id,omitempty"`
+	AgentName     string                 `json:"agent_name,omitempty"`
 	Text          string                 `json:"text"`
 	Origin        string                 `json:"origin,omitempty"`
 	Format        wsapi.HostNoteFormat   `json:"format,omitempty"`
