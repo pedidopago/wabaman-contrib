@@ -75,10 +75,10 @@ type GetMessagesRequest struct {
 }
 
 type GetMessagesResponse struct {
-	Messages   []interface{} `json:"messages,omitempty"`
-	MaxResults uint64        `json:"max_results"`
-	Page       uint          `json:"page"`
-	LastPage   uint          `json:"last_page,omitempty"`
+	Messages   []json.RawMessage `json:"messages,omitempty"`
+	MaxResults uint64            `json:"max_results"`
+	Page       uint              `json:"page"`
+	LastPage   uint              `json:"last_page,omitempty"`
 }
 
 type AnyMessage interface {
