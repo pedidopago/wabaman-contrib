@@ -89,6 +89,22 @@ func (c *Client) GetContactsV2(ctx context.Context, req rest.GetContactsV2Reques
 	return uresp, nil
 }
 
+func (c *Client) GetMessages(ctx context.Context, req rest.GetMessagesRequest) (rest.GetMessagesResponse, error) {
+	uresp := rest.GetMessagesResponse{}
+	if c == nil {
+		return uresp, fmt.Errorf("nil client")
+	}
+	urlv, err := query.Values(req)
+	if err != nil {
+		return uresp, fmt.Errorf("query values: %w", err)
+	}
+	urlv.Set("combined", "true")
+	if err := c.get(ctx, fmt.Sprintf("/api/v1/messages?%s", urlv.Encode()), &uresp); err != nil {
+		return uresp, err
+	}
+	return uresp, nil
+}
+
 func (c *Client) CheckIntegration(ctx context.Context, req *rest.CheckIntegrationRequest) (*rest.CheckIntegrationResponse, error) {
 	q := make(url.Values)
 	if req.BranchID != "" {

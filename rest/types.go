@@ -65,6 +65,28 @@ type NewMessageResponse struct {
 	SendMessageStatus NewMessageStatus `json:"send_message_status"`
 }
 
+type GetMessagesRequest struct {
+	PhoneID           uint   `url:"phone_id,omitempty"`
+	BranchID          string `url:"branch_id,omitempty"`
+	HostPhoneNumber   string `url:"host_phone_number,omitempty"`
+	ClientPhoneNumber string `url:"client_phone_number,omitempty"`
+	MaxResults        uint64 `url:"max_results,omitempty"`
+	Page              uint   `url:"page,omitempty"`
+}
+
+type GetMessagesResponse struct {
+	Messages   []AnyMessage `json:"messages,omitempty"`
+	MaxResults uint64       `json:"max_results"`
+	Page       uint         `json:"page"`
+	LastPage   uint         `json:"last_page,omitempty"`
+}
+
+type AnyMessage interface {
+	GetID() uint64
+	GetCreatedAtNano() int64
+	GetObjectType() string
+}
+
 type NewMessageRequestForRedisQueue struct {
 	NewMessageRequest    `json:",inline"`
 	AccountID            uint   `json:"account_id"`
@@ -441,3 +463,100 @@ type NewNoteRequest struct {
 }
 
 type NewNoteResponse wsapi.HostNote
+
+type SentMessage struct {
+	ID                 uint64             `json:"id"`
+	PhoneID            uint               `json:"phone_id"`
+	WabaMessageID      string             `json:"waba_message_id"`
+	WabaRecipientID    mariadb.NullString `json:"waba_recipient_id"`
+	WabaProfileName    mariadb.NullString `json:"waba_profile_name"`
+	WabaTimestamp      time.Time          `json:"waba_timestamp"`
+	LastStatusName     mariadb.NullString `json:"last_status_name"`
+	TsStatusSent       mariadb.NullTime   `json:"ts_status_sent"`
+	TsStatusDelivered  mariadb.NullTime   `json:"ts_status_delivered"`
+	TsStatusRead       mariadb.NullTime   `json:"ts_status_read"`
+	TsStatusFailed     mariadb.NullTime   `json:"ts_status_failed"`
+	PricingBillable    bool               `json:"pricing_billable"`
+	PricingModel       mariadb.NullString `json:"pricing_model"`
+	PricingCategory    mariadb.NullString `json:"pricing_category"`
+	WabaConversationID mariadb.NullString `json:"waba_conversation_id"`
+	Type               mariadb.NullString `json:"type"`
+	TextBody           mariadb.NullString `json:"text_body"`
+	MediaCaption       mariadb.NullString `json:"media_caption"`
+	MediaMimeType      mariadb.NullString `json:"media_mime_type"`
+	MediaID            string             `json:"media_id"`
+	DocumentFilename   mariadb.NullString `json:"document_filename"`
+	S3FilePublicURL    mariadb.NullString `json:"s3_file_public_url"`
+	S3FileKey          mariadb.NullString `json:"s3_file_key"`
+	S3BucketName       mariadb.NullString `json:"s3_bucket_name"`
+	TemplateName       mariadb.NullString `json:"template_name"`
+	TemplateLangCode   mariadb.NullString `json:"template_lang_code"`
+	AgentID            mariadb.NullString `json:"agent_id"`
+	AgentName          mariadb.NullString `json:"agent_name"`
+	Origin             mariadb.NullString `json:"origin"`
+	CreatedAt          time.Time          `json:"created_at"`
+	CreatedAtNano      int64              `json:"created_at_nano"`
+	ObjectType         string             `json:"object_type"`
+
+	Interactive  *fbgraph.InteractiveMessageObject `json:"interactive"`
+	Template     *TemplateCopy                     `json:"template,omitempty"`
+	FailedReason *wsapi.SentMessageFailedReason    `json:"failed_reason,omitempty"`
+}
+
+type TemplateCopy struct {
+	ParsedTemplate *wsapi.ParsedTemplate `json:"parsed,omitempty"`
+}
+
+func (m *SentMessage) GetID() uint64 {
+	return m.ID
+}
+
+func (m *SentMessage) GetCreatedAtNano() int64 {
+	return m.CreatedAtNano
+}
+
+func (m *SentMessage) GetObjectType() string {
+	return m.ObjectType
+}
+
+type ReceivedMessage struct {
+	ID                     uint64             `json:"id"`
+	PhoneID                uint               `json:"phone_id"`
+	WABAMessageID          string             `json:"waba_message_id"`
+	WABAFromID             string             `json:"waba_from_id"`
+	WABAProfileName        string             `json:"waba_profile_name"`
+	WABATimestamp          time.Time          `json:"waba_timestamp"`
+	Type                   MessageType        `json:"type"`
+	TextBody               *string            `json:"text_body"`
+	MediaCaption           *string            `json:"media_caption"`
+	MediaMimeType          *string            `json:"media_mime_type"`
+	MediaSha256B64         *string            `json:"media_sha256_b64"`
+	MediaID                *string            `json:"media_id"`
+	DocumentFilename       *string            `json:"document_filename"`
+	InteractiveType        *string            `json:"interactive_type"`
+	InteractiveID          *string            `json:"interactive_id"`
+	InteractiveTitle       *string            `json:"interactive_title"`
+	InteractiveDescription *string            `json:"interactive_description"`
+	ButtonPayload          *string            `json:"button_payload"`
+	ButtonText             *string            `json:"button_text"`
+	S3FilePublicURL        *string            `json:"s3_file_public_url"`
+	S3FileKey              *string            `json:"s3_file_key"`
+	S3BucketName           *string            `json:"s3_bucket_name"`
+	CreatedAt              time.Time          `json:"created_at"`
+	CreatedAtNano          int64              `json:"created_at_nano"`
+	ReadAt                 mariadb.NullTime   `json:"read_at"`
+	ReadAtMetadata         mariadb.NullString `json:"read_at_metadata"`
+	ObjectType             string             `json:"object_type"`
+}
+
+func (m *ReceivedMessage) GetID() uint64 {
+	return m.ID
+}
+
+func (m *ReceivedMessage) GetCreatedAtNano() int64 {
+	return m.CreatedAtNano
+}
+
+func (m *ReceivedMessage) GetObjectType() string {
+	return m.ObjectType
+}
