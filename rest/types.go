@@ -116,6 +116,7 @@ type UpdateContactRequest struct {
 	CustomerName    string         `json:"customer_name,omitempty"`
 	WABAProfileName string         `json:"waba_profile_name,omitempty"`
 	Metadata        map[string]any `json:"metadata,omitempty"`
+	OneShotMetadata map[string]any `json:"one_shot_metadata,omitempty"`
 	Origin          string         `json:"origin,omitempty"`
 }
 
