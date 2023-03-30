@@ -57,6 +57,11 @@ type NewMessageRequest struct {
 	OneShotContactMetadata map[string]any                    `json:"one_shot_contact_metadata,omitempty"`
 	AgentID                string                            `json:"agent_id,omitempty"`
 	AgentName              string                            `json:"agent_name,omitempty"`
+	Context                *NewMessageContext                `json:"context,omitempty"`
+}
+
+type NewMessageContext struct {
+	MessageID string `json:"message_id,omitempty"`
 }
 
 type NewMessageResponse struct {
