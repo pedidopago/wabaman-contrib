@@ -309,6 +309,8 @@ type Contact struct {
 	CustomerID mariadb.NullString `json:"customer_id"`
 	// The customer_name of ms_customer
 	CustomerName mariadb.NullString `json:"customer_name"`
+	// If true, this contact must not receive promotional messages.
+	MarketingEnabled bool `json:"marketing_enabled"`
 	// The datetime this contact was created on the database.
 	CreatedAt time.Time `json:"created_at"`
 	// The datetime this contact was last updated on the database.
