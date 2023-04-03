@@ -173,3 +173,10 @@ type TagEventData struct {
 	IsVisible         *bool          `json:"is_visible,omitempty"`
 	PreviousIsVisible *bool          `json:"previous_is_visible,omitempty"`
 }
+
+type MessageContext struct {
+	MessageID           string `json:"message_id,omitempty"`
+	From                string `json:"from,omitempty"`
+	Forwarded           bool   `json:"forwarded,omitempty"`
+	FrequentlyForwarded bool   `json:"frequently_forwarded,omitempty"`
+}

@@ -26,6 +26,8 @@ type ClientMessage struct {
 	Button      *Button      `json:"button,omitempty"`
 	Preview     string       `json:"preview,omitempty"`
 
+	Context *MessageContext `json:"context,omitempty"`
+
 	CreatedAt     time.Time  `json:"created_at"`
 	CreatedAtNano int64      `json:"created_at_nano,omitempty"`
 	ReadAt        *time.Time `json:"read_at,omitempty"`
