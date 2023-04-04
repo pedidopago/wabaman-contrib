@@ -19,6 +19,7 @@ const (
 	MessageTypeHostNoteUpdated    MessageType = 9
 	MessageTypeTag                MessageType = 10
 	MessageTypeTagGroup           MessageType = 11
+	MessageTypeReaction           MessageType = 12
 	MessageTypeMockClientMessages MessageType = 230
 	MessageTypeCloseError         MessageType = 240
 )
@@ -39,6 +40,7 @@ type Message struct {
 	ClientMockData    *ClientMockData    `json:"client_mock_data,omitempty"`
 	Tag               *TagEventData      `json:"tag,omitempty"`
 	TagGroup          *TagEventData      `json:"tag_group,omitempty"`
+	Reaction          *ReactionEventData `json:"reaction,omitempty"`
 }
 
 type ClientMockData struct {
@@ -172,6 +174,14 @@ type TagEventData struct {
 	ID                uint64         `json:"id,omitempty"`
 	IsVisible         *bool          `json:"is_visible,omitempty"`
 	PreviousIsVisible *bool          `json:"previous_is_visible,omitempty"`
+}
+
+type ReactionEventData struct {
+	WABAMessageID string `json:"waba_message_id"`
+	WABAContactID string `json:"waba_contact_id"`
+	Emoji         string `json:"emoji"`
+	AgentID       string `json:"agent_id,omitempty"`
+	AgentName     string `json:"agent_name,omitempty"`
 }
 
 type MessageContext struct {
