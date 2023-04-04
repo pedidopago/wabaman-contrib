@@ -180,3 +180,11 @@ type MessageContext struct {
 	Forwarded           bool   `json:"forwarded,omitempty"`
 	FrequentlyForwarded bool   `json:"frequently_forwarded,omitempty"`
 }
+
+type MessageReaction struct {
+	WABAContactID string    `json:"waba_contact_id"`
+	Emoji         string    `json:"emoji"`
+	CreatedAt     time.Time `json:"created_at,omitempty"`
+	AgentID       string    `json:"agent_id,omitempty"`
+	AgentName     string    `json:"agent_name,omitempty"`
+}

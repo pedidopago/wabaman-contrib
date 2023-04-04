@@ -36,6 +36,7 @@ type HostMessage struct {
 	CreatedAt       time.Time                         `json:"created_at,omitempty"`
 	CreatedAtNano   int64                             `json:"created_at_nano,omitempty"`
 	Context         *MessageContext                   `json:"context,omitempty"`
+	Reactions       []MessageReaction                 `json:"reactions,omitempty"`
 }
 
 type FBStatusObjectError struct {
