@@ -61,6 +61,18 @@ type NewMessageRequest struct {
 	Context                *NewMessageContext                `json:"context,omitempty"`
 }
 
+type NewMessageReactionRequest struct {
+	PhoneID       uint   `json:"phone_id"`
+	BranchID      string `json:"branch_id"`
+	FromNumber    string `json:"from_number"`
+	WABAMessageID string `json:"waba_message_id"`
+	Emoji         string `json:"emoji"`
+}
+
+type NewMessageReactionResponse struct {
+	MessageID string `json:"message_id"`
+}
+
 type NewMessageContext struct {
 	MessageID string `json:"message_id,omitempty"`
 }
