@@ -193,6 +193,7 @@ type MessageContext struct {
 }
 
 type MessageReaction struct {
+	ID            string    `json:"id,omitempty"`
 	WABAContactID string    `json:"waba_contact_id"`
 	Emoji         string    `json:"emoji"`
 	CreatedAt     time.Time `json:"created_at,omitempty"`
