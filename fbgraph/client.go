@@ -38,7 +38,13 @@ func (c *Client) SendMessage(phoneID string, msg *MessageObject) (*MessageObject
 	if msg == nil {
 		return nil, fmt.Errorf("message is nil")
 	}
-	url := fmt.Sprintf("https://graph.facebook.com/v13.0/%s/messages", phoneID)
+
+	apiVersion := "v13.0"
+	if msg.Type == "reaction" {
+		apiVersion = "v16.0"
+	}
+
+	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/messages", apiVersion, phoneID)
 	buf := new(bytes.Buffer)
 	if err := json.NewEncoder(buf).Encode(msg); err != nil {
 		return nil, fmt.Errorf("encode message: %w", err)

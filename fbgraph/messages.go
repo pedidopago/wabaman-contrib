@@ -28,8 +28,15 @@ type MessageObject struct {
 	Video            *MediaObject              `json:"video,omitempty"`
 	Sticker          *MediaObject              `json:"sticker,omitempty"`
 	Context          *MessageContext           `json:"context,omitempty"`
+
+	Reaction *ReactionObject `json:"reaction,omitempty"`
 	// TODO: add more objects at:
 	// https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages#text-object
+}
+
+type ReactionObject struct {
+	MessageID string `json:"message_id"`
+	Emoji     string `json:"emoji"`
 }
 
 type MessageContext struct {
