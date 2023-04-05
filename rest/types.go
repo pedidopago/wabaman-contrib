@@ -67,6 +67,8 @@ type NewMessageReactionRequest struct {
 	FromNumber    string `json:"from_number"`
 	WABAMessageID string `json:"waba_message_id"`
 	Emoji         string `json:"emoji"`
+	AgentID       string `json:"agent_id,omitempty"`
+	AgentName     string `json:"agent_name,omitempty"`
 }
 
 type NewMessageReactionResponse struct {
