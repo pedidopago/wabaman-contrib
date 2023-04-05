@@ -177,11 +177,12 @@ type TagEventData struct {
 }
 
 type ReactionEventData struct {
-	WABAMessageID string `json:"waba_message_id"`
-	WABAContactID string `json:"waba_contact_id"`
-	Emoji         string `json:"emoji"`
-	AgentID       string `json:"agent_id,omitempty"`
-	AgentName     string `json:"agent_name,omitempty"`
+	WABAMessageID string    `json:"waba_message_id"`
+	WABAContactID string    `json:"waba_contact_id"`
+	Emoji         string    `json:"emoji"`
+	AgentID       string    `json:"agent_id,omitempty"`
+	AgentName     string    `json:"agent_name,omitempty"`
+	CreatedAt     time.Time `json:"created_at,omitempty"`
 }
 
 type MessageContext struct {
