@@ -186,7 +186,7 @@ func (c *Client) GetMessageTemplates(ctx context.Context, params GetMessageTempl
 }
 
 func (c *Client) CreateMessageTemplate(ctx context.Context, wabaID string, template MessageTemplate) (id string, err error) {
-	url := fmt.Sprintf("https://graph.facebook.com/v15.0/%s/message_templates", wabaID)
+	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/message_templates", GetAPIVersion(ctx), wabaID)
 
 	buf := new(bytes.Buffer)
 	if err := json.NewEncoder(buf).Encode(template); err != nil {
