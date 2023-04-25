@@ -115,6 +115,9 @@ func (c *Client) GetMessages(ctx context.Context, req rest.GetMessagesRequest) (
 
 func (c *Client) CheckIntegration(ctx context.Context, req *rest.CheckIntegrationRequest) (*rest.CheckIntegrationResponse, error) {
 	q := make(url.Values)
+	if req.StoreID != "" {
+		q.Set("store_id", req.StoreID)
+	}
 	if req.BranchID != "" {
 		q.Set("branch_id", req.BranchID)
 	}
