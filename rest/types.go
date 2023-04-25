@@ -261,12 +261,14 @@ type GetContactsV2Response struct {
 }
 
 type CheckIntegrationRequest struct {
+	StoreID            string
 	BranchID           string
 	ContactPhoneNumber string
 }
 
 type CheckIntegrationResponse struct {
 	BusinessID uint     `json:"business_id"`
+	BranchIDs  []string `json:"branch_ids,omitempty"`
 	PhoneIDs   []uint   `json:"phone_ids,omitempty"`
 	ContactIDs []uint64 `json:"contact_ids,omitempty"`
 }
