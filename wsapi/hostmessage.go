@@ -16,27 +16,29 @@ type HostMessage struct {
 	PhoneID         uint   `json:"phone_id"`
 	HostPhoneNumber string `json:"host_phone_number"`
 	// The id (phone number) of the recipient (client).
-	WABARecipientID string                            `json:"waba_recipient_id"`
-	WABATimestamp   time.Time                         `json:"waba_timestamp"`
-	Type            string                            `json:"type"`
-	Text            *Text                             `json:"text,omitempty"`
-	Document        *Document                         `json:"document,omitempty"`
-	Video           *Video                            `json:"video,omitempty"`
-	Image           *Image                            `json:"image,omitempty"`
-	Audio           *Audio                            `json:"audio,omitempty"`
-	Sticker         *Sticker                          `json:"sticker,omitempty"`
-	Template        *HostTemplate                     `json:"template,omitempty"`
-	Interactive     *fbgraph.InteractiveMessageObject `json:"interactive,omitempty"`
-	ObjectType      string                            `json:"object_type,omitempty"`
-	AgentID         string                            `json:"agent_id,omitempty"`
-	AgentName       string                            `json:"agent_name,omitempty"`
-	FailedReason    *SentMessageFailedReason          `json:"failed_reason,omitempty"`
-	Preview         string                            `json:"preview,omitempty"`
-	Origin          string                            `json:"origin,omitempty"`
-	CreatedAt       time.Time                         `json:"created_at,omitempty"`
-	CreatedAtNano   int64                             `json:"created_at_nano,omitempty"`
-	Context         *MessageContext                   `json:"context,omitempty"`
-	Reactions       []MessageReaction                 `json:"reactions,omitempty"`
+	WABARecipientID         string                            `json:"waba_recipient_id"`
+	WABATimestamp           time.Time                         `json:"waba_timestamp"`
+	OriginalFailedMessageID string                            `json:"original_failed_message_id,omitempty"`
+	FailedMessageRetryChain uint                              `json:"failed_message_retry_chain,omitempty"`
+	Type                    string                            `json:"type"`
+	Text                    *Text                             `json:"text,omitempty"`
+	Document                *Document                         `json:"document,omitempty"`
+	Video                   *Video                            `json:"video,omitempty"`
+	Image                   *Image                            `json:"image,omitempty"`
+	Audio                   *Audio                            `json:"audio,omitempty"`
+	Sticker                 *Sticker                          `json:"sticker,omitempty"`
+	Template                *HostTemplate                     `json:"template,omitempty"`
+	Interactive             *fbgraph.InteractiveMessageObject `json:"interactive,omitempty"`
+	ObjectType              string                            `json:"object_type,omitempty"`
+	AgentID                 string                            `json:"agent_id,omitempty"`
+	AgentName               string                            `json:"agent_name,omitempty"`
+	FailedReason            *SentMessageFailedReason          `json:"failed_reason,omitempty"`
+	Preview                 string                            `json:"preview,omitempty"`
+	Origin                  string                            `json:"origin,omitempty"`
+	CreatedAt               time.Time                         `json:"created_at,omitempty"`
+	CreatedAtNano           int64                             `json:"created_at_nano,omitempty"`
+	Context                 *MessageContext                   `json:"context,omitempty"`
+	Reactions               []MessageReaction                 `json:"reactions,omitempty"`
 }
 
 type FBStatusObjectError struct {
