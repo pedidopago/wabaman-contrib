@@ -36,29 +36,31 @@ const (
 )
 
 type NewMessageRequest struct {
-	PhoneID                uint                              `json:"phone_id"`
-	BranchID               string                            `json:"branch_id"`
-	FromNumber             string                            `json:"from_number"`
-	ToNumber               string                            `json:"to_number"`
-	Type                   MessageType                       `json:"type"`
-	Text                   *fbgraph.TextObject               `json:"text,omitempty"`
-	Template               *fbgraph.TemplateObject           `json:"template,omitempty"`
-	Interactive            *fbgraph.InteractiveMessageObject `json:"interactive,omitempty"`
-	Image                  *fbgraph.MediaObject              `json:"image,omitempty"`
-	Audio                  *fbgraph.MediaObject              `json:"audio,omitempty"`
-	Document               *fbgraph.MediaObject              `json:"document,omitempty"`
-	Video                  *fbgraph.MediaObject              `json:"video,omitempty"`
-	Sticker                *fbgraph.MediaObject              `json:"sticker,omitempty"`
-	FallbackTemplate       string                            `json:"fallback_template,omitempty"`
-	SkipWelcome            bool                              `json:"skip_welcome,omitempty"`
-	Origin                 string                            `json:"origin,omitempty"`
-	ReadMessages           bool                              `json:"read_messages,omitempty"`
-	Verbose                bool                              `json:"verbose,omitempty"`
-	ContactMetadata        map[string]any                    `json:"contact_metadata,omitempty"`
-	OneShotContactMetadata map[string]any                    `json:"one_shot_contact_metadata,omitempty"`
-	AgentID                string                            `json:"agent_id,omitempty"`
-	AgentName              string                            `json:"agent_name,omitempty"`
-	Context                *NewMessageContext                `json:"context,omitempty"`
+	PhoneID                 uint                              `json:"phone_id"`
+	BranchID                string                            `json:"branch_id"`
+	FromNumber              string                            `json:"from_number"`
+	ToNumber                string                            `json:"to_number"`
+	Type                    MessageType                       `json:"type"`
+	Text                    *fbgraph.TextObject               `json:"text,omitempty"`
+	Template                *fbgraph.TemplateObject           `json:"template,omitempty"`
+	Interactive             *fbgraph.InteractiveMessageObject `json:"interactive,omitempty"`
+	Image                   *fbgraph.MediaObject              `json:"image,omitempty"`
+	Audio                   *fbgraph.MediaObject              `json:"audio,omitempty"`
+	Document                *fbgraph.MediaObject              `json:"document,omitempty"`
+	Video                   *fbgraph.MediaObject              `json:"video,omitempty"`
+	Sticker                 *fbgraph.MediaObject              `json:"sticker,omitempty"`
+	FallbackTemplate        string                            `json:"fallback_template,omitempty"`
+	SkipWelcome             bool                              `json:"skip_welcome,omitempty"`
+	Origin                  string                            `json:"origin,omitempty"`
+	ReadMessages            bool                              `json:"read_messages,omitempty"`
+	Verbose                 bool                              `json:"verbose,omitempty"`
+	ContactMetadata         map[string]any                    `json:"contact_metadata,omitempty"`
+	OneShotContactMetadata  map[string]any                    `json:"one_shot_contact_metadata,omitempty"`
+	AgentID                 string                            `json:"agent_id,omitempty"`
+	AgentName               string                            `json:"agent_name,omitempty"`
+	Context                 *NewMessageContext                `json:"context,omitempty"`
+	OriginalFailedMessageID string                            `json:"original_failed_message_id,omitempty"`
+	FailedMessageRetryChain uint                              `json:"failed_message_retry_chain,omitempty"`
 }
 
 type NewMessageReactionRequest struct {
