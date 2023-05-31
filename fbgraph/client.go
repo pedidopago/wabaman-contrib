@@ -39,7 +39,7 @@ func (c *Client) SendMessage(phoneID string, msg *MessageObject) (*MessageObject
 		return nil, fmt.Errorf("message is nil")
 	}
 
-	apiVersion := "v13.0"
+	apiVersion := "v14.0"
 	if msg.Type == "reaction" {
 		apiVersion = "v16.0"
 	}
