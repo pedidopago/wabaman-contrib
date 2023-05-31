@@ -41,7 +41,7 @@ func (c *Client) SendMessage(phoneID string, msg *MessageObject) (*MessageObject
 
 	apiVersion := "v14.0"
 	if msg.Type == "reaction" {
-		apiVersion = "v16.0"
+		apiVersion = "v17.0"
 	}
 
 	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/messages", apiVersion, phoneID)
