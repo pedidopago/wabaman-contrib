@@ -69,6 +69,46 @@ func (c *Client) UpdateContact(ctx context.Context, contactID uint64, req *rest.
 	return resp, nil
 }
 
+type UpdateMessagesParams struct {
+	Ids          []uint64
+	BranchID     string
+	ContactID    uint64
+	ContactPhone string
+	PhoneID      uint
+	ReadAll      bool
+	SetIsRead    bool
+}
+
+func (c *Client) UpdateMessages(ctx context.Context, params UpdateMessagesParams) error {
+	rawURI := "/api/v1/messages"
+	urlx := url.Values{}
+	for _, id := range params.Ids {
+		urlx.Add("id", fmt.Sprint(id))
+	}
+	if len(urlx) > 0 {
+		rawURI = fmt.Sprintf("%s?%s", rawURI, urlx.Encode())
+	}
+	req := struct {
+		SetIsRead    bool   `json:"set_is_read"`
+		ReadAll      bool   `json:"read_all" description:"Read all messages"`
+		ContactID    uint64 `json:"contact_id"`
+		BranchID     string `json:"branch_id"`
+		ContactPhone string `json:"contact_phone"`
+		PhoneID      uint   `json:"phone_id"`
+	}{
+		SetIsRead:    params.SetIsRead,
+		ReadAll:      params.ReadAll,
+		ContactID:    params.ContactID,
+		BranchID:     params.BranchID,
+		ContactPhone: params.ContactPhone,
+		PhoneID:      params.PhoneID,
+	}
+	if err := c.put(ctx, rawURI, req, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (c *Client) GetContacts(ctx context.Context, req *rest.GetContactsRequest) (*rest.GetContactsResponse, error) {
 	if c == nil {
 		return nil, fmt.Errorf("nil client")
@@ -226,6 +266,10 @@ func (c *Client) doRequest(ctx context.Context, method, suffix string, input, ou
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
 		return c.errorFromResponse(ctx, resp)
+	}
+	if output == nil {
+		io.Copy(io.Discard, resp.Body)
+		return nil
 	}
 	if err := json.NewDecoder(resp.Body).Decode(output); err != nil {
 		return fmt.Errorf("decode response: %w", err)
