@@ -216,11 +216,11 @@ func (c *Client) CreateMessageTemplate(ctx context.Context, wabaID string, templ
 	return result.ID, nil
 }
 
-func (c *Client) UpdateMessageTemplate(ctx context.Context, templateID string, components []TemplateComponent) error {
+func (c *Client) UpdateMessageTemplate(ctx context.Context, templateID string, components []MessageTemplateComponent) error {
 	url := fmt.Sprintf("https://graph.facebook.com/v15.0/%s", templateID)
 
 	cpstruct := struct {
-		Components []TemplateComponent `json:"components"`
+		Components []MessageTemplateComponent `json:"components"`
 	}{Components: components}
 
 	buf := new(bytes.Buffer)
