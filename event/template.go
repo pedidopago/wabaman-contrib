@@ -7,12 +7,12 @@ import (
 )
 
 type TemplateEvent struct {
-	StoreID    string                  `json:"store_id"`
-	BranchID   string                  `json:"branch_id,omitempty"`
-	PhoneID    uint                    `json:"phone_id,omitempty"`
-	Event      string                  `json:"event,omitempty"`
-	TemplateID string                  `json:"template_id,omitempty"`
-	Template   *fbgraph.TemplateObject `json:"template,omitempty"`
+	StoreID    string                   `json:"store_id"`
+	BranchID   string                   `json:"branch_id,omitempty"`
+	PhoneID    uint                     `json:"phone_id,omitempty"`
+	Event      string                   `json:"event,omitempty"`
+	TemplateID string                   `json:"template_id,omitempty"`
+	Template   *fbgraph.MessageTemplate `json:"template,omitempty"`
 }
 
 func (e TemplateEvent) ToJSON() string {
