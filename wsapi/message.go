@@ -1,6 +1,9 @@
 package wsapi
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
 // MessageType is the identifier of the Message payload.
 type MessageType uint8
@@ -41,6 +44,15 @@ type Message struct {
 	Tag               *TagEventData      `json:"tag,omitempty"`
 	TagGroup          *TagEventData      `json:"tag_group,omitempty"`
 	Reaction          *ReactionEventData `json:"reaction,omitempty"`
+}
+
+func (e Message) ToJSON() string {
+	d, _ := json.Marshal(e)
+	return string(d)
+}
+
+func (e *Message) FromJSON(data string) error {
+	return json.Unmarshal([]byte(data), e)
 }
 
 type ClientMockData struct {
