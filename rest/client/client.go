@@ -219,6 +219,14 @@ func (c *Client) NewNote(ctx context.Context, req *rest.NewNoteRequest) (*rest.N
 	return output, nil
 }
 
+func (c *Client) NewTemplate(ctx context.Context, req *rest.NewTemplateRequest) (*rest.NewTemplateResponse, error) {
+	output := &rest.NewTemplateResponse{}
+	if err := c.post(ctx, "/api/v1/template", req, output); err != nil {
+		return nil, err
+	}
+	return output, nil
+}
+
 func (c *Client) urlPrefix() string {
 	return util.Default(c.BaseURL, DefaultBaseURL)
 }

@@ -588,3 +588,16 @@ func (m *ReceivedMessage) GetCreatedAtNano() int64 {
 func (m *ReceivedMessage) GetObjectType() string {
 	return m.ObjectType
 }
+
+type NewTemplateRequest struct {
+	PhoneID    uint                               `json:"phone_id,omitempty"`
+	BranchID   string                             `json:"branch_id,omitempty"`
+	Category   fbgraph.MessageTemplateCategory    `json:"category"`
+	Language   string                             `json:"language" description:"default: pt_BR"`
+	Name       string                             `json:"name"`
+	Components []fbgraph.MessageTemplateComponent `json:"components"`
+}
+
+type NewTemplateResponse struct {
+	ID string `json:"id"`
+}
