@@ -13,18 +13,20 @@ type ErrorCode int
 const (
 	ErrorCodeGenericInvalidParameter ErrorCode = 100
 	ErrorCodeGenericBadRequest       ErrorCode = 400
+	ErrCodeInternal                  ErrorCode = 500
 )
 
 type RichError struct {
-	Code    ErrorCode `json:"code"`
-	Message string    `json:"message"`
+	HTTPStatus int       `json:"-"`
+	Code       ErrorCode `json:"code"`
+	Message    string    `json:"message"`
 }
 
 func (e *RichError) Error() string {
 	return fmt.Sprintf("%d - %s", e.Code, e.Message)
 }
 
-func NewRichErrorFromError(err error, fallbackCode ...int) *RichError {
+func NewRichErrorFromError(err error, statusCode ...int) *RichError {
 	if err == nil {
 		return nil
 	}
@@ -43,16 +45,18 @@ func NewRichErrorFromError(err error, fallbackCode ...int) *RichError {
 			emsg.WriteString(e.ErrorUserMsg)
 		}
 		return &RichError{
-			Code:    ErrorCode(e.Code),
-			Message: emsg.String(),
+			HTTPStatus: e.HTTPStatusCode,
+			Code:       ErrorCode(e.Code),
+			Message:    emsg.String(),
 		}
 	}
-	code := ErrorCode(500)
-	if len(fallbackCode) > 0 {
-		code = ErrorCode(fallbackCode[0])
+	code := 500
+	if len(statusCode) > 0 {
+		code = statusCode[0]
 	}
 	return &RichError{
-		Code:    code,
-		Message: err.Error(),
+		HTTPStatus: code,
+		Code:       ErrCodeInternal,
+		Message:    err.Error(),
 	}
 }
