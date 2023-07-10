@@ -99,6 +99,7 @@ type MessageTemplateComponent struct {
 type MessageTemplateExample struct {
 	HeaderHandle []string   `json:"header_handle,omitempty"`
 	BodyText     [][]string `json:"body_text,omitempty"`
+	HeaderText   []string   `json:"header_text,omitempty"`
 }
 
 type MessageTemplateButton struct {
