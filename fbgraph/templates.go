@@ -25,6 +25,7 @@ const (
 	MTCFormatVideo    MessageTemplateComponentFormat = "VIDEO"
 	MTCFormatImage    MessageTemplateComponentFormat = "IMAGE"
 	MTCFormatDocument MessageTemplateComponentFormat = "DOCUMENT" //TODO: check
+	MTCFormatText     MessageTemplateComponentFormat = "TEXT"
 )
 
 type MessageTemplateButtonType string
