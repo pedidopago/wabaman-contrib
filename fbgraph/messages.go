@@ -61,10 +61,12 @@ type LanguageObject struct {
 }
 
 type TemplateComponent struct {
-	Type       string                       `json:"type"`
-	SubType    string                       `json:"sub_type,omitempty"`
-	Parameters []TemplateComponentParameter `json:"parameters"`
-	Index      *int                         `json:"index,omitempty"`
+	Type                      string                       `json:"type"`
+	SubType                   string                       `json:"sub_type,omitempty"`
+	Parameters                []TemplateComponentParameter `json:"parameters"`
+	Index                     *int                         `json:"index,omitempty"`
+	AddSecurityRecommendation *bool                        `json:"add_security_recommendation,omitempty"` // only for authentication templates
+	CodeExpirationMinutes     *int                         `json:"code_expiration_minutes,omitempty"`     // only for authentication templates
 }
 
 type TemplateComponentParameter struct {
