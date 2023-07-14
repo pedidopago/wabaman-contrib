@@ -34,6 +34,7 @@ const (
 	MTBTypeQuickReply  MessageTemplateButtonType = "QUICK_REPLY"
 	MTBTypeURL         MessageTemplateButtonType = "URL"
 	MTBTypePhoneNumber MessageTemplateButtonType = "PHONE_NUMBER"
+	MTBTypeOTP         MessageTemplateButtonType = "OTP"
 )
 
 type MessageTemplateCategory string
@@ -106,12 +107,23 @@ type MessageTemplateExample struct {
 }
 
 type MessageTemplateButton struct {
-	Type        MessageTemplateButtonType `json:"type"`
-	Text        string                    `json:"text"`
-	URL         string                    `json:"url,omitempty"`
-	Example     []string                  `json:"example,omitempty"`
-	PhoneNumber string                    `json:"phone_number,omitempty"`
+	Type          MessageTemplateButtonType `json:"type"`
+	OTPType       OTPType                   `json:"otp_type,omitempty"`      // for OTP types
+	AutofillText  string                    `json:"autofill_text,omitempty"` // for OTP type ONE_TAP
+	Text          string                    `json:"text"`
+	URL           string                    `json:"url,omitempty"`
+	Example       []string                  `json:"example,omitempty"`
+	PhoneNumber   string                    `json:"phone_number,omitempty"`
+	PackageName   string                    `json:"package_name,omitempty"`   // for OTP type ONE_TAP
+	SignatureHash string                    `json:"signature_hash,omitempty"` // for OTP type ONE_TAP
 }
+
+type OTPType string
+
+const (
+	OTPTypeOneTap   OTPType = "ONE_TAP"
+	OTPTypeCopyCode OTPType = "COPY_CODE"
+)
 
 type MessageTemplatesPaging struct {
 	Cursors  MessageTemplatesCursors `json:"cursors"`
