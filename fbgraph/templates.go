@@ -90,11 +90,13 @@ type MessageTemplateScore struct {
 }
 
 type MessageTemplateComponent struct {
-	Type    MessageTemplateComponentType `json:"type"`
-	Text    string                       `json:"text,omitempty"`
-	Format  string                       `json:"format,omitempty"`
-	Example *MessageTemplateExample      `json:"example,omitempty"`
-	Buttons []MessageTemplateButton      `json:"buttons,omitempty"`
+	Type                      MessageTemplateComponentType `json:"type"`
+	Text                      string                       `json:"text,omitempty"`
+	Format                    string                       `json:"format,omitempty"`
+	Example                   *MessageTemplateExample      `json:"example,omitempty"`
+	Buttons                   []MessageTemplateButton      `json:"buttons,omitempty"`
+	AddSecurityRecommendation *bool                        `json:"add_security_recommendation,omitempty"` // only for authentication templates
+	CodeExpirationMinutes     *int                         `json:"code_expiration_minutes,omitempty"`     // only for authentication templates
 }
 
 type MessageTemplateExample struct {
