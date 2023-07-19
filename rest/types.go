@@ -38,6 +38,7 @@ type PreviewMessageOutcomeRequest struct {
 type PreviewMessageOutcomeResponse struct {
 	MessageStatus  NewMessageStatus `json:"message_status"`
 	TemplateExists *bool            `json:"template_exists,omitempty"`
+	Error          string           `json:"error,omitempty"`
 }
 
 type NewMessageStatus string
