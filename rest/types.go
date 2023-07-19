@@ -365,6 +365,7 @@ type GetPhonesRequest struct {
 	BusinessID  uint   `json:"business_id,omitempty"`
 	PhoneNumber string `json:"phone_number,omitempty"`
 	BranchID    string `json:"branch_id,omitempty"`
+	NameLike    string `json:"name_like,omitempty"`
 
 	WithStatistics bool `json:"with_statistics,omitempty"`
 }
