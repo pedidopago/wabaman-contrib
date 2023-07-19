@@ -25,6 +25,21 @@ const (
 	MessageSticker     MessageType = "sticker"
 )
 
+type PreviewMessageOutcomeRequest struct {
+	PhoneID          uint        `json:"phone_id,omitempty"`
+	BranchID         string      `json:"branch_id,omitempty"`
+	FromNumber       string      `json:"from_number"`
+	ToNumber         string      `json:"to_number" validate:"required"`
+	Type             MessageType `json:"type"`
+	TemplateName     string      `json:"template_name"`
+	TemplateLangCode string      `json:"template_lang_code"`
+}
+
+type PreviewMessageOutcomeResponse struct {
+	MessageStatus  NewMessageStatus `json:"message_status"`
+	TemplateExists *bool            `json:"template_exists,omitempty"`
+}
+
 type NewMessageStatus string
 
 // send messages statuses

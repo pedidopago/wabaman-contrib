@@ -24,6 +24,14 @@ type Client struct {
 	BaseURL string
 }
 
+func (c *Client) PreviewMessageOutcome(ctx context.Context, req *rest.PreviewMessageOutcomeRequest) (*rest.PreviewMessageOutcomeResponse, error) {
+	output := &rest.PreviewMessageOutcomeResponse{}
+	if err := c.patch(ctx, "/api/v1/message", req, output); err != nil {
+		return nil, err
+	}
+	return output, nil
+}
+
 func (c *Client) NewMessage(ctx context.Context, req *rest.NewMessageRequest) (*rest.NewMessageResponse, error) {
 	output := &rest.NewMessageResponse{}
 	if err := c.post(ctx, "/api/v1/message", req, output); err != nil {
@@ -240,6 +248,10 @@ func (c *Client) get(ctx context.Context, suffix string, output any) error {
 
 func (c *Client) put(ctx context.Context, suffix string, input, output any) error {
 	return c.doRequest(ctx, http.MethodPut, suffix, input, output)
+}
+
+func (c *Client) patch(ctx context.Context, suffix string, input, output any) error {
+	return c.doRequest(ctx, http.MethodPatch, suffix, input, output)
 }
 
 func (c *Client) post(ctx context.Context, suffix string, input, output any) error {
