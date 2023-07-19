@@ -201,6 +201,9 @@ func (c *Client) GetPhones(ctx context.Context, req *rest.GetPhonesRequest) (*re
 	if req.PhoneNumber != "" {
 		q.Set("phone_number", req.PhoneNumber)
 	}
+	if req.NameLike != "" {
+		q.Set("name_like", req.NameLike)
+	}
 	if req.WithStatistics {
 		q.Set("with_statistics", "true")
 	}
