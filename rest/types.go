@@ -157,6 +157,8 @@ type UpdateContactRequest struct {
 	Metadata        map[string]any `json:"metadata,omitempty"`
 	OneShotMetadata map[string]any `json:"one_shot_metadata,omitempty"`
 	Origin          string         `json:"origin,omitempty"`
+	Silent          bool           `json:"silent,omitempty" title:"Silent" description:"Silent update"`
+	Async           bool           `json:"async,omitempty" title:"Async" description:"Non blocking update (synchronous update will block until elasticsearch updates)"`
 }
 
 type UpdateContactResponse struct {
