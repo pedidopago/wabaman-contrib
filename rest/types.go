@@ -78,6 +78,7 @@ type NewMessageRequest struct {
 	Context                 *NewMessageContext                `json:"context,omitempty"`
 	OriginalFailedMessageID string                            `json:"original_failed_message_id,omitempty"`
 	FailedMessageRetryChain uint                              `json:"failed_message_retry_chain,omitempty"`
+	ContactDisplayName      string                            `json:"contact_display_name,omitempty"`
 }
 
 type NewMessageReactionRequest struct {
