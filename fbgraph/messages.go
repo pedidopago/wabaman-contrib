@@ -74,7 +74,7 @@ type TemplateComponentParameter struct {
 	Text     string              `json:"text,omitempty"`
 	Currency *CurrencyParameters `json:"currency,omitempty"`
 	DateTime *DateTimeParameters `json:"date_time,omitempty"`
-	Video    *MediaObject        `json:"video,omitempty"`
+	Video    *VideoParameters    `json:"video,omitempty"`
 	Document *MediaObject        `json:"document,omitempty"`
 }
 
@@ -85,6 +85,7 @@ type ImageParameters struct {
 
 // VideoParameters is present when type = "video"
 type VideoParameters struct {
+	Link string `json:"link,omitempty"`
 }
 
 type CurrencyParameters struct {
