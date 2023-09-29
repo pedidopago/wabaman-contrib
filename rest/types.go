@@ -610,12 +610,13 @@ func (m *ReceivedMessage) GetObjectType() string {
 }
 
 type NewTemplateRequest struct {
-	PhoneID    uint                               `json:"phone_id,omitempty"`
-	BranchID   string                             `json:"branch_id,omitempty"`
-	Category   fbgraph.MessageTemplateCategory    `json:"category"`
-	Language   string                             `json:"language" description:"default: pt_BR"`
-	Name       string                             `json:"name"`
-	Components []fbgraph.MessageTemplateComponent `json:"components"`
+	PhoneID       uint                               `json:"phone_id,omitempty"`
+	BranchID      string                             `json:"branch_id,omitempty"`
+	Category      fbgraph.MessageTemplateCategory    `json:"category"`
+	Language      string                             `json:"language" description:"default: pt_BR"`
+	Name          string                             `json:"name"`
+	Components    []fbgraph.MessageTemplateComponent `json:"components"`
+	IsWhitelisted bool                               `json:"is_whitelisted"`
 }
 
 type NewTemplateResponse struct {
