@@ -238,6 +238,36 @@ func (c *Client) NewTemplate(ctx context.Context, req *rest.NewTemplateRequest) 
 	return output, nil
 }
 
+func (c *Client) TemplateExists(ctx context.Context, req *rest.TemplateExistsRequest) (bool, error) {
+	q := make(url.Values)
+
+	if req.PhoneID != 0 {
+		q.Set("phone_id", fmt.Sprint(req.PhoneID))
+	}
+
+	if req.BranchID != "" {
+		q.Set("branch_id", req.BranchID)
+	}
+
+	if req.Name != "" {
+		q.Set("name", req.Name)
+	}
+
+	if req.Language != "" {
+		q.Set("language", req.Language)
+	}
+
+	output := struct {
+		Exists bool `json:"exists"`
+	}{}
+
+	if err := c.get(ctx, fmt.Sprintf("/api/v1/template-exists?%s", q.Encode()), &output); err != nil {
+		return false, err
+	}
+
+	return output.Exists, nil
+}
+
 func (c *Client) urlPrefix() string {
 	return util.Default(c.BaseURL, DefaultBaseURL)
 }

@@ -622,3 +622,10 @@ type NewTemplateRequest struct {
 type NewTemplateResponse struct {
 	ID string `json:"id"`
 }
+
+type TemplateExistsRequest struct {
+	PhoneID  uint
+	BranchID string
+	Name     string
+	Language string
+}
