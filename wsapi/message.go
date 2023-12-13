@@ -111,7 +111,7 @@ type HostNoteFormat string
 const (
 	HostNoteFormatText    HostNoteFormat = "TEXT"
 	HostNoteFormatButtons HostNoteFormat = "BUTTONS"
-	HostNoteFormatImage   HostNoteFormat = "IMAGES"
+	HostNoteFormatImages  HostNoteFormat = "IMAGES"
 )
 
 type HostNoteImage struct {
