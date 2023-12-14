@@ -125,6 +125,14 @@ func (c *Client) UpdateMessages(ctx context.Context, params UpdateMessagesParams
 	return nil
 }
 
+func (c *Client) GetContactByID(ctx context.Context, id uint64) (*rest.Contact, error) {
+	resp := &rest.Contact{}
+	if err := c.get(ctx, fmt.Sprintf("/api/v1/contact/%d", id), resp); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (c *Client) GetContacts(ctx context.Context, req *rest.GetContactsRequest) (*rest.GetContactsResponse, error) {
 	if c == nil {
 		return nil, fmt.Errorf("nil client")
