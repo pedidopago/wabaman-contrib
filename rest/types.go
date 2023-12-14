@@ -151,6 +151,22 @@ type NewMediaResponse struct {
 	MediaID string `json:"media_id"`
 }
 
+type NewContactRequest struct {
+	BranchID        string         `json:"branch_id,omitempty"`
+	CustomerID      string         `json:"customer_id,omitempty"`
+	CustomerName    string         `json:"customer_name,omitempty"`
+	Metadata        map[string]any `json:"metadata,omitempty"`
+	OneShotMetadata map[string]any `json:"one_shot_metadata,omitempty"`
+	Origin          string         `json:"origin,omitempty"`
+	Strict          bool           `json:"strict,omitempty"`
+	WabaContactID   string         `json:"waba_contact_id,omitempty"`
+	WabaProfileName string         `json:"waba_profile_name,omitempty"`
+}
+
+type NewContactResponse struct {
+	ContactID uint64 `json:"contact_id,omitempty"`
+}
+
 type UpdateContactRequest struct {
 	CustomerID      string         `json:"customer_id,omitempty"`
 	CustomerName    string         `json:"customer_name,omitempty"`

@@ -48,6 +48,14 @@ func (c *Client) NewMessageReaction(ctx context.Context, req *rest.NewMessageRea
 	return output, nil
 }
 
+func (c *Client) NewContact(ctx context.Context, req *rest.NewContactRequest) (*rest.NewContactResponse, error) {
+	output := &rest.NewContactResponse{}
+	if err := c.post(ctx, "/api/v1/contacts", req, output); err != nil {
+		return nil, err
+	}
+	return output, nil
+}
+
 func (c *Client) UpdateContact(ctx context.Context, contactID uint64, req *rest.UpdateContactRequest, opts ...rest.UpdateContactOption) (*rest.UpdateContactResponse, error) {
 	op := &rest.UpdateContactOptions{}
 	for _, opt := range opts {
