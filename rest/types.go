@@ -48,6 +48,7 @@ const (
 	NewMessageStatusImmediate                  NewMessageStatus = "sent_immediately"
 	NewMessageStatusQueuedForTemplate          NewMessageStatus = "queued_for_template"
 	NewMessageStatusBlockedByMarketingDisabled NewMessageStatus = "blocked_by_marketing_disabled"
+	NewMessageStatusBlockedByExperiment        NewMessageStatus = "blocked_by_experiment"
 	NewMessageStatusUnknown                    NewMessageStatus = "unknown"
 )
 
