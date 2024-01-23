@@ -1,6 +1,10 @@
 package wsapi
 
-import "time"
+import (
+	"time"
+
+	shared "github.com/pedidopago/wabaman-contrib/shared-types"
+)
 
 // ClientMessage is a message that was sent from a client to a WhatsApp business.
 type ClientMessage struct {
@@ -28,6 +32,8 @@ type ClientMessage struct {
 
 	Context   *MessageContext   `json:"context,omitempty"`
 	Reactions []MessageReaction `json:"reactions,omitempty"`
+
+	Referral *shared.MessageObjectReferral `json:"referral,omitempty"`
 
 	CreatedAt     time.Time  `json:"created_at"`
 	CreatedAtNano int64      `json:"created_at_nano,omitempty"`

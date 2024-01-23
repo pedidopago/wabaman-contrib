@@ -15,12 +15,10 @@ type AccountMetadata struct {
 }
 
 type BusinessMetadata struct {
-	ID                        uint   `json:"id,omitempty"`
-	StoreID                   string `json:"store_id,omitempty"`
-	StoreName                 string `json:"store_name,omitempty"`
-	WhatsAppBusinessAccountID string `json:"whatsapp_business_account_id,omitempty"`
-	FacebookAppID             string `json:"facebook_app_id,omitempty"`
-	APIKey                    string `json:"api_key,omitempty"`
+	ID        uint   `json:"id,omitempty"`
+	StoreID   string `json:"store_id,omitempty"`
+	StoreName string `json:"store_name,omitempty"`
+	APIKey    string `json:"api_key,omitempty"`
 }
 
 type PhoneMetadata struct {
