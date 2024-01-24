@@ -7,7 +7,7 @@ const (
 )
 
 type WebhookRequest struct {
-	Secret   string      `json:"secret"`
+	Token    string      `json:"token"`
 	Business Business    `json:"business"`
 	Phone    Phone       `json:"phone"`
 	Type     WebhookType `json:"type"`
