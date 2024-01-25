@@ -28,4 +28,5 @@ type NewMessageContext struct {
 
 type SendMessageResult struct {
 	MessageID string `json:"message_id"`
+	ContactID string `json:"contact_id"` // This is usually the contact's parsed phone number. AKA WABAContactID (due to legacy WABA implementation)
 }
