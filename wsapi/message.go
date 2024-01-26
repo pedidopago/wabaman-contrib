@@ -10,49 +10,49 @@ type MessageType uint8
 
 // All valid message types
 const (
-	MessageTypePing                        MessageType = 0
-	MessageTypePong                        MessageType = 1
-	MessageTypeClientMessage               MessageType = 2
-	MessageTypeHostMessage                 MessageType = 3
-	MessageTypeReadByHostReceipt           MessageType = 4
-	MessageTypeClientReceipt               MessageType = 5
-	MessageTypeContactUpdate               MessageType = 6
-	MessageTypeNewContact                  MessageType = 7
-	MessageTypeHostNote                    MessageType = 8
-	MessageTypeHostNoteUpdated             MessageType = 9
-	MessageTypeTag                         MessageType = 10
-	MessageTypeTagGroup                    MessageType = 11
-	MessageTypeReaction                    MessageType = 12
-	MessageTypePresenceViewClient          MessageType = 20 // js/ts client sends this to the server
-	MessageTypePresenceTypingToClient      MessageType = 21 // js/ts client sends this to the server
-	MessageTypePresenceAgentViewingClient  MessageType = 22 // server sends this to the clients
-	MessageTypePresenceAgentTypingToClient MessageType = 23 // server sends this to the clients
-	MessageTypeMockClientMessages          MessageType = 230
-	MessageTypeGenericError                MessageType = 235
-	MessageTypeCloseError                  MessageType = 240
+	MessageTypePing                   MessageType = 0
+	MessageTypePong                   MessageType = 1
+	MessageTypeClientMessage          MessageType = 2
+	MessageTypeHostMessage            MessageType = 3
+	MessageTypeReadByHostReceipt      MessageType = 4
+	MessageTypeClientReceipt          MessageType = 5
+	MessageTypeContactUpdate          MessageType = 6
+	MessageTypeNewContact             MessageType = 7
+	MessageTypeHostNote               MessageType = 8
+	MessageTypeHostNoteUpdated        MessageType = 9
+	MessageTypeTag                    MessageType = 10
+	MessageTypeTagGroup               MessageType = 11
+	MessageTypeReaction               MessageType = 12
+	MessageTypePresenceViewClient     MessageType = 20 // js/ts client sends this to the server
+	MessageTypePresenceTypingToClient MessageType = 21 // js/ts client sends this to the server
+	MessageTypePresenceRequest        MessageType = 22 // js/ts client sends this to the server
+	MessageTypePresenceResponse       MessageType = 23 // server sends this to the clients
+	MessageTypeMockClientMessages     MessageType = 230
+	MessageTypeGenericError           MessageType = 235
+	MessageTypeCloseError             MessageType = 240
 )
 
 // Message is the root level object of a ms-wabaman websocket.
 type Message struct {
-	Type                        MessageType                  `json:"type"`
-	Error                       *Error                       `json:"error,omitempty"`
-	ClientMessage               *ClientMessage               `json:"client_message,omitempty"`
-	HostMessage                 *HostMessage                 `json:"host_message,omitempty"`
-	ReadByHostReceipt           *ReadByHostReceipt           `json:"read_by_host_receipt,omitempty"`
-	ClientReceipt               *ClientReceipt               `json:"client_receipt,omitempty"`
-	ContactUpdate               *ContactUpdate               `json:"contact_update,omitempty"`
-	NewContact                  *NewContact                  `json:"new_contact,omitempty"`
-	HostNote                    *HostNote                    `json:"host_note,omitempty"`
-	HostNoteUpdated             *HostNoteUpdated             `json:"host_note_updated,omitempty"`
-	Metadata                    *Metadata                    `json:"metadata,omitempty"`
-	ClientMockData              *ClientMockData              `json:"client_mock_data,omitempty"`
-	Tag                         *TagEventData                `json:"tag,omitempty"`
-	TagGroup                    *TagEventData                `json:"tag_group,omitempty"`
-	Reaction                    *ReactionEventData           `json:"reaction,omitempty"`
-	PresenceViewClient          *PresenceViewClient          `json:"presence_view_client,omitempty"`
-	PresenceTypingToClient      *PresenceTypingToClient      `json:"presence_typing_to_client,omitempty"`
-	PresenceAgentViewingClient  *PresenceAgentViewingClient  `json:"presence_agent_viewing_client,omitempty"`
-	PresenceAgentTypingToClient *PresenceAgentTypingToClient `json:"presence_agent_typing_to_client,omitempty"`
+	Type                   MessageType             `json:"type"`
+	Error                  *Error                  `json:"error,omitempty"`
+	ClientMessage          *ClientMessage          `json:"client_message,omitempty"`
+	HostMessage            *HostMessage            `json:"host_message,omitempty"`
+	ReadByHostReceipt      *ReadByHostReceipt      `json:"read_by_host_receipt,omitempty"`
+	ClientReceipt          *ClientReceipt          `json:"client_receipt,omitempty"`
+	ContactUpdate          *ContactUpdate          `json:"contact_update,omitempty"`
+	NewContact             *NewContact             `json:"new_contact,omitempty"`
+	HostNote               *HostNote               `json:"host_note,omitempty"`
+	HostNoteUpdated        *HostNoteUpdated        `json:"host_note_updated,omitempty"`
+	Metadata               *Metadata               `json:"metadata,omitempty"`
+	ClientMockData         *ClientMockData         `json:"client_mock_data,omitempty"`
+	Tag                    *TagEventData           `json:"tag,omitempty"`
+	TagGroup               *TagEventData           `json:"tag_group,omitempty"`
+	Reaction               *ReactionEventData      `json:"reaction,omitempty"`
+	PresenceViewClient     *PresenceViewClient     `json:"presence_view_client,omitempty"`
+	PresenceTypingToClient *PresenceTypingToClient `json:"presence_typing_to_client,omitempty"`
+	PresenceRequest        *PresenceRequest        `json:"presence_request,omitempty"`
+	PresenceResponse       *PresenceResponse       `json:"presence_response,omitempty"`
 }
 
 func (e Message) ToJSON() string {
