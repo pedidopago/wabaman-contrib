@@ -28,6 +28,7 @@ const (
 	MessageTypePresenceAgentViewingClient  MessageType = 22 // server sends this to the clients
 	MessageTypePresenceAgentTypingToClient MessageType = 23 // server sends this to the clients
 	MessageTypeMockClientMessages          MessageType = 230
+	MessageTypeGenericError                MessageType = 235
 	MessageTypeCloseError                  MessageType = 240
 )
 

@@ -13,6 +13,7 @@ type ErrorCode int
 // All valid errors
 const (
 	ErrorCodeInvalidAuth         ErrorCode = 1
+	ErrorCodeUnknownMessageType  ErrorCode = 400
 	ErrorCodeInternalError       ErrorCode = 500
-	ErrorCodeInternalRedisClosed           = 600
+	ErrorCodeInternalRedisClosed ErrorCode = 600
 )
