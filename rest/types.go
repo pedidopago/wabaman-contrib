@@ -521,6 +521,7 @@ type NewNoteRequest struct {
 	Format        wsapi.HostNoteFormat   `json:"format,omitempty"`
 	Type          string                 `json:"type"`
 	Buttons       []wsapi.HostNoteButton `json:"buttons,omitempty"`
+	Images        []wsapi.HostNoteImage  `json:"images,omitempty"`
 	Title         string                 `json:"title,omitempty"`
 	TitleIcon     string                 `json:"title_icon,omitempty"`
 	Description   string                 `json:"description,omitempty"`
