@@ -647,3 +647,28 @@ type TemplateExistsRequest struct {
 	Name     string
 	Language string
 }
+
+type BusinessContactBroadcastRequest struct {
+	BusinessID         uint            `json:"-"`
+	StoreID            string          `json:"-"`
+	BranchID           string          `json:"branch_id,omitempty"`
+	ClientID           uint64          `json:"client_id,omitempty"`
+	ContactCustomerID  string          `json:"contact_customer_id,omitempty"`
+	ContactPhoneNumber string          `json:"contact_phone_number,omitempty"`
+	Data               json.RawMessage `json:"data,omitempty"`
+	Type               string          `json:"type"`
+}
+
+type BusinessContactBroadcastResponse struct{}
+
+type PhoneContactBroadcastRequest struct {
+	PhoneID            uint            `json:"-"`
+	BranchID           string          `json:"-"`
+	ClientID           uint64          `json:"client_id,omitempty"`
+	ContactCustomerID  string          `json:"contact_customer_id,omitempty"`
+	ContactPhoneNumber string          `json:"contact_phone_number,omitempty"`
+	Data               json.RawMessage `json:"data,omitempty"`
+	Type               string          `json:"type"`
+}
+
+type PhoneContactBroadcastResponse struct{}

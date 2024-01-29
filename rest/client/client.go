@@ -284,6 +284,34 @@ func (c *Client) TemplateExists(ctx context.Context, req *rest.TemplateExistsReq
 	return output.Exists, nil
 }
 
+func (c *Client) BusinessContactBroadcast(ctx context.Context, req *rest.BusinessContactBroadcastRequest) (*rest.BusinessContactBroadcastResponse, error) {
+	var businessIDOrStoreID string
+	if req.BusinessID != 0 {
+		businessIDOrStoreID = strconv.FormatInt(int64(req.BusinessID), 10)
+	} else {
+		businessIDOrStoreID = req.StoreID
+	}
+	output := &rest.BusinessContactBroadcastResponse{}
+	if err := c.post(ctx, fmt.Sprintf("/api/v2/business/%s/contact-broadcast", businessIDOrStoreID), req, output); err != nil {
+		return nil, err
+	}
+	return output, nil
+}
+
+func (c *Client) PhoneContactBroadcast(ctx context.Context, req *rest.PhoneContactBroadcastRequest) (*rest.PhoneContactBroadcastResponse, error) {
+	var phoneIDOrBranchID string
+	if req.PhoneID != 0 {
+		phoneIDOrBranchID = strconv.FormatInt(int64(req.PhoneID), 10)
+	} else {
+		phoneIDOrBranchID = req.BranchID
+	}
+	output := &rest.PhoneContactBroadcastResponse{}
+	if err := c.post(ctx, fmt.Sprintf("/api/v2/business/%s/contact-broadcast", phoneIDOrBranchID), req, output); err != nil {
+		return nil, err
+	}
+	return output, nil
+}
+
 func (c *Client) urlPrefix() string {
 	return util.Default(c.BaseURL, DefaultBaseURL)
 }
