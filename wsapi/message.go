@@ -23,6 +23,7 @@ const (
 	MessageTypeTag                    MessageType = 10
 	MessageTypeTagGroup               MessageType = 11
 	MessageTypeReaction               MessageType = 12
+	MessageTypeClientBroadcast        MessageType = 13
 	MessageTypePresenceViewClient     MessageType = 20 // js/ts client sends this to the server
 	MessageTypePresenceTypingToClient MessageType = 21 // js/ts client sends this to the server
 	MessageTypePresenceRequest        MessageType = 22 // js/ts client sends this to the server
@@ -49,6 +50,7 @@ type Message struct {
 	Tag                    *TagEventData           `json:"tag,omitempty"`
 	TagGroup               *TagEventData           `json:"tag_group,omitempty"`
 	Reaction               *ReactionEventData      `json:"reaction,omitempty"`
+	ClientBroadcast        *ClientBroadcast        `json:"client_broadcast,omitempty"`
 	PresenceViewClient     *PresenceViewClient     `json:"presence_view_client,omitempty"`
 	PresenceTypingToClient *PresenceTypingToClient `json:"presence_typing_to_client,omitempty"`
 	PresenceRequest        *PresenceRequest        `json:"presence_request,omitempty"`
@@ -235,4 +237,10 @@ type MessageReaction struct {
 	AgentName     string    `json:"agent_name,omitempty"`
 	Status        string    `json:"status,omitempty"`
 	Error         string    `json:"error,omitempty"`
+}
+
+type ClientBroadcast struct {
+	ClientID uint64          `json:"client_id,omitempty"`
+	Type     string          `json:"type,omitempty"`
+	Data     json.RawMessage `json:"data,omitempty"`
 }
