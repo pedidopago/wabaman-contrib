@@ -42,4 +42,5 @@ type Phone struct {
 	DefaultTemplateCompanyName string `json:"default_template_company_name,omitempty"`
 	DriverName                 string `json:"driver_name"`
 	DriverData                 string `json:"driver_data"` // 1000 char data to use with the driver
+	PhoneNumber                string `json:"phone_number"`
 }
