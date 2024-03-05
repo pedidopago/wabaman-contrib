@@ -672,3 +672,24 @@ type PhoneContactBroadcastRequest struct {
 }
 
 type PhoneContactBroadcastResponse struct{}
+
+type RegisterDriverMessageRequest struct {
+	PhoneID         uint   `json:"phone_id" description:"Phone ID"`
+	MessageID       string `json:"message_id" description:"External Message ID (formerly known as whatsapp_id)"`
+	From            string `json:"from" description:"Sender"`
+	FromProfileName string `json:"from_profile_name" description:"Sender Profile Name (optional if 'from' = wabaman.phone)"`
+	To              string `json:"to" description:"Recipient"`
+	ToProfileName   string `json:"to_profile_name" description:"Recipient Profile Name (optional if 'to' = wabaman.phone)"`
+	Type            string `json:"type" description:"Message type (currently only text is implemented)" enum:"text,image,video,document"`
+	Text            struct {
+		Body string `json:"body" description:"Message body"`
+	} `json:"text" description:"Text message"`
+	CreatedAt   time.Time `json:"created_at,omitempty" description:"Message creation date"`
+	SentAt      time.Time `json:"sent_at,omitempty" description:"Message sent date"`
+	DeliveredAt time.Time `json:"delivered_at,omitempty" description:"Message delivered date"`
+	ReadAt      time.Time `json:"read_at,omitempty" description:"Message read date"`
+}
+
+type RegisterDriverMessageResponse struct {
+	ID uint64 `json:"id" description:"Internal Message ID"`
+}
