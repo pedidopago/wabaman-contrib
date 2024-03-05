@@ -700,7 +700,7 @@ const (
 type Button struct {
 	Type      ButtonType `json:"type"`
 	Text      string     `json:"text"`
-	PressedAt int        `json:"pressed_at"` // Unix timestamp (millis)
+	PressedAt int64      `json:"pressed_at"` // Unix timestamp (millis)
 	ID        string     `json:"id,omitempty"`
 }
 
