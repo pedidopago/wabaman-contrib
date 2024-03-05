@@ -673,17 +673,55 @@ type PhoneContactBroadcastRequest struct {
 
 type PhoneContactBroadcastResponse struct{}
 
+type Media struct {
+	Caption string `json:"caption,omitempty"`
+	URL     string `json:"url,omitempty"`
+}
+
+type Document struct {
+	Media    `json:",inline"`
+	Filename string `json:"filename,omitempty"`
+}
+
+type HeaderType = MessageType
+
+type Header struct {
+	Type HeaderType `json:"type"`
+	Text string     `json:"text,omitempty"`
+	URL  string     `json:"url,omitempty"`
+}
+
+type ButtonType string
+
+const (
+	ButtonTypeText ButtonType = "text"
+)
+
+type Button struct {
+	Type      ButtonType `json:"type"`
+	Text      string     `json:"text"`
+	PressedAt int        `json:"pressed_at"` // Unix timestamp (millis)
+	ID        string     `json:"id,omitempty"`
+}
+
 type RegisterDriverMessageRequest struct {
-	PhoneID         uint   `json:"phone_id" description:"Phone ID"`
-	MessageID       string `json:"message_id" description:"External Message ID (formerly known as whatsapp_id)"`
-	From            string `json:"from" description:"Sender"`
-	FromProfileName string `json:"from_profile_name" description:"Sender Profile Name (optional if 'from' = wabaman.phone)"`
-	To              string `json:"to" description:"Recipient"`
-	ToProfileName   string `json:"to_profile_name" description:"Recipient Profile Name (optional if 'to' = wabaman.phone)"`
-	Type            string `json:"type" description:"Message type (currently only text is implemented)" enum:"text,image,video,document"`
+	PhoneID         uint        `json:"phone_id" description:"Phone ID"`
+	MessageID       string      `json:"message_id" description:"External Message ID (formerly known as whatsapp_id)"`
+	From            string      `json:"from" description:"Sender"`
+	FromProfileName string      `json:"from_profile_name" description:"Sender Profile Name (optional if 'from' = wabaman.phone)"`
+	To              string      `json:"to" description:"Recipient"`
+	ToProfileName   string      `json:"to_profile_name" description:"Recipient Profile Name (optional if 'to' = wabaman.phone)"`
+	Type            MessageType `json:"type" description:"Message type" enum:"text,image,video,audio,document"`
 	Text            struct {
 		Body string `json:"body" description:"Message body"`
 	} `json:"text" description:"Text message"`
+	Image       *Media    `json:"image,omitempty"`
+	Video       *Media    `json:"video,omitempty"`
+	Audio       *Media    `json:"audio,omitempty"`
+	Document    *Document `json:"document,omitempty"`
+	Buttons     []Button  `json:"buttons,omitempty"`
+	Header      *Header   `json:"header,omitempty"`
+	Footer      string    `json:"footer,omitempty"`
 	CreatedAt   time.Time `json:"created_at,omitempty" description:"Message creation date"`
 	SentAt      time.Time `json:"sent_at,omitempty" description:"Message sent date"`
 	DeliveredAt time.Time `json:"delivered_at,omitempty" description:"Message delivered date"`
