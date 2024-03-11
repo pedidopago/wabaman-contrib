@@ -704,6 +704,11 @@ type Button struct {
 	ID        string     `json:"id,omitempty"`
 }
 
+type ReplyContact struct {
+	Name        string `json:"name,omitempty"`
+	PhoneNumber string `json:"phone_number"`
+}
+
 type RegisterDriverMessageRequest struct {
 	PhoneID         uint        `json:"phone_id" description:"Phone ID"`
 	MessageID       string      `json:"message_id" description:"External Message ID (formerly known as whatsapp_id)"`
@@ -715,17 +720,20 @@ type RegisterDriverMessageRequest struct {
 	Text            struct {
 		Body string `json:"body" description:"Message body"`
 	} `json:"text" description:"Text message"`
-	Image       *Media    `json:"image,omitempty"`
-	Video       *Media    `json:"video,omitempty"`
-	Audio       *Media    `json:"audio,omitempty"`
-	Document    *Document `json:"document,omitempty"`
-	Buttons     []Button  `json:"buttons,omitempty"`
-	Header      *Header   `json:"header,omitempty"`
-	Footer      string    `json:"footer,omitempty"`
-	CreatedAt   time.Time `json:"created_at,omitempty" description:"Message creation date"`
-	SentAt      time.Time `json:"sent_at,omitempty" description:"Message sent date"`
-	DeliveredAt time.Time `json:"delivered_at,omitempty" description:"Message delivered date"`
-	ReadAt      time.Time `json:"read_at,omitempty" description:"Message read date"`
+	Image          *Media        `json:"image,omitempty"`
+	Video          *Media        `json:"video,omitempty"`
+	Audio          *Media        `json:"audio,omitempty"`
+	Document       *Document     `json:"document,omitempty"`
+	Buttons        []Button      `json:"buttons,omitempty"`
+	Header         *Header       `json:"header,omitempty"`
+	Footer         string        `json:"footer,omitempty"`
+	CreatedAt      time.Time     `json:"created_at,omitempty" description:"Message creation date"`
+	SentAt         time.Time     `json:"sent_at,omitempty" description:"Message sent date"`
+	DeliveredAt    time.Time     `json:"delivered_at,omitempty" description:"Message delivered date"`
+	ReadAt         time.Time     `json:"read_at,omitempty" description:"Message read date"`
+	ReplyContact   *ReplyContact `json:"reply_contact,omitempty"`
+	ReplyMessageID string        `json:"reply_message_id,omitempty"`
+	ReplyButtonID  string        `json:"reply_button_id,omitempty"`
 }
 
 type RegisterDriverMessageResponse struct {
