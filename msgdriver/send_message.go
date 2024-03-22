@@ -26,8 +26,17 @@ type NewMessageContext struct {
 	MessageID string `json:"message_id,omitempty"`
 }
 
+type MessageStatus string
+
+const (
+	MessageStatusSent      MessageStatus = "sent"
+	MessageStatusDelivered MessageStatus = "delivered"
+	MessageStatusRead      MessageStatus = "read"
+)
+
 type SendMessageResult struct {
-	MessageID   string `json:"message_id"`
-	ContactID   string `json:"contact_id"` // This is usually the contact's parsed phone number. AKA WABAContactID (due to legacy WABA implementation)
-	ContactName string `json:"contact_name"`
+	MessageID     string        `json:"message_id"`
+	MessageStatus MessageStatus `json:"message_status,omitempty"`
+	ContactID     string        `json:"contact_id"` // This is usually the contact's parsed phone number. AKA WABAContactID (due to legacy WABA implementation)
+	ContactName   string        `json:"contact_name"`
 }
