@@ -3,7 +3,8 @@ package msgdriver
 type WebhookType string
 
 const (
-	WebhookTypeSendMessage WebhookType = "send_message"
+	WebhookTypeSendMessage     WebhookType = "send_message"
+	WebhookTypeNotifyMessageID WebhookType = "notify_message_id"
 )
 
 type WebhookRequest struct {
@@ -14,7 +15,8 @@ type WebhookRequest struct {
 
 	// one of:
 
-	SendMessage *SendMessage `json:"send_message,omitempty"`
+	SendMessage     *SendMessage     `json:"send_message,omitempty"`
+	NotifyMessageID *NotifyMessageID `json:"notify_message_id,omitempty"`
 }
 
 type WebhookResponse struct {
