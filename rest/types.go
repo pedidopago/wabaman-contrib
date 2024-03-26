@@ -80,6 +80,7 @@ type NewMessageRequest struct {
 	OriginalFailedMessageID string                            `json:"original_failed_message_id,omitempty"`
 	FailedMessageRetryChain uint                              `json:"failed_message_retry_chain,omitempty"`
 	ContactDisplayName      string                            `json:"contact_display_name,omitempty"`
+	MessageMetadata         map[string]any                    `json:"message_metadata,omitempty"`
 }
 
 type NewMessageReactionRequest struct {
