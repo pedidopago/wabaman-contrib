@@ -20,6 +20,7 @@ type SendMessage struct {
 	AgentID     string                            `json:"agent_id,omitempty"`
 	AgentName   string                            `json:"agent_name,omitempty"`
 	Context     *NewMessageContext                `json:"context,omitempty"`
+	Metadata    map[string]any                    `json:"metadata,omitempty"`
 }
 
 type NewMessageContext struct {
