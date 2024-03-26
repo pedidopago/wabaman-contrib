@@ -81,6 +81,7 @@ type NewMessageRequest struct {
 	FailedMessageRetryChain uint                              `json:"failed_message_retry_chain,omitempty"`
 	ContactDisplayName      string                            `json:"contact_display_name,omitempty"`
 	MessageMetadata         map[string]any                    `json:"message_metadata,omitempty"`
+	OverridePhoneByDriver   string                            `json:"override_phone_by_driver,omitempty" description:"If set, Wabaman might override the branch_id (and subsequently the phone_id) used if the contact is found in a branch that has this driver."`
 }
 
 type NewMessageReactionRequest struct {
