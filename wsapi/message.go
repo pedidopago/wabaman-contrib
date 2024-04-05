@@ -171,6 +171,13 @@ func (m *HostNote) GetObjectType() string {
 	return m.ObjectType
 }
 
+func (m *HostNote) GetOrigin() string {
+	if m == nil {
+		return ""
+	}
+	return m.Origin
+}
+
 type HostNoteButton struct {
 	ID         string `json:"id"`
 	Text       string `json:"text"`

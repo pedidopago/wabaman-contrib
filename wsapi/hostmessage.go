@@ -41,6 +41,14 @@ type HostMessage struct {
 	Reactions               []MessageReaction                 `json:"reactions,omitempty"`
 }
 
+func (m *HostMessage) GetOrigin() string {
+	if m == nil {
+		return ""
+	}
+
+	return m.Origin
+}
+
 type FBStatusObjectError struct {
 	Code  int    `json:"code"`
 	Title string `json:"title"`

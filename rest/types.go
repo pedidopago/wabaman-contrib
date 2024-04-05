@@ -84,6 +84,14 @@ type NewMessageRequest struct {
 	OverridePhoneByDriver   string                            `json:"override_phone_by_driver,omitempty" description:"If set, Wabaman might override the branch_id (and subsequently the phone_id) used if the contact is found in a branch that has this driver."`
 }
 
+func (m *NewMessageRequest) GetOrigin() string {
+	if m == nil {
+		return ""
+	}
+
+	return m.Origin
+}
+
 type NewMessageReactionRequest struct {
 	PhoneID       uint   `json:"phone_id"`
 	BranchID      string `json:"branch_id"`
@@ -164,6 +172,14 @@ type NewContactRequest struct {
 	Strict          bool           `json:"strict,omitempty"`
 	WabaContactID   string         `json:"waba_contact_id,omitempty"`
 	WabaProfileName string         `json:"waba_profile_name,omitempty"`
+}
+
+func (m *NewContactRequest) GetOrigin() string {
+	if m == nil {
+		return ""
+	}
+
+	return m.Origin
 }
 
 type NewContactResponse struct {

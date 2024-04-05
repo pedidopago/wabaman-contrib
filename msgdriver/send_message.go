@@ -23,6 +23,14 @@ type SendMessage struct {
 	Metadata    map[string]any                    `json:"metadata,omitempty"`
 }
 
+func (m *SendMessage) GetOrigin() string {
+	if m == nil {
+		return ""
+	}
+
+	return m.Origin
+}
+
 type NewMessageContext struct {
 	MessageID string `json:"message_id,omitempty"`
 }
