@@ -22,6 +22,7 @@ const (
 type Client struct {
 	JWT     string
 	BaseURL string
+	Origin  string // If origin is specified, the HTTP client will set a header "X-Origin" with the value of this field.
 }
 
 func (c *Client) PreviewMessageOutcome(ctx context.Context, req *rest.PreviewMessageOutcomeRequest) (*rest.PreviewMessageOutcomeResponse, error) {
@@ -349,6 +350,11 @@ func (c *Client) doRequest(ctx context.Context, method, suffix string, input, ou
 	if err != nil {
 		return fmt.Errorf("new request: %w", err)
 	}
+
+	if c.Origin != "" {
+		req.Header.Set("X-Origin", c.Origin)
+	}
+
 	req = req.WithContext(ctx)
 	if input != nil {
 		req.Header.Set("Content-Type", "application/json")
