@@ -39,6 +39,7 @@ type HostMessage struct {
 	CreatedAtNano           int64                             `json:"created_at_nano,omitempty"`
 	Context                 *MessageContext                   `json:"context,omitempty"`
 	Reactions               []MessageReaction                 `json:"reactions,omitempty"`
+	Metadata                map[string]any                    `json:"metadata,omitempty"`
 }
 
 func (m *HostMessage) GetOrigin() string {
