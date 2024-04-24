@@ -110,8 +110,9 @@ type InteractiveMessageAction struct {
 }
 
 type InteractiveButton struct {
-	Type  string                  `json:"type"` // type: only supported type is reply (for Reply Button)
-	Reply *InteractiveReplyButton `json:"reply"`
+	Type     string                     `json:"type"` // type: [WABA] only supported type is reply (for Reply Button); Use pp_action for PP Action Button.
+	Reply    *InteractiveReplyButton    `json:"reply,omitempty"`
+	PPAction *InteractivePPActionButton `json:"pp_action,omitempty"`
 }
 
 type InteractiveReplyButton struct {
@@ -121,6 +122,16 @@ type InteractiveReplyButton struct {
 	// Unique identifier for your button. This ID is returned in the webhook when
 	// the button is clicked by the user. Maximum length: 256 characters.
 	ID string `json:"id"`
+}
+
+// This is NOT a official WhatsApp API object. It is a custom object to
+// use with the wabaman external drivers.
+type InteractivePPActionButton struct {
+	Type  string `json:"type"`
+	URL   string `json:"url,omitempty"`
+	Phone string `json:"phone,omitempty"`
+	Text  string `json:"text"`
+	ID    string `json:"id,omitempty"`
 }
 
 type InteractiveMessageSection struct {
