@@ -5,6 +5,7 @@ type WebhookType string
 const (
 	WebhookTypeSendMessage     WebhookType = "send_message"
 	WebhookTypeNotifyMessageID WebhookType = "notify_message_id"
+	WebhookTypeReadMessage     WebhookType = "read_message"
 )
 
 type WebhookRequest struct {
@@ -17,6 +18,7 @@ type WebhookRequest struct {
 
 	SendMessage     *SendMessage     `json:"send_message,omitempty"`
 	NotifyMessageID *NotifyMessageID `json:"notify_message_id,omitempty"`
+	ReadMessage     *ReadMessage     `json:"read_message,omitempty"`
 }
 
 type WebhookResponse struct {
