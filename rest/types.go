@@ -69,6 +69,7 @@ type NewMessageRequest struct {
 	FallbackTemplate string                            `json:"fallback_template,omitempty"`
 	// This Skip Welcome field will save a contact metadata `"skip_welcome": true` ONLY if
 	// the contact is created by this message. If the contact already exists, this field will be ignored.
+	//
 	//Deprecated: use ContactMetadata instead (with `"skip_welcome": true`)
 	SkipWelcome             bool               `json:"skip_welcome,omitempty"`
 	Origin                  string             `json:"origin,omitempty"`
