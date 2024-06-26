@@ -307,7 +307,7 @@ func (c *Client) PhoneContactBroadcast(ctx context.Context, req *rest.PhoneConta
 		phoneIDOrBranchID = req.BranchID
 	}
 	output := &rest.PhoneContactBroadcastResponse{}
-	if err := c.post(ctx, fmt.Sprintf("/api/v2/business/%s/contact-broadcast", phoneIDOrBranchID), req, output); err != nil {
+	if err := c.post(ctx, fmt.Sprintf("/api/v2/phone/%s/contact-broadcast", phoneIDOrBranchID), req, output); err != nil {
 		return nil, err
 	}
 	return output, nil
