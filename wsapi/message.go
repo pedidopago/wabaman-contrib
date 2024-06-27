@@ -25,7 +25,6 @@ const (
 	MessageTypeReaction               MessageType = 12
 	MessageTypeContactBroadcast       MessageType = 13
 	MessageTypeMessageUpdated         MessageType = 14 // server sends this to the clients
-	MessageTypeMessageClassified      MessageType = 15 // server sends this to the clients
 	MessageTypePresenceViewClient     MessageType = 20 // js/ts client sends this to the server
 	MessageTypePresenceTypingToClient MessageType = 21 // js/ts client sends this to the server
 	MessageTypePresenceRequest        MessageType = 22 // js/ts client sends this to the server
@@ -54,7 +53,6 @@ type Message struct {
 	Reaction               *ReactionEventData      `json:"reaction,omitempty"`
 	ContactBroadcast       *ContactBroadcast       `json:"contact_broadcast,omitempty"`
 	MessageUpdated         *MessageUpdated         `json:"message_updated,omitempty"`
-	MessageClassified      *MessageClassified      `json:"message_classified,omitempty"`
 	PresenceViewClient     *PresenceViewClient     `json:"presence_view_client,omitempty"`
 	PresenceTypingToClient *PresenceTypingToClient `json:"presence_typing_to_client,omitempty"`
 	PresenceRequest        *PresenceRequest        `json:"presence_request,omitempty"`
@@ -257,17 +255,10 @@ type ContactBroadcast struct {
 }
 
 type MessageUpdated struct {
-	WABAMessageID string `json:"waba_message_id"`
-	WABAContactID string `json:"waba_contact_id"`
-	PhoneID       uint   `json:"phone_id"`
-	IsFromHost    bool   `json:"is_from_host"`
-	ID            uint64 `json:"id"`
-}
-
-type MessageClassified struct {
-	WABAMessageID string `json:"waba_message_id"`
-	WABAContactID string `json:"waba_contact_id"`
-	PhoneID       uint   `json:"phone_id"`
-	IsFromHost    bool   `json:"is_from_host"`
-	ID            uint64 `json:"id"`
+	WABAMessageID          string `json:"waba_message_id"`
+	WABAContactID          string `json:"waba_contact_id"`
+	PhoneID                uint   `json:"phone_id"`
+	IsFromHost             bool   `json:"is_from_host"`
+	ID                     uint64 `json:"id"`
+	IsMessageCConfidential bool   `json:"is_message_confidential"`
 }
