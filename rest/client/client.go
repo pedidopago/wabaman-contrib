@@ -380,7 +380,7 @@ func (c *Client) doRequest(ctx context.Context, method, suffix string, input, ou
 	return nil
 }
 
-func (c *Client) errorFromResponse(ctx context.Context, resp *http.Response) error {
+func (c *Client) errorFromResponse(_ context.Context, resp *http.Response) error {
 	buf := new(bytes.Buffer)
 	if _, err := io.Copy(buf, resp.Body); err != nil {
 		return fmt.Errorf("copy response body: %w", err)
