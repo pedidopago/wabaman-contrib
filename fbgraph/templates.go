@@ -85,6 +85,13 @@ type MessageTemplate struct {
 	ID             string                     `json:"id,omitempty"`
 }
 
+func ConvertMessageTemplateToNew(tpl MessageTemplate, allowCategoryChange bool) NewMessageTemplate {
+	return NewMessageTemplate{
+		MessageTemplate:     tpl,
+		AllowCategoryChange: allowCategoryChange,
+	}
+}
+
 type NewMessageTemplate struct {
 	MessageTemplate     `json:",inline"`
 	AllowCategoryChange bool `json:"allow_category_change,omitempty"`
