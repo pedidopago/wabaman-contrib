@@ -85,6 +85,11 @@ type MessageTemplate struct {
 	ID             string                     `json:"id,omitempty"`
 }
 
+type NewMessageTemplate struct {
+	MessageTemplate     `json:",inline"`
+	AllowCategoryChange bool `json:"allow_category_change,omitempty"`
+}
+
 type MessageTemplateScore struct {
 	Score   string   `json:"score"`
 	Reasons []string `json:"reasons,omitempty"`
@@ -201,7 +206,7 @@ func (c *Client) GetMessageTemplates(ctx context.Context, params GetMessageTempl
 	return result, nil
 }
 
-func (c *Client) CreateMessageTemplate(ctx context.Context, wabaID string, template MessageTemplate) (id string, err error) {
+func (c *Client) CreateMessageTemplate(ctx context.Context, wabaID string, template NewMessageTemplate) (id string, err error) {
 	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/message_templates", GetAPIVersion(ctx), wabaID)
 
 	buf := new(bytes.Buffer)
@@ -232,6 +237,47 @@ func (c *Client) CreateMessageTemplate(ctx context.Context, wabaID string, templ
 	return result.ID, nil
 }
 
+func (c *Client) UpdateMessageTemplateCategory(ctx context.Context, templateID string, newCategory MessageTemplateCategory) error {
+	url := fmt.Sprintf("https://graph.facebook.com/v20.0/%s", templateID)
+
+	cpstruct := struct {
+		Category MessageTemplateCategory `json:"category"`
+	}{Category: newCategory}
+
+	buf := new(bytes.Buffer)
+	if err := json.NewEncoder(buf).Encode(cpstruct); err != nil {
+		return fmt.Errorf("encode template update: %w", err)
+	}
+
+	req, err := http.NewRequest(http.MethodPost, url, buf)
+	if err != nil {
+		return fmt.Errorf("new request: %w", err)
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken))
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("request failed: %w", err)
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return c.errorFromResponse(resp)
+	}
+
+	result := struct {
+		Success bool `json:"success"`
+	}{}
+
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return fmt.Errorf("decode response: %w", err)
+	}
+
+	return nil
+}
+
 func (c *Client) UpdateMessageTemplate(ctx context.Context, templateID string, components []MessageTemplateComponent) error {
 	url := fmt.Sprintf("https://graph.facebook.com/v15.0/%s", templateID)
 
@@ -248,6 +294,7 @@ func (c *Client) UpdateMessageTemplate(ctx context.Context, templateID string, c
 	if err != nil {
 		return fmt.Errorf("new request: %w", err)
 	}
+
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken))
 	resp, err := c.HTTPClient.Do(req)
