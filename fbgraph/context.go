@@ -13,6 +13,8 @@ type APIVersion string
 const (
 	APIVersion15 APIVersion = "v15.0"
 	APIVersion16 APIVersion = "v16.0"
+	APIVersion17 APIVersion = "v17.0"
+	APIVersion20 APIVersion = "v20.0"
 )
 
 func WithAPIVersion(ctx context.Context, version APIVersion) context.Context {
