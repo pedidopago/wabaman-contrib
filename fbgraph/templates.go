@@ -149,7 +149,9 @@ type MessageTemplatesCursors struct {
 }
 
 func (c *Client) GetMessageTemplate(ctx context.Context, id string) (*MessageTemplate, error) {
-	url := fmt.Sprintf("https://graph.facebook.com/v15.0/%s", id)
+	apiversion := GetAPIVersion(ctx, APIVersion20)
+
+	url := fmt.Sprintf("https://graph.facebook.com/%s/%s", apiversion, id)
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -175,6 +177,8 @@ func (c *Client) GetMessageTemplate(ctx context.Context, id string) (*MessageTem
 }
 
 func (c *Client) GetMessageTemplates(ctx context.Context, params GetMessageTemplatesParameters) (*GetMessageTemplatesResponse, error) {
+	apiversion := GetAPIVersion(ctx, APIVersion20)
+
 	if params.Fields == nil {
 		params.Fields = templateParamsDefaultFields
 	}
@@ -188,7 +192,7 @@ func (c *Client) GetMessageTemplates(ctx context.Context, params GetMessageTempl
 		encfields.Set("limit", fmt.Sprintf("%d", params.Limit))
 	}
 
-	url := fmt.Sprintf("https://graph.facebook.com/v15.0/%s/message_templates?%s", params.WhatsAppBusinessAccountID, encfields.Encode())
+	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/message_templates?%s", apiversion, params.WhatsAppBusinessAccountID, encfields.Encode())
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -214,7 +218,7 @@ func (c *Client) GetMessageTemplates(ctx context.Context, params GetMessageTempl
 }
 
 func (c *Client) CreateMessageTemplate(ctx context.Context, wabaID string, template NewMessageTemplate) (id string, err error) {
-	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/message_templates", GetAPIVersion(ctx), wabaID)
+	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/message_templates", GetAPIVersion(ctx, APIVersion20), wabaID)
 
 	buf := new(bytes.Buffer)
 	if err := json.NewEncoder(buf).Encode(template); err != nil {
@@ -245,7 +249,7 @@ func (c *Client) CreateMessageTemplate(ctx context.Context, wabaID string, templ
 }
 
 func (c *Client) UpdateMessageTemplateCategory(ctx context.Context, templateID string, newCategory MessageTemplateCategory) error {
-	url := fmt.Sprintf("https://graph.facebook.com/v20.0/%s", templateID)
+	url := fmt.Sprintf("https://graph.facebook.com/%s/%s", GetAPIVersion(ctx, APIVersion20), templateID)
 
 	cpstruct := struct {
 		Category MessageTemplateCategory `json:"category"`
@@ -286,7 +290,7 @@ func (c *Client) UpdateMessageTemplateCategory(ctx context.Context, templateID s
 }
 
 func (c *Client) UpdateMessageTemplate(ctx context.Context, templateID string, components []MessageTemplateComponent) error {
-	url := fmt.Sprintf("https://graph.facebook.com/v15.0/%s", templateID)
+	url := fmt.Sprintf("https://graph.facebook.com/%s/%s", GetAPIVersion(ctx, APIVersion20), templateID)
 
 	cpstruct := struct {
 		Components []MessageTemplateComponent `json:"components"`
@@ -325,7 +329,7 @@ func (c *Client) UpdateMessageTemplate(ctx context.Context, templateID string, c
 func (c *Client) DeleteMessageTemplate(ctx context.Context, whatsappBusinessAccountID, templateName string) error {
 	urlv := make(url.Values)
 	urlv.Set("name", templateName)
-	url := fmt.Sprintf("https://graph.facebook.com/v15.0/%s/message_templates?%s", whatsappBusinessAccountID, urlv.Encode())
+	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/message_templates?%s", GetAPIVersion(ctx, APIVersion20), whatsappBusinessAccountID, urlv.Encode())
 
 	req, err := http.NewRequest(http.MethodDelete, url, nil)
 	if err != nil {

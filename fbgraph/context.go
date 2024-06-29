@@ -21,8 +21,12 @@ func WithAPIVersion(ctx context.Context, version APIVersion) context.Context {
 	return context.WithValue(ctx, ContextGraphAPIVersion, version)
 }
 
-func GetAPIVersion(ctx context.Context) APIVersion {
+func GetAPIVersion(ctx context.Context, defaultv APIVersion) APIVersion {
 	if ctx == nil || ctx.Value(ContextGraphAPIVersion) == nil {
+		if defaultv != "" {
+			return defaultv
+		}
+
 		return APIVersion15
 	}
 	return ctx.Value(ContextGraphAPIVersion).(APIVersion)
