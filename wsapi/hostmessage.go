@@ -51,18 +51,18 @@ func (m *HostMessage) GetOrigin() string {
 }
 
 type FBStatusObjectError struct {
-	Code         int    `json:"code"`
-	Title        string `json:"title"`
-	Href         string `json:"href"`
-	FailedReason string `json:"failed_reason,omitempty"` // Pedido Pago custom field
+	Code           int    `json:"code"`
+	Title          string `json:"title"`
+	Href           string `json:"href"`
+	LocalizedError string `json:"localized_error,omitempty"` // Pedido Pago custom field
 }
 
 type SentMessageFailedReason struct {
-	Code         int                   `json:"code,omitempty"`
-	Title        string                `json:"title,omitempty"`
-	Href         string                `json:"href,omitempty"`
-	Errors       []FBStatusObjectError `json:"errors,omitempty"`
-	FailedReason string                `json:"failed_reason,omitempty"` // Pedido Pago custom field
+	Code           int                   `json:"code,omitempty"`
+	Title          string                `json:"title,omitempty"`
+	Href           string                `json:"href,omitempty"`
+	Errors         []FBStatusObjectError `json:"errors,omitempty"`
+	LocalizedError string                `json:"localized_error,omitempty"` // Pedido Pago custom field
 }
 
 type HostTemplate struct {
