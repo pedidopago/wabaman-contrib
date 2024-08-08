@@ -36,6 +36,7 @@ type ContactMetadata struct {
 	WABAContactID                string           `json:"waba_contact_id,omitempty"`
 	WABAProfileName              string           `json:"waba_profile_name,omitempty"`
 	Name                         string           `json:"name,omitempty"`
+	ContactPhoneNumber           string           `json:"contact_phone_number,omitempty"`
 	IsNewContact                 bool             `json:"is_new_contact,omitempty"`
 	Metadata                     map[string]any   `json:"metadata,omitempty"`
 	LastActivity                 mariadb.NullTime `json:"last_activity,omitempty"`
