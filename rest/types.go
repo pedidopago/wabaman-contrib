@@ -52,6 +52,11 @@ const (
 	NewMessageStatusUnknown                    NewMessageStatus = "unknown"
 )
 
+type NewMessageRequestTemplate struct {
+	fbgraph.TemplateObject `json:",inline"`
+	ExactMatch             bool `json:"exact_match"`
+}
+
 type NewMessageRequest struct {
 	PhoneID          uint                              `json:"phone_id"`
 	BranchID         string                            `json:"branch_id"`
@@ -59,7 +64,7 @@ type NewMessageRequest struct {
 	ToNumber         string                            `json:"to_number"`
 	Type             MessageType                       `json:"type"`
 	Text             *fbgraph.TextObject               `json:"text,omitempty"`
-	Template         *fbgraph.TemplateObject           `json:"template,omitempty"`
+	Template         *NewMessageRequestTemplate        `json:"template,omitempty"`
 	Interactive      *fbgraph.InteractiveMessageObject `json:"interactive,omitempty"`
 	Image            *fbgraph.MediaObject              `json:"image,omitempty"`
 	Audio            *fbgraph.MediaObject              `json:"audio,omitempty"`
@@ -554,39 +559,38 @@ type NewNoteRequest struct {
 type NewNoteResponse wsapi.HostNote
 
 type SentMessage struct {
-	ID                     uint64             `json:"id"`
-	PhoneID                uint               `json:"phone_id"`
-	WabaMessageID          string             `json:"waba_message_id"`
-	WabaRecipientID        mariadb.NullString `json:"waba_recipient_id"`
-	WabaProfileName        mariadb.NullString `json:"waba_profile_name"`
-	WabaTimestamp          time.Time          `json:"waba_timestamp"`
-	LastStatusName         mariadb.NullString `json:"last_status_name"`
-	TsStatusSent           mariadb.NullTime   `json:"ts_status_sent"`
-	TsStatusDelivered      mariadb.NullTime   `json:"ts_status_delivered"`
-	TsStatusRead           mariadb.NullTime   `json:"ts_status_read"`
-	TsStatusFailed         mariadb.NullTime   `json:"ts_status_failed"`
-	PricingBillable        bool               `json:"pricing_billable"`
-	PricingModel           mariadb.NullString `json:"pricing_model"`
-	PricingCategory        mariadb.NullString `json:"pricing_category"`
-	WabaConversationID     mariadb.NullString `json:"waba_conversation_id"`
-	Type                   mariadb.NullString `json:"type"`
-	TextBody               mariadb.NullString `json:"text_body"`
-	MediaCaption           mariadb.NullString `json:"media_caption"`
-	MediaMimeType          mariadb.NullString `json:"media_mime_type"`
-	MediaID                string             `json:"media_id"`
-	DocumentFilename       mariadb.NullString `json:"document_filename"`
-	S3FilePublicURL        mariadb.NullString `json:"s3_file_public_url"`
-	S3FileKey              mariadb.NullString `json:"s3_file_key"`
-	S3BucketName           mariadb.NullString `json:"s3_bucket_name"`
-	TemplateName           mariadb.NullString `json:"template_name"`
-	TemplateLangCode       mariadb.NullString `json:"template_lang_code"`
-	TemplateNameExactMatch bool               `json:"template_name_exact_match"`
-	AgentID                mariadb.NullString `json:"agent_id"`
-	AgentName              mariadb.NullString `json:"agent_name"`
-	Origin                 mariadb.NullString `json:"origin"`
-	CreatedAt              time.Time          `json:"created_at"`
-	CreatedAtNano          int64              `json:"created_at_nano"`
-	ObjectType             string             `json:"object_type"`
+	ID                 uint64             `json:"id"`
+	PhoneID            uint               `json:"phone_id"`
+	WabaMessageID      string             `json:"waba_message_id"`
+	WabaRecipientID    mariadb.NullString `json:"waba_recipient_id"`
+	WabaProfileName    mariadb.NullString `json:"waba_profile_name"`
+	WabaTimestamp      time.Time          `json:"waba_timestamp"`
+	LastStatusName     mariadb.NullString `json:"last_status_name"`
+	TsStatusSent       mariadb.NullTime   `json:"ts_status_sent"`
+	TsStatusDelivered  mariadb.NullTime   `json:"ts_status_delivered"`
+	TsStatusRead       mariadb.NullTime   `json:"ts_status_read"`
+	TsStatusFailed     mariadb.NullTime   `json:"ts_status_failed"`
+	PricingBillable    bool               `json:"pricing_billable"`
+	PricingModel       mariadb.NullString `json:"pricing_model"`
+	PricingCategory    mariadb.NullString `json:"pricing_category"`
+	WabaConversationID mariadb.NullString `json:"waba_conversation_id"`
+	Type               mariadb.NullString `json:"type"`
+	TextBody           mariadb.NullString `json:"text_body"`
+	MediaCaption       mariadb.NullString `json:"media_caption"`
+	MediaMimeType      mariadb.NullString `json:"media_mime_type"`
+	MediaID            string             `json:"media_id"`
+	DocumentFilename   mariadb.NullString `json:"document_filename"`
+	S3FilePublicURL    mariadb.NullString `json:"s3_file_public_url"`
+	S3FileKey          mariadb.NullString `json:"s3_file_key"`
+	S3BucketName       mariadb.NullString `json:"s3_bucket_name"`
+	TemplateName       mariadb.NullString `json:"template_name"`
+	TemplateLangCode   mariadb.NullString `json:"template_lang_code"`
+	AgentID            mariadb.NullString `json:"agent_id"`
+	AgentName          mariadb.NullString `json:"agent_name"`
+	Origin             mariadb.NullString `json:"origin"`
+	CreatedAt          time.Time          `json:"created_at"`
+	CreatedAtNano      int64              `json:"created_at_nano"`
+	ObjectType         string             `json:"object_type"`
 
 	Interactive  *fbgraph.InteractiveMessageObject `json:"interactive"`
 	Template     *TemplateCopy                     `json:"template,omitempty"`
