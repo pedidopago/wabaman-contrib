@@ -670,10 +670,11 @@ type NewTemplateResponse struct {
 }
 
 type TemplateExistsRequest struct {
-	PhoneID  uint
-	BranchID string
-	Name     string
-	Language string
+	PhoneID    uint
+	BranchID   string
+	Name       string
+	Language   string
+	ExactMatch bool // if true, the template name must be exactly the same as the one in the request
 }
 
 type BusinessContactBroadcastRequest struct {

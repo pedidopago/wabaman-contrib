@@ -274,6 +274,10 @@ func (c *Client) TemplateExists(ctx context.Context, req *rest.TemplateExistsReq
 		q.Set("language", req.Language)
 	}
 
+	if req.ExactMatch {
+		q.Set("exact_match", "true")
+	}
+
 	output := struct {
 		Exists bool `json:"exists"`
 	}{}
