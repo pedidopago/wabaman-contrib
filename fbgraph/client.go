@@ -15,7 +15,8 @@ import (
 )
 
 var (
-	DebugTrace bool
+	DebugTrace             bool
+	DefaultGraphAPIVersion = "v20.0"
 )
 
 var DefaultHTTPClient = &http.Client{
@@ -23,8 +24,9 @@ var DefaultHTTPClient = &http.Client{
 }
 
 type Client struct {
-	HTTPClient  *http.Client
-	AccessToken string
+	HTTPClient      *http.Client
+	AccessToken     string
+	GraphAPIVersion string // use this to override the default API version (check DefaultGraphAPIVersion)
 }
 
 func NewClient(accessToken string) *Client {
@@ -39,11 +41,9 @@ func (c *Client) SendMessage(phoneID string, msg *MessageObject) (*MessageObject
 		return nil, fmt.Errorf("message is nil")
 	}
 
-	apiVersion := "v16.0"
-	if msg.Type == "reaction" {
-		apiVersion = "v17.0"
-	} else if msg.Type == "contacts" {
-		apiVersion = "v20.0"
+	apiVersion := DefaultGraphAPIVersion
+	if c.GraphAPIVersion != "" {
+		apiVersion = c.GraphAPIVersion
 	}
 
 	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/messages", apiVersion, phoneID)
