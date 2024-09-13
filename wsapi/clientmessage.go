@@ -3,6 +3,7 @@ package wsapi
 import (
 	"time"
 
+	"github.com/pedidopago/wabaman-contrib/fbgraph"
 	shared "github.com/pedidopago/wabaman-contrib/shared-types"
 )
 
@@ -20,15 +21,16 @@ type ClientMessage struct {
 	WABATimestamp   time.Time `json:"waba_timestamp"`
 	Type            string    `json:"type"`
 
-	Text        *Text        `json:"text,omitempty"`
-	Document    *Document    `json:"document,omitempty"`
-	Video       *Video       `json:"video,omitempty"`
-	Image       *Image       `json:"image,omitempty"`
-	Audio       *Audio       `json:"audio,omitempty"`
-	Sticker     *Sticker     `json:"sticker,omitempty"`
-	Interactive *Interactive `json:"interactive,omitempty"`
-	Button      *Button      `json:"button,omitempty"`
-	Preview     string       `json:"preview,omitempty"`
+	Text        *Text                   `json:"text,omitempty"`
+	Document    *Document               `json:"document,omitempty"`
+	Video       *Video                  `json:"video,omitempty"`
+	Image       *Image                  `json:"image,omitempty"`
+	Audio       *Audio                  `json:"audio,omitempty"`
+	Sticker     *Sticker                `json:"sticker,omitempty"`
+	Interactive *Interactive            `json:"interactive,omitempty"`
+	Contacts    []fbgraph.ContactObject `json:"contacts,omitempty"`
+	Button      *Button                 `json:"button,omitempty"`
+	Preview     string                  `json:"preview,omitempty"`
 
 	Context   *MessageContext   `json:"context,omitempty"`
 	Reactions []MessageReaction `json:"reactions,omitempty"`
