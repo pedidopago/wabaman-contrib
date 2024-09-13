@@ -12,6 +12,7 @@ import (
 //      video
 //      document
 //      template
+//      contacts
 //      hsm (interactive)
 
 type MessageObject struct {
@@ -27,6 +28,7 @@ type MessageObject struct {
 	Document         *MediaObject              `json:"document,omitempty"`
 	Video            *MediaObject              `json:"video,omitempty"`
 	Sticker          *MediaObject              `json:"sticker,omitempty"`
+	Contacts         []ContactObject           `json:"contacts,omitempty"`
 	Context          *MessageContext           `json:"context,omitempty"`
 
 	Reaction *ReactionObject `json:"reaction,omitempty"`
@@ -54,6 +56,57 @@ type TemplateObject struct {
 	Name       string              `json:"name"`
 	Language   *LanguageObject     `json:"language,omitempty"`
 	Components []TemplateComponent `json:"components,omitempty"`
+}
+
+type ContactObject struct {
+	Addresses []ContactAddress `json:"addresses,omitempty"`
+	Birthday  string           `json:"birthday,omitempty"`
+	Emails    []ContactEmail   `json:"emails,omitempty"`
+	Name      ContactName      `json:"name"`
+	Org       ContactOrg       `json:"org,omitempty"`
+	Phones    []ContactPhone   `json:"phones,omitempty"`
+	URLs      []ContactURL     `json:"urls,omitempty"`
+}
+
+type ContactName struct {
+	FormattedName string `json:"formatted_name"`        // full name
+	FirstName     string `json:"first_name"`            // first name
+	LastName      string `json:"last_name"`             // last name
+	MiddleName    string `json:"middle_name,omitempty"` // middle name
+	Suffix        string `json:"suffix,omitempty"`      // suffix
+	Prefix        string `json:"prefix,omitempty"`      // prefix
+}
+
+type ContactPhone struct {
+	Phone string `json:"phone"` // phone number
+	Type  string `json:"type"`  // phone type
+	WAID  string `json:"wa_id"` // whatsapp ID
+}
+
+type ContactOrg struct {
+	Company    string `json:"company"`    // company name
+	Department string `json:"department"` // department
+	Title      string `json:"title"`      // job title
+}
+
+type ContactURL struct {
+	URL  string `json:"url"`  // URL
+	Type string `json:"type"` // URL type
+}
+
+type ContactAddress struct {
+	Street      string `json:"street"`       // street number and name
+	City        string `json:"city"`         // city
+	State       string `json:"state"`        // state code
+	ZIP         string `json:"zip"`          // zip code
+	Country     string `json:"country"`      // country name
+	CountryCode string `json:"country_code"` // country code
+	Type        string `json:"type"`         // address type
+}
+
+type ContactEmail struct {
+	Email string `json:"email"` // email address
+	Type  string `json:"type"`  // email type
 }
 
 type LanguageObject struct {
