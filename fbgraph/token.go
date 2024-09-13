@@ -36,7 +36,12 @@ func (c *Client) DebugToken(ctx context.Context, inputToken string) (TokenInfo, 
 
 	emptyd := TokenInfo{}
 
-	url := fmt.Sprintf("https://graph.facebook.com/v15.0/debug_token?input_token=%s&access_token=%s", inputToken, c.AccessToken)
+	apiVersion := DefaultGraphAPIVersion
+	if c.GraphAPIVersion != "" {
+		apiVersion = c.GraphAPIVersion
+	}
+
+	url := fmt.Sprintf("https://graph.facebook.com/%s/debug_token?input_token=%s&access_token=%s", apiVersion, inputToken, c.AccessToken)
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
