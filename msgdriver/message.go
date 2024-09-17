@@ -11,4 +11,5 @@ const (
 	MessageAudio       MessageType = "audio"
 	MessageDocument    MessageType = "document"
 	MessageSticker     MessageType = "sticker"
+	MessageContacts    MessageType = "contacts"
 )
