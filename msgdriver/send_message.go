@@ -15,6 +15,7 @@ type SendMessage struct {
 	Document    *fbgraph.MediaObject              `json:"document,omitempty"`
 	Video       *fbgraph.MediaObject              `json:"video,omitempty"`
 	Sticker     *fbgraph.MediaObject              `json:"sticker,omitempty"`
+	Contacts    []fbgraph.ContactObject           `json:"contacts,omitempty"`
 	Origin      string                            `json:"origin,omitempty"`
 	IsSecret    bool                              `json:"is_secret,omitempty"`
 	AgentID     string                            `json:"agent_id,omitempty"`
