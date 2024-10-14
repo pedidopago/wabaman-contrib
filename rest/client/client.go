@@ -255,7 +255,7 @@ func (c *Client) NewTemplate(ctx context.Context, req *rest.NewTemplateRequest) 
 	return output, nil
 }
 
-func (c *Client) TemplateExists(ctx context.Context, req *rest.TemplateExistsRequest) (bool, error) {
+func (c *Client) TemplateExists(ctx context.Context, req *rest.TemplateExistsRequest) (exists bool, name, id string, err error) {
 	q := make(url.Values)
 
 	if req.PhoneID != 0 {
@@ -279,14 +279,16 @@ func (c *Client) TemplateExists(ctx context.Context, req *rest.TemplateExistsReq
 	}
 
 	output := struct {
-		Exists bool `json:"exists"`
+		Exists bool   `json:"exists"`
+		Name   string `json:"name"`
+		ID     string `json:"id"`
 	}{}
 
 	if err := c.get(ctx, fmt.Sprintf("/api/v1/template-exists?%s", q.Encode()), &output); err != nil {
-		return false, err
+		return false, "", "", err
 	}
 
-	return output.Exists, nil
+	return output.Exists, output.Name, output.ID, nil
 }
 
 func (c *Client) BusinessContactBroadcast(ctx context.Context, req *rest.BusinessContactBroadcastRequest) (*rest.BusinessContactBroadcastResponse, error) {
