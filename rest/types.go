@@ -95,7 +95,10 @@ type NewMessageRequest struct {
 	MessageMetadata         map[string]any     `json:"message_metadata,omitempty"`
 	OverridePhoneByDriver   string             `json:"override_phone_by_driver,omitempty" description:"If set, Wabaman might override the branch_id (and subsequently the phone_id) used if the contact is found in a branch that has this driver."`
 	SkipPhoneValidation     bool               `json:"skip_phone_validation,omitempty" description:"If set, Wabaman will not validate the phone number before sending the message."`
-	Schedule                string             `json:"schedule,omitempty" description:"If set, Wabaman will schedule the message to be sent at the given Unix timestamp (RFC3339 or RFC3339Nano)"`
+	Schedule                struct {
+		At         string `json:"at,omitempty" description:"If set, Wabaman will schedule the message to be sent at the given Unix timestamp (RFC3339 or RFC3339Nano)"`
+		Persistent bool   `json:"persistent,omitempty" description:"If set, this message will not be erased from the queue even if the client replies before the scheduled time"`
+	} `json:"schedule,omitempty" description:"Schedule this message to be sent at a specific time"`
 }
 
 func (m *NewMessageRequest) GetOrigin() string {
