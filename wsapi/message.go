@@ -25,6 +25,7 @@ const (
 	MessageTypeReaction               MessageType = 12
 	MessageTypeContactBroadcast       MessageType = 13
 	MessageTypeMessageUpdated         MessageType = 14 // server sends this to the clients
+	MessageTypeScheduledMessage       MessageType = 15 // server sends this to the clients
 	MessageTypePresenceViewClient     MessageType = 20 // js/ts client sends this to the server
 	MessageTypePresenceTypingToClient MessageType = 21 // js/ts client sends this to the server
 	MessageTypePresenceRequest        MessageType = 22 // js/ts client sends this to the server
@@ -57,6 +58,7 @@ type Message struct {
 	PresenceTypingToClient *PresenceTypingToClient `json:"presence_typing_to_client,omitempty"`
 	PresenceRequest        *PresenceRequest        `json:"presence_request,omitempty"`
 	PresenceResponse       *PresenceResponse       `json:"presence_response,omitempty"`
+	ScheduledMessage       *ScheduledMessageStub   `json:"scheduled_message,omitempty"`
 }
 
 func (e Message) ToJSON() string {
@@ -261,4 +263,16 @@ type MessageUpdated struct {
 	IsFromHost             bool   `json:"is_from_host"`
 	ID                     uint64 `json:"id"`
 	IsMessageCConfidential bool   `json:"is_message_confidential"`
+}
+
+type ScheduledMessageStub struct {
+	ID            uint64 `json:"id"`
+	PhoneID       uint   `json:"phone_id"`
+	BranchID      string `json:"branch_id,omitempty"`
+	WABAContactID string `json:"waba_contact_id"`
+	ContactID     uint64 `json:"contact_id,omitempty"`
+	Scheduled     struct {
+		At         string `json:"at,omitempty"`
+		Persistent bool   `json:"persistent,omitempty"`
+	} `json:"scheduled"`
 }
