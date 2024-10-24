@@ -2,11 +2,11 @@ package msgdriver
 
 import "encoding/json"
 
-type ClientQuery struct {
+type Query struct {
 	Key    string         `json:"key"`
 	Params map[string]any `json:"params"`
 }
 
-type ClientQueryResult struct {
+type QueryResult struct {
 	Data json.RawMessage `json:"data"`
 }
