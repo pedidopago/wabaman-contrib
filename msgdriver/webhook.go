@@ -6,6 +6,7 @@ const (
 	WebhookTypeSendMessage     WebhookType = "send_message"
 	WebhookTypeNotifyMessageID WebhookType = "notify_message_id"
 	WebhookTypeReadMessage     WebhookType = "read_message"
+	WebhookTypeClientQUery     WebhookType = "client_query"
 )
 
 type WebhookRequest struct {
@@ -19,6 +20,7 @@ type WebhookRequest struct {
 	SendMessage     *SendMessage     `json:"send_message,omitempty"`
 	NotifyMessageID *NotifyMessageID `json:"notify_message_id,omitempty"`
 	ReadMessage     *ReadMessage     `json:"read_message,omitempty"`
+	ClientQuery     *ClientQuery     `json:"client_query,omitempty"`
 }
 
 type WebhookResponse struct {
@@ -27,6 +29,7 @@ type WebhookResponse struct {
 	// one of:
 
 	SendMessage *SendMessageResult `json:"send_message,omitempty"`
+	ClientQuery *ClientQueryResult `json:"client_query,omitempty"`
 }
 
 // Business is equivalent to a Store (PP).
