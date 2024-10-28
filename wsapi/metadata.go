@@ -27,6 +27,7 @@ type PhoneMetadata struct {
 	WhatsAppBusinessAccountID string `json:"whatsapp_business_account_id,omitempty"`
 	PhoneNumber               string `json:"phone_number,omitempty"`
 	BranchID                  string `json:"branch_id,omitempty"`
+	LanguageCode              string `json:"language_code,omitempty"`
 }
 
 type ContactMetadata struct {
