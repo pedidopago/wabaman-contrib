@@ -38,28 +38,29 @@ const (
 
 // Message is the root level object of a ms-wabaman websocket.
 type Message struct {
-	Type                   MessageType             `json:"type"`
-	Error                  *Error                  `json:"error,omitempty"`
-	ClientMessage          *ClientMessage          `json:"client_message,omitempty"`
-	HostMessage            *HostMessage            `json:"host_message,omitempty"`
-	ReadByHostReceipt      *ReadByHostReceipt      `json:"read_by_host_receipt,omitempty"`
-	ClientReceipt          *ClientReceipt          `json:"client_receipt,omitempty"`
-	ContactUpdate          *ContactUpdate          `json:"contact_update,omitempty"`
-	NewContact             *NewContact             `json:"new_contact,omitempty"`
-	HostNote               *HostNote               `json:"host_note,omitempty"`
-	HostNoteUpdated        *HostNoteUpdated        `json:"host_note_updated,omitempty"`
-	Metadata               *Metadata               `json:"metadata,omitempty"`
-	ClientMockData         *ClientMockData         `json:"client_mock_data,omitempty"`
-	Tag                    *TagEventData           `json:"tag,omitempty"`
-	TagGroup               *TagEventData           `json:"tag_group,omitempty"`
-	Reaction               *ReactionEventData      `json:"reaction,omitempty"`
-	ContactBroadcast       *ContactBroadcast       `json:"contact_broadcast,omitempty"`
-	MessageUpdated         *MessageUpdated         `json:"message_updated,omitempty"`
-	PresenceViewClient     *PresenceViewClient     `json:"presence_view_client,omitempty"`
-	PresenceTypingToClient *PresenceTypingToClient `json:"presence_typing_to_client,omitempty"`
-	PresenceRequest        *PresenceRequest        `json:"presence_request,omitempty"`
-	PresenceResponse       *PresenceResponse       `json:"presence_response,omitempty"`
-	ScheduledMessage       *ScheduledMessageStub   `json:"scheduled_message,omitempty"`
+	Type                       MessageType                 `json:"type"`
+	Error                      *Error                      `json:"error,omitempty"`
+	ClientMessage              *ClientMessage              `json:"client_message,omitempty"`
+	HostMessage                *HostMessage                `json:"host_message,omitempty"`
+	ReadByHostReceipt          *ReadByHostReceipt          `json:"read_by_host_receipt,omitempty"`
+	ClientReceipt              *ClientReceipt              `json:"client_receipt,omitempty"`
+	ContactUpdate              *ContactUpdate              `json:"contact_update,omitempty"`
+	NewContact                 *NewContact                 `json:"new_contact,omitempty"`
+	HostNote                   *HostNote                   `json:"host_note,omitempty"`
+	HostNoteUpdated            *HostNoteUpdated            `json:"host_note_updated,omitempty"`
+	Metadata                   *Metadata                   `json:"metadata,omitempty"`
+	ClientMockData             *ClientMockData             `json:"client_mock_data,omitempty"`
+	Tag                        *TagEventData               `json:"tag,omitempty"`
+	TagGroup                   *TagEventData               `json:"tag_group,omitempty"`
+	Reaction                   *ReactionEventData          `json:"reaction,omitempty"`
+	ContactBroadcast           *ContactBroadcast           `json:"contact_broadcast,omitempty"`
+	MessageUpdated             *MessageUpdated             `json:"message_updated,omitempty"`
+	PresenceViewClient         *PresenceViewClient         `json:"presence_view_client,omitempty"`
+	PresenceTypingToClient     *PresenceTypingToClient     `json:"presence_typing_to_client,omitempty"`
+	PresenceRequest            *PresenceRequest            `json:"presence_request,omitempty"`
+	PresenceResponse           *PresenceResponse           `json:"presence_response,omitempty"`
+	ScheduledMessage           *ScheduledMessageStub       `json:"scheduled_message,omitempty"`
+	CancelledScheduledMessages *CancelledScheduledMessages `json:"cancelled_scheduled_messages,omitempty"`
 }
 
 func (e Message) ToJSON() string {
