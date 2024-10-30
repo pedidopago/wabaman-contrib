@@ -10,29 +10,30 @@ type MessageType uint8
 
 // All valid message types
 const (
-	MessageTypePing                   MessageType = 0
-	MessageTypePong                   MessageType = 1
-	MessageTypeClientMessage          MessageType = 2
-	MessageTypeHostMessage            MessageType = 3
-	MessageTypeReadByHostReceipt      MessageType = 4
-	MessageTypeClientReceipt          MessageType = 5
-	MessageTypeContactUpdate          MessageType = 6
-	MessageTypeNewContact             MessageType = 7
-	MessageTypeHostNote               MessageType = 8
-	MessageTypeHostNoteUpdated        MessageType = 9
-	MessageTypeTag                    MessageType = 10
-	MessageTypeTagGroup               MessageType = 11
-	MessageTypeReaction               MessageType = 12
-	MessageTypeContactBroadcast       MessageType = 13
-	MessageTypeMessageUpdated         MessageType = 14 // server sends this to the clients
-	MessageTypeScheduledMessage       MessageType = 15 // server sends this to the clients
-	MessageTypePresenceViewClient     MessageType = 20 // js/ts client sends this to the server
-	MessageTypePresenceTypingToClient MessageType = 21 // js/ts client sends this to the server
-	MessageTypePresenceRequest        MessageType = 22 // js/ts client sends this to the server
-	MessageTypePresenceResponse       MessageType = 23 // server sends this to the clients
-	MessageTypeMockClientMessages     MessageType = 230
-	MessageTypeGenericError           MessageType = 235
-	MessageTypeCloseError             MessageType = 240
+	MessageTypePing                       MessageType = 0
+	MessageTypePong                       MessageType = 1
+	MessageTypeClientMessage              MessageType = 2
+	MessageTypeHostMessage                MessageType = 3
+	MessageTypeReadByHostReceipt          MessageType = 4
+	MessageTypeClientReceipt              MessageType = 5
+	MessageTypeContactUpdate              MessageType = 6
+	MessageTypeNewContact                 MessageType = 7
+	MessageTypeHostNote                   MessageType = 8
+	MessageTypeHostNoteUpdated            MessageType = 9
+	MessageTypeTag                        MessageType = 10
+	MessageTypeTagGroup                   MessageType = 11
+	MessageTypeReaction                   MessageType = 12
+	MessageTypeContactBroadcast           MessageType = 13
+	MessageTypeMessageUpdated             MessageType = 14 // server sends this to the clients
+	MessageTypeScheduledMessage           MessageType = 15 // server sends this to the clients
+	MessageTypeCancelledScheduledMessages MessageType = 16 // server sends this to the clients
+	MessageTypePresenceViewClient         MessageType = 20 // js/ts client sends this to the server
+	MessageTypePresenceTypingToClient     MessageType = 21 // js/ts client sends this to the server
+	MessageTypePresenceRequest            MessageType = 22 // js/ts client sends this to the server
+	MessageTypePresenceResponse           MessageType = 23 // server sends this to the clients
+	MessageTypeMockClientMessages         MessageType = 230
+	MessageTypeGenericError               MessageType = 235
+	MessageTypeCloseError                 MessageType = 240
 )
 
 // Message is the root level object of a ms-wabaman websocket.
@@ -275,4 +276,12 @@ type ScheduledMessageStub struct {
 		At         string `json:"at,omitempty"`
 		Persistent bool   `json:"persistent,omitempty"`
 	} `json:"scheduled"`
+}
+
+type CancelledScheduledMessages struct {
+	PhoneID             uint     `json:"phone_id"`
+	BranchID            string   `json:"branch_id,omitempty"`
+	WABAContactID       string   `json:"waba_contact_id"`
+	ContactID           uint64   `json:"contact_id,omitempty"`
+	CancelledMessageIDs []uint64 `json:"cancelled_message_ids"`
 }
