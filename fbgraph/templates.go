@@ -46,16 +46,6 @@ const (
 	MTCategoryTicketUpdate    MessageTemplateCategory = "TICKET_UPDATE"
 	MTCategoryIssueResolution MessageTemplateCategory = "ISSUE_RESOLUTION"
 	MTCategoryAuthentication  MessageTemplateCategory = "AUTHENTICATION"
-
-	// TRANSACTIONAL
-	//
-	//Deprecated: use MTCategoryUtility
-	MTCategoryTransactional MessageTemplateCategory = "TRANSACTIONAL"
-
-	// OTP
-	//
-	//Deprecated: use MTCategoryAuthentication
-	MTCategoryIssueOneTimePassword MessageTemplateCategory = "OTP"
 )
 
 var templateParamsDefaultFields = []string{
