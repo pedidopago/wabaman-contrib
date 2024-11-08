@@ -171,11 +171,13 @@ type ParsedTemplate struct {
 	Header       *ParsedTemplateHeader `json:"header,omitempty"`
 	Body         string                `json:"body"`
 	Footer       string                `json:"footer"`
-	ButtonsType  TemplateButtonsType   `json:"buttons_type"`
 	Buttons      []TplButton           `json:"buttons,omitempty"`
 	Cards        []TplCard             `json:"cards,omitempty"`
 
 	// Deprecated fields
+
+	// Deprecated: use Buttons
+	ButtonsType TemplateButtonsType `json:"buttons_type"`
 
 	// Deprecated: use Buttons
 	QuickReplyButtons []TplQuickReplyButton `json:"quick_reply_buttons" deprecated:"true"`
