@@ -98,11 +98,12 @@ const (
 	TplButtonsTypeQuickReply   TemplateButtonsType = "quick_reply"
 )
 
-type TemplateCTAButtonType string
+type TemplateButtonType string
 
 const (
-	TplCTABCall TemplateCTAButtonType = "call"
-	TplCTABURL  TemplateCTAButtonType = "url"
+	TplCTABCall       TemplateButtonType = "call"
+	TplCTABURL        TemplateButtonType = "url"
+	TplCTABQuickReply TemplateButtonType = "quick_reply"
 )
 
 type TemplateRef struct {
@@ -132,15 +133,17 @@ type TplRefHeader struct {
 	ContentExample string             `json:"content_example"`
 }
 
+// Deprecated: use TplButton
 type TplQuickReplyButton struct {
 	Text string `json:"text"`
 }
 
+// Deprecated: use TplButton
 type TplCallToActionButton struct {
-	Type TemplateCTAButtonType `json:"type"`
-	Text string                `json:"text"`
-	URL  *TplCallToActionURL   `json:"url,omitempty"`
-	Call *TplCallToActionCall  `json:"call,omitempty"`
+	Type TemplateButtonType   `json:"type"`
+	Text string               `json:"text"`
+	URL  *TplCallToActionURL  `json:"url,omitempty"`
+	Call *TplCallToActionCall `json:"call,omitempty"`
 }
 
 type TplCallToActionURL struct {
@@ -154,14 +157,21 @@ type TplCallToActionCall struct {
 }
 
 type ParsedTemplate struct {
-	TemplateName        string                  `json:"template_name"`
-	LanguageCode        string                  `json:"language_code"`
-	Header              *ParsedTemplateHeader   `json:"header,omitempty"`
-	Body                string                  `json:"body"`
-	Footer              string                  `json:"footer"`
-	ButtonsType         TemplateButtonsType     `json:"buttons_type"`
-	QuickReplyButtons   []TplQuickReplyButton   `json:"quick_reply_buttons"`
-	CallToActionButtons []TplCallToActionButton `json:"call_to_action_buttons"`
+	TemplateName string                `json:"template_name"`
+	LanguageCode string                `json:"language_code"`
+	Header       *ParsedTemplateHeader `json:"header,omitempty"`
+	Body         string                `json:"body"`
+	Footer       string                `json:"footer"`
+	ButtonsType  TemplateButtonsType   `json:"buttons_type"`
+	Buttons      []TplButton           `json:"buttons,omitempty"`
+	Cards        []TplCard             `json:"cards,omitempty"`
+
+	// Deprecated fields
+
+	// Deprecated: use Buttons
+	QuickReplyButtons []TplQuickReplyButton `json:"quick_reply_buttons" deprecated:"true"`
+	// Deprecated: use Buttons
+	CallToActionButtons []TplCallToActionButton `json:"call_to_action_buttons" deprecated:"true"`
 }
 
 type ParsedTemplateHeader struct {
@@ -169,4 +179,17 @@ type ParsedTemplateHeader struct {
 	ContentExample string             `json:"content_example"`
 	Content        string             `json:"content"`
 	Type           string             `json:"type"`
+}
+
+type TplCard struct {
+	Header  *ParsedTemplateHeader `json:"header,omitempty"`
+	Body    string                `json:"body"`
+	Buttons []TplButton           `json:"buttons,omitempty"`
+}
+
+type TplButton struct {
+	Type TemplateButtonType   `json:"type"`
+	Text string               `json:"text"`
+	URL  *TplCallToActionURL  `json:"url,omitempty"`
+	Call *TplCallToActionCall `json:"call,omitempty"`
 }

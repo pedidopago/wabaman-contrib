@@ -118,6 +118,12 @@ type TemplateComponent struct {
 	SubType    string                       `json:"sub_type,omitempty"`
 	Parameters []TemplateComponentParameter `json:"parameters"`
 	Index      *int                         `json:"index,omitempty"`
+	Cards      []TemplateCardComponent      `json:"cards,omitempty"`
+}
+
+type TemplateCardComponent struct {
+	CardIndex  *int                `json:"card_index,omitempty"`
+	Components []TemplateComponent `json:"components"`
 }
 
 type TemplateComponentParameter struct {
