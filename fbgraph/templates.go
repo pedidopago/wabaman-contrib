@@ -13,10 +13,11 @@ import (
 type MessageTemplateComponentType string
 
 const (
-	MTComponentHeader  MessageTemplateComponentType = "HEADER"
-	MTComponentBody    MessageTemplateComponentType = "BODY"
-	MTComponentFooter  MessageTemplateComponentType = "FOOTER"
-	MTComponentButtons MessageTemplateComponentType = "BUTTONS"
+	MTComponentHeader   MessageTemplateComponentType = "HEADER"
+	MTComponentBody     MessageTemplateComponentType = "BODY"
+	MTComponentFooter   MessageTemplateComponentType = "FOOTER"
+	MTComponentButtons  MessageTemplateComponentType = "BUTTONS"
+	MTComponentCarousel MessageTemplateComponentType = "CAROUSEL" //TODO: check casing
 )
 
 type MessageTemplateComponentFormat string
@@ -24,7 +25,7 @@ type MessageTemplateComponentFormat string
 const (
 	MTCFormatVideo    MessageTemplateComponentFormat = "VIDEO"
 	MTCFormatImage    MessageTemplateComponentFormat = "IMAGE"
-	MTCFormatDocument MessageTemplateComponentFormat = "DOCUMENT" //TODO: check
+	MTCFormatDocument MessageTemplateComponentFormat = "DOCUMENT"
 	MTCFormatText     MessageTemplateComponentFormat = "TEXT"
 )
 
@@ -108,6 +109,7 @@ type MessageTemplateComponent struct {
 	Format                    string                       `json:"format,omitempty"`
 	Example                   *MessageTemplateExample      `json:"example,omitempty"`
 	Buttons                   []MessageTemplateButton      `json:"buttons,omitempty"`
+	Cards                     []MessageTemplateCard        `json:"cards,omitempty"`                       // for type `carousel`
 	AddSecurityRecommendation *bool                        `json:"add_security_recommendation,omitempty"` // only for authentication templates
 	CodeExpirationMinutes     *int                         `json:"code_expiration_minutes,omitempty"`     // only for authentication templates
 }
@@ -128,6 +130,13 @@ type MessageTemplateButton struct {
 	PhoneNumber   string                    `json:"phone_number,omitempty"`
 	PackageName   string                    `json:"package_name,omitempty"`   // for OTP type ONE_TAP
 	SignatureHash string                    `json:"signature_hash,omitempty"` // for OTP type ONE_TAP
+}
+
+// for type `carousel`
+//
+// At least 1 button required, maximum 2; button types can be mixed
+type MessageTemplateCard struct {
+	Components []MessageTemplateComponent `json:"components"`
 }
 
 type OTPType string
