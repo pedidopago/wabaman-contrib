@@ -101,9 +101,9 @@ const (
 type TemplateButtonType string
 
 const (
-	TplCTABCall       TemplateButtonType = "call"
-	TplCTABURL        TemplateButtonType = "url"
-	TplCTABQuickReply TemplateButtonType = "quick_reply"
+	TemplateButtonCall       TemplateButtonType = "call"
+	TemplateButtonURL        TemplateButtonType = "url"
+	TemplateButtonQuickReply TemplateButtonType = "quick_reply"
 )
 
 type TemplateRef struct {
