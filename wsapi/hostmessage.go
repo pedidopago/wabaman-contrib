@@ -90,8 +90,10 @@ const (
 	TplHeaderTypeMedia TemplateHeaderType = "media"
 )
 
+// Deprecated: use TemplateButtonType
 type TemplateButtonsType string
 
+// Deprecated: use TemplateButtonType
 const (
 	TplButtonsTypeNone         TemplateButtonsType = "none"
 	TplButtonsTypeCallToAction TemplateButtonsType = "call_to_action"
@@ -119,13 +121,20 @@ type TemplateRef struct {
 type TemplateRefLanguage struct {
 	LanguageCode string `json:"language_code"`
 
-	Header      *TplRefHeader       `json:"header"`
-	Body        string              `json:"body"`
-	Footer      string              `json:"footer"`
+	Header *TplRefHeader `json:"header"`
+	Body   string        `json:"body"`
+	Footer string        `json:"footer"`
+
+	// Deprecated: use TemplateButtonType
 	ButtonsType TemplateButtonsType `json:"buttons_type"`
 
-	QuickReplyButtons   []TplQuickReplyButton   `json:"quick_reply_buttons,omitempty"`
+	// Deprecated: use Buttons
+	QuickReplyButtons []TplQuickReplyButton `json:"quick_reply_buttons,omitempty"`
+	// Deprecated: use Buttons
 	CallToActionButtons []TplCallToActionButton `json:"call_to_action_buttons,omitempty"`
+
+	Buttons []TplButton `json:"buttons,omitempty"`
+	Cards   []TplCard   `json:"cards,omitempty"`
 }
 
 type TplRefHeader struct {
