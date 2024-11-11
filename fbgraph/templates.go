@@ -126,6 +126,7 @@ type MessageTemplateButton struct {
 //
 // At least 1 button required, maximum 2; button types can be mixed
 type MessageTemplateCard struct {
+	CardIndex  int                        `json:"card_index,omitempty"`
 	Components []MessageTemplateComponent `json:"components"`
 }
 
