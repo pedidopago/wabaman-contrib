@@ -50,12 +50,20 @@ type TextObject struct {
 	PreviewURL bool   `json:"preview_url"`
 }
 
+type ComponentHolder interface {
+	GetComponents() []TemplateComponent
+}
+
 type TemplateObject struct {
 	// Namespace  string              `json:"namespace,omitempty"`
 	Namespace  string              `json:"-"`
 	Name       string              `json:"name"`
 	Language   *LanguageObject     `json:"language,omitempty"`
 	Components []TemplateComponent `json:"components,omitempty"`
+}
+
+func (t *TemplateObject) GetComponents() []TemplateComponent {
+	return t.Components
 }
 
 type ContactObject struct {
@@ -124,6 +132,10 @@ type TemplateComponent struct {
 type TemplateCardComponent struct {
 	CardIndex  *int                `json:"card_index,omitempty"`
 	Components []TemplateComponent `json:"components"`
+}
+
+func (t *TemplateCardComponent) GetComponents() []TemplateComponent {
+	return t.Components
 }
 
 type TemplateComponentParameter struct {
