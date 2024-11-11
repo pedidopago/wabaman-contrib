@@ -12,6 +12,10 @@ import (
 
 type MessageTemplateComponentType string
 
+func (ct MessageTemplateComponentType) Equals(other MessageTemplateComponentType) bool {
+	return strings.EqualFold(string(ct), string(other))
+}
+
 const (
 	MTComponentHeader   MessageTemplateComponentType = "HEADER"
 	MTComponentBody     MessageTemplateComponentType = "BODY"
