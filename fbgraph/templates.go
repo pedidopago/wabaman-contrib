@@ -108,6 +108,14 @@ type MessageTemplateComponent struct {
 	CodeExpirationMinutes     *int                         `json:"code_expiration_minutes,omitempty"`     // only for authentication templates
 }
 
+type MessageTemplateCardComponent struct {
+	Type    MessageTemplateComponentType `json:"type"`
+	Text    string                       `json:"text,omitempty"`
+	Format  string                       `json:"format,omitempty"`
+	Example *MessageTemplateExample      `json:"example,omitempty"`
+	Buttons []MessageTemplateButton      `json:"buttons,omitempty"`
+}
+
 type MessageTemplateExample struct {
 	HeaderHandle []string   `json:"header_handle,omitempty"`
 	BodyText     [][]string `json:"body_text,omitempty"`
@@ -130,8 +138,8 @@ type MessageTemplateButton struct {
 //
 // At least 1 button required, maximum 2; button types can be mixed
 type MessageTemplateCard struct {
-	CardIndex  int                        `json:"card_index,omitempty"`
-	Components []MessageTemplateComponent `json:"components"`
+	CardIndex  int                            `json:"card_index,omitempty"`
+	Components []MessageTemplateCardComponent `json:"components"`
 }
 
 type OTPType string
