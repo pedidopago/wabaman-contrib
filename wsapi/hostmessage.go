@@ -195,6 +195,7 @@ type ParsedTemplateHeader struct {
 type TplCard struct {
 	Header  *ParsedTemplateHeader `json:"header,omitempty"`
 	Body    string                `json:"body"`
+	Footer  string                `json:"footer,omitempty"`
 	Buttons []TplButton           `json:"buttons,omitempty"`
 }
 
