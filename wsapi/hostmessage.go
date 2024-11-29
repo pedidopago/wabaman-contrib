@@ -193,10 +193,10 @@ type ParsedTemplateHeader struct {
 }
 
 type TplCard struct {
-	Header  *ParsedTemplateHeader `json:"header,omitempty"`
-	Body    string                `json:"body"`
-	Footer  string                `json:"footer,omitempty"`
-	Buttons []TplButton           `json:"buttons,omitempty"`
+	Header *ParsedTemplateHeader `json:"header,omitempty"`
+	Body   string                `json:"body"`
+	//Footer  string                `json:"footer,omitempty"` //gabs: removed footer since there is no support: https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/media-card-carousel-templates/
+	Buttons []TplButton `json:"buttons,omitempty"`
 }
 
 type TplButton struct {
