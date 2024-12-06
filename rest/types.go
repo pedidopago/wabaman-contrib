@@ -96,6 +96,12 @@ type NewMessageRequest struct {
 	OverridePhoneByDriver   string             `json:"override_phone_by_driver,omitempty" description:"If set, Wabaman might override the branch_id (and subsequently the phone_id) used if the contact is found in a branch that has this driver."`
 	SkipPhoneValidation     bool               `json:"skip_phone_validation,omitempty" description:"If set, Wabaman will not validate the phone number before sending the message."`
 	Schedule                MessageSchedule    `json:"schedule,omitempty" description:"Schedule this message to be sent at a specific time"`
+	ContactTags             *ContactTagsMod    `json:"contact_tags,omitempty"`
+}
+
+type ContactTagsMod struct {
+	Add    []string `json:"add,omitempty"`
+	Remove []string `json:"remove,omitempty"`
 }
 
 type MessageSchedule struct {
