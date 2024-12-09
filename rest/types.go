@@ -60,10 +60,10 @@ type NewMessageRequestTemplate struct {
 }
 
 type NewMessageRequest struct {
-	PhoneID          uint                              `json:"phone_id"`
-	BranchID         string                            `json:"branch_id"`
-	FromNumber       string                            `json:"from_number"`
-	ToNumber         string                            `json:"to_number"`
+	PhoneID          uint                              `json:"phone_id,omitempty"`
+	BranchID         string                            `json:"branch_id,omitempty"`
+	FromNumber       string                            `json:"from_number,omitempty"`
+	ToNumber         string                            `json:"to_number,omitempty"`
 	Type             MessageType                       `json:"type"`
 	Text             *fbgraph.TextObject               `json:"text,omitempty"`
 	Template         *NewMessageRequestTemplate        `json:"template,omitempty"`
