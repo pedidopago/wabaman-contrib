@@ -783,7 +783,7 @@ type RegisterDriverMessageRequest struct {
 	ReplyMessageID             string         `json:"reply_message_id,omitempty"`
 	ReplyButtonID              string         `json:"reply_button_id,omitempty"`
 	Metadata                   map[string]any `json:"metadata,omitempty"`
-	SkipOpenToChatWindowUpdate bool           `json:"skip_open_to_chat_window_update,omitempty"`
+	SkipOpenToChatWindowUpdate bool           `json:"skip_open_to_chat_window_update,omitempty" description:"If true, Wabaman will not bump the open-to-chat (AKA last_24h_window) window for this contact"`
 }
 
 type RegisterDriverMessageResponse struct {
