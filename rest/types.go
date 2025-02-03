@@ -758,6 +758,7 @@ type ReplyContact struct {
 }
 
 type RegisterDriverMessageRequest struct {
+	RawIdentifiers  bool        `json:"raw_identifiers" description:"If true, the identifiers will be sent as is, without any processing"`
 	PhoneID         uint        `json:"phone_id" description:"Phone ID"`
 	MessageID       string      `json:"message_id" description:"External Message ID (formerly known as whatsapp_id)"`
 	From            string      `json:"from" description:"Sender"`
