@@ -768,21 +768,22 @@ type RegisterDriverMessageRequest struct {
 	Text            struct {
 		Body string `json:"body" description:"Message body"`
 	} `json:"text" description:"Text message"`
-	Image          *Media         `json:"image,omitempty"`
-	Video          *Media         `json:"video,omitempty"`
-	Audio          *Media         `json:"audio,omitempty"`
-	Document       *Document      `json:"document,omitempty"`
-	Buttons        []Button       `json:"buttons,omitempty"`
-	Header         *Header        `json:"header,omitempty"`
-	Footer         string         `json:"footer,omitempty"`
-	CreatedAt      time.Time      `json:"created_at,omitempty" description:"Message creation date"`
-	SentAt         time.Time      `json:"sent_at,omitempty" description:"Message sent date"`
-	DeliveredAt    time.Time      `json:"delivered_at,omitempty" description:"Message delivered date"`
-	ReadAt         time.Time      `json:"read_at,omitempty" description:"Message read date"`
-	ReplyContact   *ReplyContact  `json:"reply_contact,omitempty"`
-	ReplyMessageID string         `json:"reply_message_id,omitempty"`
-	ReplyButtonID  string         `json:"reply_button_id,omitempty"`
-	Metadata       map[string]any `json:"metadata,omitempty"`
+	Image                      *Media         `json:"image,omitempty"`
+	Video                      *Media         `json:"video,omitempty"`
+	Audio                      *Media         `json:"audio,omitempty"`
+	Document                   *Document      `json:"document,omitempty"`
+	Buttons                    []Button       `json:"buttons,omitempty"`
+	Header                     *Header        `json:"header,omitempty"`
+	Footer                     string         `json:"footer,omitempty"`
+	CreatedAt                  time.Time      `json:"created_at,omitempty" description:"Message creation date"`
+	SentAt                     time.Time      `json:"sent_at,omitempty" description:"Message sent date"`
+	DeliveredAt                time.Time      `json:"delivered_at,omitempty" description:"Message delivered date"`
+	ReadAt                     time.Time      `json:"read_at,omitempty" description:"Message read date"`
+	ReplyContact               *ReplyContact  `json:"reply_contact,omitempty"`
+	ReplyMessageID             string         `json:"reply_message_id,omitempty"`
+	ReplyButtonID              string         `json:"reply_button_id,omitempty"`
+	Metadata                   map[string]any `json:"metadata,omitempty"`
+	SkipOpenToChatWindowUpdate bool           `json:"skip_open_to_chat_window_update,omitempty"`
 }
 
 type RegisterDriverMessageResponse struct {
