@@ -84,6 +84,7 @@ type NewMessageRequest struct {
 	IsSecret                bool               `json:"is_secret,omitempty"`
 	ReadMessages            bool               `json:"read_messages,omitempty"`
 	Verbose                 bool               `json:"verbose,omitempty"`
+	DiscardWindowClosed     bool               `json:"discard_window_closed,omitempty" description:"If true, Wabaman will discard the=is message if the last 24h window is closed, of if the last_24h_window is not client-initiated"`
 	ContactMetadata         map[string]any     `json:"contact_metadata,omitempty"`
 	OneShotContactMetadata  map[string]any     `json:"one_shot_contact_metadata,omitempty"`
 	AgentID                 string             `json:"agent_id,omitempty"`
