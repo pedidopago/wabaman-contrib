@@ -46,12 +46,13 @@ type NewMessageStatus string
 
 // send messages statuses
 const (
-	NewMessageStatusImmediate                  NewMessageStatus = "sent_immediately"
-	NewMessageStatusQueuedForTemplate          NewMessageStatus = "queued_for_template"
-	NewMessageStatusBlockedByMarketingDisabled NewMessageStatus = "blocked_by_marketing_disabled"
-	NewMessageStatusBlockedByExperiment        NewMessageStatus = "blocked_by_experiment"
-	NewMessageStatusScheduled                  NewMessageStatus = "scheduled"
-	NewMessageStatusUnknown                    NewMessageStatus = "unknown"
+	NewMessageStatusImmediate                    NewMessageStatus = "sent_immediately"
+	NewMessageStatusQueuedForTemplate            NewMessageStatus = "queued_for_template"
+	NewMessageStatusBlockedByMarketingDisabled   NewMessageStatus = "blocked_by_marketing_disabled"
+	NewMessageStatusBlockedByExperiment          NewMessageStatus = "blocked_by_experiment"
+	NewMessageStatusBlockedByDiscardWindowClosed NewMessageStatus = "blocked_by_discard_window_closed"
+	NewMessageStatusScheduled                    NewMessageStatus = "scheduled"
+	NewMessageStatusUnknown                      NewMessageStatus = "unknown"
 )
 
 type NewMessageRequestTemplate struct {
