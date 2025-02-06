@@ -50,4 +50,5 @@ type Phone struct {
 	DriverName                 string `json:"driver_name"`
 	DriverData                 string `json:"driver_data"` // 1000 char data to use with the driver
 	PhoneNumber                string `json:"phone_number"`
+	LanguageCode               string `json:"language_code,omitempty"`
 }
