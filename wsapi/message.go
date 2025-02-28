@@ -129,6 +129,7 @@ const (
 	HostNoteFormatText    HostNoteFormat = "TEXT"
 	HostNoteFormatButtons HostNoteFormat = "BUTTONS"
 	HostNoteFormatImages  HostNoteFormat = "IMAGES"
+	HostNoteFormatCustom  HostNoteFormat = "CUSTOM" // Custom JSON
 )
 
 type HostNoteImage struct {
@@ -141,7 +142,7 @@ type HostNote struct {
 	ContactID     uint64         `json:"contact_id"`
 	WABAContactID string         `json:"waba_contact_id"`
 	PhoneID       uint           `json:"phone_id"`
-	Format        HostNoteFormat `json:"format"`
+	Format        HostNoteFormat `json:"format"` // primary "type"
 	Title         string         `json:"title"`
 	TitleIcon     string         `json:"title_icon"`
 	Description   string         `json:"description"`
@@ -151,11 +152,12 @@ type HostNote struct {
 	Text    string           `json:"text,omitempty"`
 	Buttons []HostNoteButton `json:"buttons,omitempty"`
 	Images  []HostNoteImage  `json:"images,omitempty"`
+	Custom  json.RawMessage  `json:"custom,omitempty"`
 
 	AgentID       string         `json:"agent_id"`
 	AgentName     string         `json:"agent_name,omitempty"`
 	Origin        string         `json:"origin,omitempty"`
-	Type          string         `json:"type"`
+	Type          string         `json:"type"` // subtype
 	CreatedAt     time.Time      `json:"created_at"`
 	CreatedAtNano int64          `json:"created_at_nano"`
 	Metadata      map[string]any `json:"metadata,omitempty"`
