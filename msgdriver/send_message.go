@@ -45,8 +45,9 @@ const (
 )
 
 type SendMessageResult struct {
-	MessageID     string        `json:"message_id"`
-	MessageStatus MessageStatus `json:"message_status,omitempty"`
-	ContactID     string        `json:"contact_id"` // This is usually the contact's parsed phone number. AKA WABAContactID (due to legacy WABA implementation)
-	ContactName   string        `json:"contact_name"`
+	MessageID     string         `json:"message_id"`
+	MessageStatus MessageStatus  `json:"message_status,omitempty"`
+	ContactID     string         `json:"contact_id"` // This is usually the contact's parsed phone number. AKA WABAContactID (due to legacy WABA implementation)
+	ContactName   string         `json:"contact_name"`
+	Metadata      map[string]any `json:"metadata,omitempty"` // This can be used to save metadata to this recently created message.
 }
