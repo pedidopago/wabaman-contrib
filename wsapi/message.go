@@ -102,25 +102,27 @@ type ClientReceipt struct {
 }
 
 type ContactUpdate struct {
-	ContactID       uint64                 `json:"contact_id"`
-	HostPhoneID     uint                   `json:"host_phone_id"`
-	WABAContactID   string                 `json:"waba_contact_id"`
-	WABAProfileName string                 `json:"waba_profile_name"`
-	CustomerID      string                 `json:"customer_id"`
-	CustomerName    string                 `json:"customer_name"`
-	Name            string                 `json:"name"`
-	Metadata        map[string]interface{} `json:"metadata"`
-	ColorTags       []ColorTag             `json:"color_tags,omitempty"`
-	UpdatedFields   []string               `json:"updated_fields"`
+	ContactID          uint64                 `json:"contact_id"`
+	HostPhoneID        uint                   `json:"host_phone_id"`
+	WABAContactID      string                 `json:"waba_contact_id"`
+	WABAProfileName    string                 `json:"waba_profile_name"`
+	ContactPhoneNumber string                 `json:"contact_phone_number,omitempty"`
+	CustomerID         string                 `json:"customer_id"`
+	CustomerName       string                 `json:"customer_name"`
+	Name               string                 `json:"name"`
+	Metadata           map[string]interface{} `json:"metadata"`
+	ColorTags          []ColorTag             `json:"color_tags,omitempty"`
+	UpdatedFields      []string               `json:"updated_fields"`
 }
 
 type NewContact struct {
-	ContactID       uint64                 `json:"contact_id"`
-	HostPhoneID     uint                   `json:"host_phone_id"`
-	WABAContactID   string                 `json:"waba_contact_id"`
-	WABAProfileName string                 `json:"waba_profile_name"`
-	CustomerID      string                 `json:"customer_id"`
-	Metadata        map[string]interface{} `json:"metadata"`
+	ContactID          uint64                 `json:"contact_id"`
+	HostPhoneID        uint                   `json:"host_phone_id"`
+	WABAContactID      string                 `json:"waba_contact_id"`
+	WABAProfileName    string                 `json:"waba_profile_name"`
+	ContactPhoneNumber string                 `json:"contact_phone_number,omitempty"`
+	CustomerID         string                 `json:"customer_id"`
+	Metadata           map[string]interface{} `json:"metadata"`
 }
 
 type HostNoteFormat string
