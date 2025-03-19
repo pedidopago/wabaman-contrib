@@ -7,6 +7,7 @@ const (
 	WebhookTypeNotifyMessageID WebhookType = "notify_message_id"
 	WebhookTypeReadMessage     WebhookType = "read_message"
 	WebhookTypeQuery           WebhookType = "query"
+	WebhookTypeHostNote        WebhookType = "host_note"
 )
 
 type WebhookRequest struct {
@@ -21,6 +22,7 @@ type WebhookRequest struct {
 	NotifyMessageID *NotifyMessageID `json:"notify_message_id,omitempty"`
 	ReadMessage     *ReadMessage     `json:"read_message,omitempty"`
 	Query           *Query           `json:"query,omitempty"`
+	HostNote        *HostNote        `json:"host_note,omitempty"`
 }
 
 type WebhookResponse struct {
