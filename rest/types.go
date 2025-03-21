@@ -65,6 +65,7 @@ type NewMessageRequest struct {
 	BranchID         string                            `json:"branch_id,omitempty"`
 	FromNumber       string                            `json:"from_number,omitempty"`
 	ToNumber         string                            `json:"to_number,omitempty"`
+	ToCustomerID     string                            `json:"to_customer_id,omitempty" description:"If set, Wabaman will use the CustomerID (instead of 'to_number') to send the message."`
 	Type             MessageType                       `json:"type"`
 	Text             *fbgraph.TextObject               `json:"text,omitempty"`
 	Template         *NewMessageRequestTemplate        `json:"template,omitempty"`
@@ -562,6 +563,7 @@ func UCWithAsync(async bool) UpdateContactOption {
 type NewNoteRequest struct {
 	ContactID     uint64                 `json:"contact_id,omitempty"`
 	WABAContactID string                 `json:"waba_contact_id,omitempty"`
+	ToCustomerID  string                 `json:"to_customer_id,omitempty" description:"If set, Wabaman will use the CustomerID (instead of 'waba_contact_id') to send the host note."`
 	BranchID      string                 `json:"branch_id,omitempty"`
 	PhoneID       uint                   `json:"phone_id,omitempty"`
 	AgentName     string                 `json:"agent_name,omitempty"`
