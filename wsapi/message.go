@@ -113,6 +113,8 @@ type ContactUpdate struct {
 	Metadata           map[string]interface{} `json:"metadata"`
 	ColorTags          []ColorTag             `json:"color_tags,omitempty"`
 	UpdatedFields      []string               `json:"updated_fields"`
+	FieldsBefore       map[string]interface{} `json:"fields_before,omitempty"`
+	FieldsAfter        map[string]interface{} `json:"fields_after,omitempty"`
 }
 
 type NewContact struct {
