@@ -1,6 +1,10 @@
 package wsapi
 
-import "github.com/pedidopago/go-common/mariadb"
+import (
+	"encoding/json"
+
+	"github.com/pedidopago/go-common/mariadb"
+)
 
 type Metadata struct {
 	Account  *AccountMetadata  `json:"account,omitempty"`
@@ -39,7 +43,7 @@ type ContactMetadata struct {
 	Name                         string           `json:"name,omitempty"`
 	ContactPhoneNumber           string           `json:"contact_phone_number,omitempty"`
 	IsNewContact                 bool             `json:"is_new_contact,omitempty"`
-	Metadata                     map[string]any   `json:"metadata,omitempty"`
+	Metadata                     json.RawMessage  `json:"metadata,omitempty"`
 	LastActivity                 mariadb.NullTime `json:"last_activity,omitempty"`
 	LastMessagePreview           string           `json:"last_message_preview,omitempty"`
 	LastMessagePreviewOrigin     string           `json:"last_message_preview_origin,omitempty"`
