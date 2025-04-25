@@ -110,7 +110,7 @@ type ContactUpdate struct {
 	CustomerID         string                 `json:"customer_id"`
 	CustomerName       string                 `json:"customer_name"`
 	Name               string                 `json:"name"`
-	Metadata           map[string]interface{} `json:"metadata"`
+	Metadata           json.RawMessage        `json:"metadata"`
 	ColorTags          []ColorTag             `json:"color_tags,omitempty"`
 	UpdatedFields      []string               `json:"updated_fields"`
 	FieldsBefore       map[string]interface{} `json:"fields_before,omitempty"`
