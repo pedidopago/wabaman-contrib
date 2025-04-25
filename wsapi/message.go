@@ -118,13 +118,13 @@ type ContactUpdate struct {
 }
 
 type NewContact struct {
-	ContactID          uint64                 `json:"contact_id"`
-	HostPhoneID        uint                   `json:"host_phone_id"`
-	WABAContactID      string                 `json:"waba_contact_id"`
-	WABAProfileName    string                 `json:"waba_profile_name"`
-	ContactPhoneNumber string                 `json:"contact_phone_number,omitempty"`
-	CustomerID         string                 `json:"customer_id"`
-	Metadata           map[string]interface{} `json:"metadata"`
+	ContactID          uint64          `json:"contact_id"`
+	HostPhoneID        uint            `json:"host_phone_id"`
+	WABAContactID      string          `json:"waba_contact_id"`
+	WABAProfileName    string          `json:"waba_profile_name"`
+	ContactPhoneNumber string          `json:"contact_phone_number,omitempty"`
+	CustomerID         string          `json:"customer_id"`
+	Metadata           json.RawMessage `json:"metadata"`
 }
 
 type HostNoteFormat string
