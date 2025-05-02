@@ -134,14 +134,9 @@ func (c *Client) GetContactByID(ctx context.Context, id uint64) (*rest.Contact, 
 	return resp, nil
 }
 
-func (c *Client) GetContacts(ctx context.Context, req *rest.GetContactsRequest) (*rest.GetContactsResponse, error) {
-	if c == nil {
-		return nil, fmt.Errorf("nil client")
-	}
-	q := req.BuildQuery()
-	qenc := q.Encode()
-	resp := &rest.GetContactsResponse{}
-	if err := c.get(ctx, fmt.Sprintf("/api/v1/contacts?%s", qenc), resp); err != nil {
+func (c *Client) GetContactByBranchIDAndWABAContactID(ctx context.Context, branchID, wabaContactID string) (*rest.Contact, error) {
+	resp := &rest.Contact{}
+	if err := c.get(ctx, fmt.Sprintf("/api/v1/contact/0?branch_id=%s&waba_contact_id=%s", branchID, wabaContactID), resp); err != nil {
 		return nil, err
 	}
 	return resp, nil
