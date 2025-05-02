@@ -7,8 +7,8 @@ import (
 type SafeMetadata json.RawMessage
 
 func (m SafeMetadata) MarshalJSON() ([]byte, error) {
-	if m == nil {
-		return []byte("null"), nil
+	if len(m) == 0 {
+		return []byte("{}"), nil
 	}
 
 	return []byte(m), nil
