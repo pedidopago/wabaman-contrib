@@ -2,6 +2,7 @@ package types
 
 import (
 	"encoding/json"
+	"errors"
 	"log/slog"
 	"runtime"
 )
@@ -79,4 +80,24 @@ func (m *CachedMetadata) Set(key string, value any) {
 	m.rawIsDirty = true
 
 	m.parsed[key] = value
+}
+
+func (m *CachedMetadata) UnmarshalTo(target any) error {
+	if target == nil {
+		return errors.New("target is nil")
+	}
+
+	if len(m.raw) != 0 && !m.rawIsDirty {
+		return json.Unmarshal(m.raw, target)
+	}
+
+	if len(m.parsed) > 0 {
+		ms, err := json.Marshal(m.parsed)
+		if err != nil {
+			return err
+		}
+		return json.Unmarshal(ms, target)
+	}
+
+	return nil
 }
