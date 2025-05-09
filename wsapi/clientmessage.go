@@ -34,6 +34,7 @@ type ClientMessage struct {
 
 	Context   *MessageContext   `json:"context,omitempty"`
 	Reactions []MessageReaction `json:"reactions,omitempty"`
+	Metadata  map[string]any    `json:"metadata,omitempty"`
 
 	Referral *shared.MessageObjectReferral `json:"referral,omitempty"`
 

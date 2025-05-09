@@ -4,17 +4,25 @@ import (
 	"encoding/json"
 )
 
-type SafeMetadata json.RawMessage
+// CachedMetadata is not thread safe
+type CachedMetadata struct {
+	raw    json.RawMessage
+	parsed map[string]any
+}
 
-func (m SafeMetadata) MarshalJSON() ([]byte, error) {
-	if len(m) == 0 {
+func (m CachedMetadata) MarshalJSON() ([]byte, error) {
+	if len(m.raw) == 0 && m.parsed == nil {
 		return []byte("{}"), nil
 	}
 
-	return []byte(m), nil
+	if len(m.raw) == 0 && m.parsed != nil {
+		return json.Marshal(m.parsed)
+	}
+
+	return []byte(m.raw), nil
 }
 
-func (m *SafeMetadata) UnmarshalJSON(data []byte) error {
+func (m *CachedMetadata) UnmarshalJSON(data []byte) error {
 	if m == nil || data == nil {
 		return nil
 	}
@@ -23,8 +31,23 @@ func (m *SafeMetadata) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
-	*m = make([]byte, len(data))
-	copy((*m)[:], data)
+	m.raw = make([]byte, len(data))
+	copy(m.raw[:], data)
 
 	return nil
+}
+
+func (m *CachedMetadata) Get(key string) any {
+	if m.parsed != nil {
+		return m.parsed[key]
+	}
+
+	parsed := make(map[string]any)
+	err := json.Unmarshal(m.raw, &parsed)
+	if err != nil {
+		return nil
+	}
+	m.parsed = parsed
+
+	return parsed
 }
