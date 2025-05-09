@@ -10,6 +10,10 @@ type CachedMetadata struct {
 	parsed map[string]any
 }
 
+func (m CachedMetadata) IsEmpty() bool {
+	return len(m.raw) == 0 && m.parsed == nil
+}
+
 func (m CachedMetadata) MarshalJSON() ([]byte, error) {
 	if len(m.raw) == 0 && m.parsed == nil {
 		return []byte("{}"), nil
