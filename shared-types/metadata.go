@@ -2,12 +2,15 @@ package types
 
 import (
 	"encoding/json"
+	"log/slog"
+	"runtime"
 )
 
 // CachedMetadata is not thread safe
 type CachedMetadata struct {
-	raw    json.RawMessage
-	parsed map[string]any
+	raw        json.RawMessage
+	rawIsDirty bool
+	parsed     map[string]any
 }
 
 func (m CachedMetadata) IsEmpty() bool {
@@ -17,6 +20,10 @@ func (m CachedMetadata) IsEmpty() bool {
 func (m CachedMetadata) MarshalJSON() ([]byte, error) {
 	if len(m.raw) == 0 && m.parsed == nil {
 		return []byte("{}"), nil
+	}
+
+	if m.rawIsDirty && m.parsed != nil {
+		return json.Marshal(m.parsed)
 	}
 
 	if len(m.raw) == 0 && m.parsed != nil {
@@ -49,9 +56,27 @@ func (m *CachedMetadata) Get(key string) any {
 	parsed := make(map[string]any)
 	err := json.Unmarshal(m.raw, &parsed)
 	if err != nil {
+		_, file, line, _ := runtime.Caller(1)
+		slog.Error("failed to unmarshal metadata (CachedMetadata)", slog.String("error", err.Error()), slog.String("file", file), slog.Int("line", line))
 		return nil
 	}
 	m.parsed = parsed
 
 	return parsed
+}
+
+func (m *CachedMetadata) Set(key string, value any) {
+	if m.parsed == nil && len(m.raw) > 0 {
+		m.parsed = make(map[string]any)
+		err := json.Unmarshal(m.raw, &m.parsed)
+		if err != nil {
+			_, file, line, _ := runtime.Caller(1)
+			slog.Error("failed to unmarshal metadata (CachedMetadata)", slog.String("error", err.Error()), slog.String("file", file), slog.Int("line", line))
+			return
+		}
+	}
+
+	m.rawIsDirty = true
+
+	m.parsed[key] = value
 }
