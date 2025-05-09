@@ -14,6 +14,22 @@ type CachedMetadata struct {
 	parsed     map[string]any
 }
 
+func NewCachedMetadataFromJSONBytes(data []byte) CachedMetadata {
+	var m CachedMetadata
+	m.raw = make([]byte, len(data))
+	copy(m.raw[:], data)
+
+	return m
+}
+
+func NewCachedMetadataPtrFromJSONBytes(data []byte) *CachedMetadata {
+	var m CachedMetadata
+	m.raw = make([]byte, len(data))
+	copy(m.raw[:], data)
+
+	return &m
+}
+
 func (m CachedMetadata) IsEmpty() bool {
 	return len(m.raw) == 0 && m.parsed == nil
 }
