@@ -82,6 +82,10 @@ func (m *CachedMetadata) Get(key string) any {
 		return m.parsed[key]
 	}
 
+	if len(m.raw) == 0 {
+		return nil
+	}
+
 	parsed := make(map[string]any)
 	err := json.Unmarshal(m.raw, &parsed)
 	if err != nil {
