@@ -74,7 +74,11 @@ func (m *CachedMetadata) Get(key string) any {
 	err := json.Unmarshal(m.raw, &parsed)
 	if err != nil {
 		_, file, line, _ := runtime.Caller(1)
-		slog.Error("failed to unmarshal metadata (CachedMetadata)", slog.String("error", err.Error()), slog.String("file", file), slog.Int("line", line))
+		rawstr := ""
+		if len(m.raw) > 0 {
+			rawstr = string(m.raw)
+		}
+		slog.Error("failed to unmarshal metadata (CachedMetadata)", slog.String("error", err.Error()), slog.String("file", file), slog.Int("line", line), slog.String("raw", rawstr))
 		return nil
 	}
 	m.parsed = parsed
