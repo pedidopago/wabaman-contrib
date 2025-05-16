@@ -112,7 +112,7 @@ type ContactUpdate struct {
 	CustomerID         string                 `json:"customer_id"`
 	CustomerName       string                 `json:"customer_name"`
 	Name               string                 `json:"name"`
-	Metadata           types.CachedMetadata   `json:"metadata"`
+	Metadata           *types.CachedMetadata  `json:"metadata"`
 	ColorTags          []ColorTag             `json:"color_tags,omitempty"`
 	UpdatedFields      []string               `json:"updated_fields"`
 	FieldsBefore       map[string]interface{} `json:"fields_before,omitempty"`
@@ -120,13 +120,13 @@ type ContactUpdate struct {
 }
 
 type NewContact struct {
-	ContactID          uint64               `json:"contact_id"`
-	HostPhoneID        uint                 `json:"host_phone_id"`
-	WABAContactID      string               `json:"waba_contact_id"`
-	WABAProfileName    string               `json:"waba_profile_name"`
-	ContactPhoneNumber string               `json:"contact_phone_number,omitempty"`
-	CustomerID         string               `json:"customer_id"`
-	Metadata           types.CachedMetadata `json:"metadata"`
+	ContactID          uint64                `json:"contact_id"`
+	HostPhoneID        uint                  `json:"host_phone_id"`
+	WABAContactID      string                `json:"waba_contact_id"`
+	WABAProfileName    string                `json:"waba_profile_name"`
+	ContactPhoneNumber string                `json:"contact_phone_number,omitempty"`
+	CustomerID         string                `json:"customer_id"`
+	Metadata           *types.CachedMetadata `json:"metadata"`
 }
 
 type HostNoteFormat string

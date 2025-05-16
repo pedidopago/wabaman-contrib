@@ -14,12 +14,12 @@ type CachedMetadata struct {
 	parsed     map[string]any
 }
 
-func NewCachedMetadataFromJSONBytes(data []byte) CachedMetadata {
+func NewCachedMetadataFromJSONBytes(data []byte) *CachedMetadata {
 	var m CachedMetadata
 	m.raw = make([]byte, len(data))
 	copy(m.raw[:], data)
 
-	return m
+	return &m
 }
 
 func NewCachedMetadataPtrFromJSONBytes(data []byte) *CachedMetadata {
@@ -30,11 +30,19 @@ func NewCachedMetadataPtrFromJSONBytes(data []byte) *CachedMetadata {
 	return &m
 }
 
-func (m CachedMetadata) IsEmpty() bool {
+func (m *CachedMetadata) IsEmpty() bool {
+	if m == nil {
+		return true
+	}
+
 	return len(m.raw) == 0 && m.parsed == nil
 }
 
-func (m CachedMetadata) MarshalJSON() ([]byte, error) {
+func (m *CachedMetadata) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("{}"), nil
+	}
+
 	if len(m.raw) == 0 && m.parsed == nil {
 		return []byte("{}"), nil
 	}
@@ -66,6 +74,10 @@ func (m *CachedMetadata) UnmarshalJSON(data []byte) error {
 }
 
 func (m *CachedMetadata) Get(key string) any {
+	if m == nil {
+		return nil
+	}
+
 	if m.parsed != nil {
 		return m.parsed[key]
 	}
@@ -87,6 +99,10 @@ func (m *CachedMetadata) Get(key string) any {
 }
 
 func (m *CachedMetadata) Set(key string, value any) {
+	if m == nil {
+		return
+	}
+
 	if m.parsed == nil && len(m.raw) > 0 {
 		m.parsed = make(map[string]any)
 		err := json.Unmarshal(m.raw, &m.parsed)
@@ -103,6 +119,10 @@ func (m *CachedMetadata) Set(key string, value any) {
 }
 
 func (m *CachedMetadata) UnmarshalTo(target any) error {
+	if m == nil {
+		return nil
+	}
+
 	if target == nil {
 		return errors.New("target is nil")
 	}
