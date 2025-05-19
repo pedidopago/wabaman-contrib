@@ -72,6 +72,35 @@ func (e *Message) FromJSON(data string) error {
 	return json.Unmarshal([]byte(data), e)
 }
 
+// MessageToSend is the root level object of a ms-wabaman websocket.
+// This is nearly identical to Message, but with netadata fields as json.RawMessage.
+// This is used to send messages to the websocket API.
+type MessageToSend struct {
+	Type                       MessageType                 `json:"type"`
+	Error                      *Error                      `json:"error,omitempty"`
+	ClientMessage              *ClientMessage              `json:"client_message,omitempty"`
+	HostMessage                *HostMessage                `json:"host_message,omitempty"`
+	ReadByHostReceipt          *ReadByHostReceipt          `json:"read_by_host_receipt,omitempty"`
+	ClientReceipt              *ClientReceipt              `json:"client_receipt,omitempty"`
+	ContactUpdate              *ContactUpdateToSend        `json:"contact_update,omitempty"`
+	NewContact                 *NewContactToSend           `json:"new_contact,omitempty"`
+	HostNote                   *HostNote                   `json:"host_note,omitempty"`
+	HostNoteUpdated            *HostNoteUpdated            `json:"host_note_updated,omitempty"`
+	Metadata                   *MetadataToSend             `json:"metadata,omitempty"`
+	ClientMockData             *ClientMockData             `json:"client_mock_data,omitempty"`
+	Tag                        *TagEventData               `json:"tag,omitempty"`
+	TagGroup                   *TagEventData               `json:"tag_group,omitempty"`
+	Reaction                   *ReactionEventData          `json:"reaction,omitempty"`
+	ContactBroadcast           *ContactBroadcast           `json:"contact_broadcast,omitempty"`
+	MessageUpdated             *MessageUpdated             `json:"message_updated,omitempty"`
+	PresenceViewClient         *PresenceViewClient         `json:"presence_view_client,omitempty"`
+	PresenceTypingToClient     *PresenceTypingToClient     `json:"presence_typing_to_client,omitempty"`
+	PresenceRequest            *PresenceRequest            `json:"presence_request,omitempty"`
+	PresenceResponse           *PresenceResponse           `json:"presence_response,omitempty"`
+	ScheduledMessage           *ScheduledMessageStub       `json:"scheduled_message,omitempty"`
+	CancelledScheduledMessages *CancelledScheduledMessages `json:"cancelled_scheduled_messages,omitempty"`
+}
+
 type ClientMockData struct {
 	Count             int    `json:"count"`
 	Interval          int    `json:"interval"`
@@ -117,6 +146,22 @@ type ContactUpdate struct {
 	FieldsAfter        map[string]any `json:"fields_after,omitempty"`
 }
 
+type ContactUpdateToSend struct {
+	ContactID          uint64          `json:"contact_id"`
+	HostPhoneID        uint            `json:"host_phone_id"`
+	WABAContactID      string          `json:"waba_contact_id"`
+	WABAProfileName    string          `json:"waba_profile_name"`
+	ContactPhoneNumber string          `json:"contact_phone_number,omitempty"`
+	CustomerID         string          `json:"customer_id"`
+	CustomerName       string          `json:"customer_name"`
+	Name               string          `json:"name"`
+	Metadata           json.RawMessage `json:"metadata"`
+	ColorTags          []ColorTag      `json:"color_tags,omitempty"`
+	UpdatedFields      []string        `json:"updated_fields"`
+	FieldsBefore       map[string]any  `json:"fields_before,omitempty"`
+	FieldsAfter        map[string]any  `json:"fields_after,omitempty"`
+}
+
 type NewContact struct {
 	ContactID          uint64         `json:"contact_id"`
 	HostPhoneID        uint           `json:"host_phone_id"`
@@ -125,6 +170,16 @@ type NewContact struct {
 	ContactPhoneNumber string         `json:"contact_phone_number,omitempty"`
 	CustomerID         string         `json:"customer_id"`
 	Metadata           map[string]any `json:"metadata"`
+}
+
+type NewContactToSend struct {
+	ContactID          uint64          `json:"contact_id"`
+	HostPhoneID        uint            `json:"host_phone_id"`
+	WABAContactID      string          `json:"waba_contact_id"`
+	WABAProfileName    string          `json:"waba_profile_name"`
+	ContactPhoneNumber string          `json:"contact_phone_number,omitempty"`
+	CustomerID         string          `json:"customer_id"`
+	Metadata           json.RawMessage `json:"metadata"`
 }
 
 type HostNoteFormat string
