@@ -3,8 +3,6 @@ package wsapi
 import (
 	"encoding/json"
 	"time"
-
-	types "github.com/pedidopago/wabaman-contrib/shared-types"
 )
 
 // MessageType is the identifier of the Message payload.
@@ -104,29 +102,29 @@ type ClientReceipt struct {
 }
 
 type ContactUpdate struct {
-	ContactID          uint64                 `json:"contact_id"`
-	HostPhoneID        uint                   `json:"host_phone_id"`
-	WABAContactID      string                 `json:"waba_contact_id"`
-	WABAProfileName    string                 `json:"waba_profile_name"`
-	ContactPhoneNumber string                 `json:"contact_phone_number,omitempty"`
-	CustomerID         string                 `json:"customer_id"`
-	CustomerName       string                 `json:"customer_name"`
-	Name               string                 `json:"name"`
-	Metadata           *types.CachedMetadata  `json:"metadata"`
-	ColorTags          []ColorTag             `json:"color_tags,omitempty"`
-	UpdatedFields      []string               `json:"updated_fields"`
-	FieldsBefore       map[string]interface{} `json:"fields_before,omitempty"`
-	FieldsAfter        map[string]interface{} `json:"fields_after,omitempty"`
+	ContactID          uint64         `json:"contact_id"`
+	HostPhoneID        uint           `json:"host_phone_id"`
+	WABAContactID      string         `json:"waba_contact_id"`
+	WABAProfileName    string         `json:"waba_profile_name"`
+	ContactPhoneNumber string         `json:"contact_phone_number,omitempty"`
+	CustomerID         string         `json:"customer_id"`
+	CustomerName       string         `json:"customer_name"`
+	Name               string         `json:"name"`
+	Metadata           map[string]any `json:"metadata"`
+	ColorTags          []ColorTag     `json:"color_tags,omitempty"`
+	UpdatedFields      []string       `json:"updated_fields"`
+	FieldsBefore       map[string]any `json:"fields_before,omitempty"`
+	FieldsAfter        map[string]any `json:"fields_after,omitempty"`
 }
 
 type NewContact struct {
-	ContactID          uint64                `json:"contact_id"`
-	HostPhoneID        uint                  `json:"host_phone_id"`
-	WABAContactID      string                `json:"waba_contact_id"`
-	WABAProfileName    string                `json:"waba_profile_name"`
-	ContactPhoneNumber string                `json:"contact_phone_number,omitempty"`
-	CustomerID         string                `json:"customer_id"`
-	Metadata           *types.CachedMetadata `json:"metadata"`
+	ContactID          uint64         `json:"contact_id"`
+	HostPhoneID        uint           `json:"host_phone_id"`
+	WABAContactID      string         `json:"waba_contact_id"`
+	WABAProfileName    string         `json:"waba_profile_name"`
+	ContactPhoneNumber string         `json:"contact_phone_number,omitempty"`
+	CustomerID         string         `json:"customer_id"`
+	Metadata           map[string]any `json:"metadata"`
 }
 
 type HostNoteFormat string
