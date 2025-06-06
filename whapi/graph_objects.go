@@ -16,6 +16,11 @@ const (
 	WebhookObjectWhatsappBusinessAccount WebhookObjectType = "whatsapp_business_account"
 )
 
+//TODO: coexist follow-up https://developers.facebook.com/docs/whatsapp/embedded-signup/custom-flows/onboarding-business-app-users
+
+// Disparalha:
+// https://developers.facebook.com/apps/482087044545101/whatsapp-business/wa-settings/?business_id=1033582667966734
+
 // TODO: check this page periodically for updates:
 // https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/components
 
@@ -404,6 +409,8 @@ func (s StatusObject) JSONReasonError() *wsapi.SentMessageFailedReason {
 	}
 }
 
+//TODO: obtain all fields from https://developers.facebook.com/docs/graph-api/webhooks/reference/whatsapp_business_account/#history
+
 type HistoryObject struct {
 	Metadata struct {
 		Phase      float64 `json:"phase"`
@@ -429,6 +436,8 @@ type HistoryThreadMessageObject struct {
 	} `json:"history_context"`
 }
 
+//TODO: obtain all fields from https://developers.facebook.com/docs/graph-api/webhooks/reference/whatsapp_business_account/#smb_message_echoes
+
 type MessageEchoObject struct {
 	From      string `json:"from"`
 	To        string `json:"to"`
@@ -440,6 +449,8 @@ type MessageEchoObject struct {
 	} `json:"text"`
 	//TODO: add more fields (need to find documentation)
 }
+
+//TODO: obtain all fields from https://developers.facebook.com/docs/graph-api/webhooks/reference/whatsapp_business_account/#smb_app_state_sync
 
 type StateSyncObject struct {
 	Type    string `json:"type"`
