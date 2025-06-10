@@ -438,17 +438,7 @@ type HistoryThreadMessageObject struct {
 
 //TODO: obtain all fields from https://developers.facebook.com/docs/graph-api/webhooks/reference/whatsapp_business_account/#smb_message_echoes
 
-type MessageEchoObject struct {
-	From      string `json:"from"`
-	To        string `json:"to"`
-	ID        string `json:"id"`
-	Type      string `json:"type"`
-	Timestamp string `json:"timestamp"`
-	Text      struct {
-		Body string `json:"body"`
-	} `json:"text"`
-	//TODO: add more fields (need to find documentation)
-}
+type MessageEchoObject MessageObject
 
 //TODO: obtain all fields from https://developers.facebook.com/docs/graph-api/webhooks/reference/whatsapp_business_account/#smb_app_state_sync
 
