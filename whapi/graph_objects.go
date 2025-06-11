@@ -438,7 +438,21 @@ type HistoryThreadMessageObject struct {
 
 //TODO: obtain all fields from https://developers.facebook.com/docs/graph-api/webhooks/reference/whatsapp_business_account/#smb_message_echoes
 
-type MessageEchoObject MessageObject
+type MessageEchoObject struct {
+	From      string                  `json:"from"`
+	To        string                  `json:"to"`
+	ID        string                  `json:"id"`
+	Timestamp string                  `json:"timestamp"`
+	Type      string                  `json:"type"`
+	Text      *fbgraph.TextObject     `json:"text,omitempty"`
+	Image     *fbgraph.MediaObject    `json:"image,omitempty"`
+	Audio     *fbgraph.MediaObject    `json:"audio,omitempty"`
+	Document  *fbgraph.MediaObject    `json:"document,omitempty"`
+	Video     *fbgraph.MediaObject    `json:"video,omitempty"`
+	Sticker   *fbgraph.MediaObject    `json:"sticker,omitempty"`
+	Contacts  []fbgraph.ContactObject `json:"contacts,omitempty"`
+	Context   *fbgraph.MessageContext `json:"context,omitempty"`
+}
 
 //TODO: obtain all fields from https://developers.facebook.com/docs/graph-api/webhooks/reference/whatsapp_business_account/#smb_app_state_sync
 
