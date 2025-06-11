@@ -86,7 +86,7 @@ type ValueObject struct {
 	// History for a message that was sent by the business that is subscribed to the webhook.
 	Histories []HistoryObject `json:"history,omitempty"`
 	// Message echoes for a message that was sent by the business that is subscribed to the webhook.
-	MessageEchoes []MessageEchoObject `json:"message_echoes,omitempty"`
+	MessageEchoes []MessageEHObject `json:"message_echoes,omitempty"`
 	// State sync for a message that was sent by the business that is subscribed to the webhook.
 	StateSync []StateSyncObject `json:"state_sync,omitempty"`
 	// Metadata for the business that is subscribed to the webhook.
@@ -411,47 +411,47 @@ func (s StatusObject) JSONReasonError() *wsapi.SentMessageFailedReason {
 
 //TODO: obtain all fields from https://developers.facebook.com/docs/graph-api/webhooks/reference/whatsapp_business_account/#history
 
+type ChunkPhase int
+
+const (
+	ChunkPhaseDayOne ChunkPhase = iota
+	ChunkPhaseDayOneTo90
+	ChunkPhaseDay90To180
+)
+
 type HistoryObject struct {
 	Metadata struct {
-		Phase      float64 `json:"phase"`
-		ChunkOrder float64 `json:"chunk_order"`
-		Progress   float64 `json:"progress"`
+		Phase      ChunkPhase `json:"phase"`
+		ChunkOrder int        `json:"chunk_order"` // Indicates chunk number, which you can use to order sets of webhooks sequentially.
+		Progress   int        `json:"progress"`    // min 0, max 100; Indicates percentage total of synchronization progress.
 	} `json:"metadata"`
 	Threads []HistoryThreadObject `json:"threads"`
 }
 
 type HistoryThreadObject struct {
-	ID       string                       `json:"id"`
-	Messages []HistoryThreadMessageObject `json:"messages"`
-}
-
-type HistoryThreadMessageObject struct {
-	From           string `json:"from"`
-	ID             string `json:"id"`
-	Timestamp      string `json:"timestamp"`
-	Type           string `json:"type"`
-	HistoryContext struct {
-		Status string `json:"status"`
-		FromMe bool   `json:"from_me"`
-	} `json:"history_context"`
+	ID       string            `json:"id"` // WHATSAPP_USER_PHONE_NUMBER - The WhatsApp user's phone number.
+	Messages []MessageEHObject `json:"messages"`
 }
 
 //TODO: obtain all fields from https://developers.facebook.com/docs/graph-api/webhooks/reference/whatsapp_business_account/#smb_message_echoes
 
-type MessageEchoObject struct {
-	From      string                  `json:"from"`
-	To        string                  `json:"to"`
-	ID        string                  `json:"id"`
-	Timestamp string                  `json:"timestamp"`
-	Type      string                  `json:"type"`
-	Text      *fbgraph.TextObject     `json:"text,omitempty"`
-	Image     *fbgraph.MediaObject    `json:"image,omitempty"`
-	Audio     *fbgraph.MediaObject    `json:"audio,omitempty"`
-	Document  *fbgraph.MediaObject    `json:"document,omitempty"`
-	Video     *fbgraph.MediaObject    `json:"video,omitempty"`
-	Sticker   *fbgraph.MediaObject    `json:"sticker,omitempty"`
-	Contacts  []fbgraph.ContactObject `json:"contacts,omitempty"`
-	Context   *fbgraph.MessageContext `json:"context,omitempty"`
+type MessageEHObject struct {
+	From           string                  `json:"from"`      // BUSINESS_OR_WHATSAPP_USER_PHONE_NUMBER
+	To             string                  `json:"to"`        // only included if SMB message echo
+	ID             string                  `json:"id"`        // WHATSAPP_MESSAGE_ID
+	Timestamp      string                  `json:"timestamp"` // DEVICE_TIMESTAMP
+	Type           string                  `json:"type"`      // MESSAGE_TYPE
+	Text           *fbgraph.TextObject     `json:"text,omitempty"`
+	Image          *fbgraph.MediaObject    `json:"image,omitempty"`
+	Audio          *fbgraph.MediaObject    `json:"audio,omitempty"`
+	Document       *fbgraph.MediaObject    `json:"document,omitempty"`
+	Video          *fbgraph.MediaObject    `json:"video,omitempty"`
+	Sticker        *fbgraph.MediaObject    `json:"sticker,omitempty"`
+	Contacts       []fbgraph.ContactObject `json:"contacts,omitempty"`
+	Context        *fbgraph.MessageContext `json:"context,omitempty"`
+	HistoryContext struct {
+		Status string `json:"status"` // MESSAGE_STATUS - DELIVERED ERROR PENDING PLAYED READ SENT
+	} `json:"history_context,omitempty"`
 }
 
 //TODO: obtain all fields from https://developers.facebook.com/docs/graph-api/webhooks/reference/whatsapp_business_account/#smb_app_state_sync
