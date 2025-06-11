@@ -426,6 +426,16 @@ type HistoryObject struct {
 		Progress   int        `json:"progress"`    // min 0, max 100; Indicates percentage total of synchronization progress.
 	} `json:"metadata"`
 	Threads []HistoryThreadObject `json:"threads"`
+	Errors  []HistoryErrorObject  `json:"errors,omitempty"`
+}
+
+type HistoryErrorObject struct {
+	Code      int    `json:"code"`
+	Title     string `json:"title"`
+	Message   string `json:"message"`
+	ErrorData struct {
+		Details string `json:"details"`
+	} `json:"error_data"`
 }
 
 type HistoryThreadObject struct {
