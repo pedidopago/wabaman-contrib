@@ -442,6 +442,13 @@ type MessageEchoObject MessageObject
 
 //TODO: obtain all fields from https://developers.facebook.com/docs/graph-api/webhooks/reference/whatsapp_business_account/#smb_app_state_sync
 
+type StateSyncObjectAction string
+
+const (
+	StateSyncObjectActionAdd    StateSyncObjectAction = "add"
+	StateSyncObjectActionRemove StateSyncObjectAction = "remove"
+)
+
 type StateSyncObject struct {
 	Type    string `json:"type"`
 	Contact struct {
@@ -449,7 +456,7 @@ type StateSyncObject struct {
 		FirstName   string `json:"first_name"`
 		PhoneNumber string `json:"phone_number"`
 	} `json:"contact"`
-	Action   string `json:"action"`
+	Action   StateSyncObjectAction `json:"action"`
 	Metadata struct {
 		Timestamp string  `json:"timestamp"`
 		Version   float64 `json:"version"`
