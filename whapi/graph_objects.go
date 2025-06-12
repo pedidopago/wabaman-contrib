@@ -161,6 +161,7 @@ type CommonMessageObject interface {
 	GetID() string
 	GetFrom() string
 	GetTo() string
+	GetTimestamp() string
 	StructName() string
 }
 
@@ -235,6 +236,10 @@ func (m MessageObject) GetTo() string {
 
 func (m MessageObject) StructName() string {
 	return "whapi.MessageObject"
+}
+
+func (m MessageObject) GetTimestamp() string {
+	return m.Timestamp
 }
 
 type MessageObjectAudio struct {
@@ -506,6 +511,10 @@ func (m MessageEHObject) GetFrom() string {
 
 func (m MessageEHObject) GetTo() string {
 	return m.To
+}
+
+func (m MessageEHObject) GetTimestamp() string {
+	return m.Timestamp
 }
 
 func (m MessageEHObject) StructName() string {
