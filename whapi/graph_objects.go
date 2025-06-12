@@ -156,6 +156,14 @@ func (m MessageObjectType) IsValid() bool {
 	return false
 }
 
+type CommonMessageObject interface {
+	GetType() string
+	GetID() string
+	GetFrom() string
+	GetTo() string
+	StructName() string
+}
+
 // MessageObject - The messages array of objects is nested within the value object
 // and is triggered when a customer updates their profile information or a customer
 // sends a message to the business that is subscribed to the webhook.
@@ -207,6 +215,26 @@ type MessageObject struct {
 	Type      MessageObjectType      `json:"type"`
 	Video     *MessageObjectVideo    `json:"video,omitempty"`
 	Reaction  *MessageObjectReaction `json:"reaction,omitempty"`
+}
+
+func (m MessageObject) GetType() string {
+	return string(m.Type)
+}
+
+func (m MessageObject) GetID() string {
+	return m.ID
+}
+
+func (m MessageObject) GetFrom() string {
+	return m.From
+}
+
+func (m MessageObject) GetTo() string {
+	return ""
+}
+
+func (m MessageObject) StructName() string {
+	return "whapi.MessageObject"
 }
 
 type MessageObjectAudio struct {
@@ -462,6 +490,26 @@ type MessageEHObject struct {
 	HistoryContext struct {
 		Status string `json:"status"` // MESSAGE_STATUS - DELIVERED ERROR PENDING PLAYED READ SENT
 	} `json:"history_context,omitempty"`
+}
+
+func (m MessageEHObject) GetType() string {
+	return string(m.Type)
+}
+
+func (m MessageEHObject) GetID() string {
+	return m.ID
+}
+
+func (m MessageEHObject) GetFrom() string {
+	return m.From
+}
+
+func (m MessageEHObject) GetTo() string {
+	return m.To
+}
+
+func (m MessageEHObject) StructName() string {
+	return "whapi.MessageEHObject"
 }
 
 //TODO: obtain all fields from https://developers.facebook.com/docs/graph-api/webhooks/reference/whatsapp_business_account/#smb_app_state_sync
