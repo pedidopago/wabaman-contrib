@@ -33,12 +33,13 @@ type BusinessMetadata struct {
 }
 
 type PhoneMetadata struct {
-	ID                        uint   `json:"id,omitempty"`
-	WhatsAppID                string `json:"whatsapp_id,omitempty"`
-	WhatsAppBusinessAccountID string `json:"whatsapp_business_account_id,omitempty"`
-	PhoneNumber               string `json:"phone_number,omitempty"`
-	BranchID                  string `json:"branch_id,omitempty"`
-	LanguageCode              string `json:"language_code,omitempty"`
+	ID                        uint           `json:"id,omitempty"`
+	WhatsAppID                string         `json:"whatsapp_id,omitempty"`
+	WhatsAppBusinessAccountID string         `json:"whatsapp_business_account_id,omitempty"`
+	PhoneNumber               string         `json:"phone_number,omitempty"`
+	BranchID                  string         `json:"branch_id,omitempty"`
+	LanguageCode              string         `json:"language_code,omitempty"`
+	Metadata                  map[string]any `json:"metadata,omitempty"`
 }
 
 type ContactMetadata struct {
