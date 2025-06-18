@@ -57,7 +57,8 @@ const (
 
 type NewMessageRequestTemplate struct {
 	fbgraph.TemplateObject `json:",inline"`
-	ExactMatch             bool `json:"exact_match"`
+	ExactMatch             bool   `json:"exact_match"`
+	SkipRule               string `json:"skip_rule,omitzero"`
 }
 
 type NewMessageRequest struct {
