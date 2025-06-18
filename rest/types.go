@@ -52,6 +52,7 @@ const (
 	NewMessageStatusBlockedByExperiment          NewMessageStatus = "blocked_by_experiment"
 	NewMessageStatusBlockedByDiscardWindowClosed NewMessageStatus = "blocked_by_discard_window_closed"
 	NewMessageStatusScheduled                    NewMessageStatus = "scheduled"
+	NewMessageStatusBlockedBySkipRule            NewMessageStatus = "blocked_by_skip_rule"
 	NewMessageStatusUnknown                      NewMessageStatus = "unknown"
 )
 
