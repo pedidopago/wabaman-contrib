@@ -52,12 +52,14 @@ const (
 	NewMessageStatusBlockedByExperiment          NewMessageStatus = "blocked_by_experiment"
 	NewMessageStatusBlockedByDiscardWindowClosed NewMessageStatus = "blocked_by_discard_window_closed"
 	NewMessageStatusScheduled                    NewMessageStatus = "scheduled"
+	NewMessageStatusBlockedBySkipRule            NewMessageStatus = "blocked_by_skip_rule"
 	NewMessageStatusUnknown                      NewMessageStatus = "unknown"
 )
 
 type NewMessageRequestTemplate struct {
 	fbgraph.TemplateObject `json:",inline"`
-	ExactMatch             bool `json:"exact_match"`
+	ExactMatch             bool   `json:"exact_match"`
+	SkipRule               string `json:"skip_rule,omitzero"`
 }
 
 type NewMessageRequest struct {
