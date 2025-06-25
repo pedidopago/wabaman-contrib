@@ -516,6 +516,8 @@ type Phone struct {
 	TemplateDefaultStoreURL     string `json:"template_default_store_url,omitempty"`
 	TemplateDefaultContactPhone string `json:"template_default_contact_phone,omitempty"`
 
+	Metadata map[string]any `json:"metadata,omitempty"`
+
 	DriverName   string `json:"driver_name,omitempty"`
 	LanguageCode string `json:"language_code,omitempty"`
 
