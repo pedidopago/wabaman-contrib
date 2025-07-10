@@ -39,6 +39,7 @@ type PhoneMetadata struct {
 	PhoneNumber               string         `json:"phone_number,omitempty"`
 	BranchID                  string         `json:"branch_id,omitempty"`
 	LanguageCode              string         `json:"language_code,omitempty"`
+	DriverName                string         `json:"driver_name,omitempty"`
 	Metadata                  map[string]any `json:"metadata,omitempty"`
 }
 
