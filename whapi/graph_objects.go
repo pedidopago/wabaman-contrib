@@ -89,6 +89,8 @@ type ValueObject struct {
 	MessageEchoes []MessageEHObject `json:"message_echoes,omitempty"`
 	// State sync for a message that was sent by the business that is subscribed to the webhook.
 	StateSync []StateSyncObject `json:"state_sync,omitempty"`
+	// UserPreferences https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/reference/user_preferences
+	UserPreferences []UserPreferencesObject `json:"user_preferences,omitempty"`
 	// Metadata for the business that is subscribed to the webhook.
 	Metadata ValueObjectMetadata `json:"metadata,omitempty"`
 
@@ -522,6 +524,14 @@ func (m MessageEHObject) StructName() string {
 }
 
 //TODO: obtain all fields from https://developers.facebook.com/docs/graph-api/webhooks/reference/whatsapp_business_account/#smb_app_state_sync
+
+type UserPreferencesObject struct {
+	WAID      string `json:"wa_id"`
+	Detail    string `json:"detail"`
+	Category  string `json:"category"`
+	Value     string `json:"value"`
+	Timestamp string `json:"timestamp"`
+}
 
 type StateSyncObjectAction string
 
