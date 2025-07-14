@@ -526,11 +526,11 @@ func (m MessageEHObject) StructName() string {
 //TODO: obtain all fields from https://developers.facebook.com/docs/graph-api/webhooks/reference/whatsapp_business_account/#smb_app_state_sync
 
 type UserPreferencesObject struct {
-	WAID      string `json:"wa_id"`
-	Detail    string `json:"detail"`
-	Category  string `json:"category"`
-	Value     string `json:"value"`
-	Timestamp string `json:"timestamp"`
+	WAID     string `json:"wa_id"`
+	Detail   string `json:"detail"`
+	Category string `json:"category"`
+	Value    string `json:"value"`
+	// Timestamp string `json:"timestamp"`
 }
 
 type StateSyncObjectAction string
