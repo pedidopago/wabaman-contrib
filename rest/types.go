@@ -56,10 +56,15 @@ const (
 	NewMessageStatusUnknown                      NewMessageStatus = "unknown"
 )
 
+// Wabaman will use the components defined in here if the template
+// chosen by Wabaman matches the template name (map key).
+type TemplateCompMap map[string][]fbgraph.TemplateComponent
+
 type NewMessageRequestTemplate struct {
 	fbgraph.TemplateObject `json:",inline"`
-	ExactMatch             bool   `json:"exact_match"`
-	SkipRule               string `json:"skip_rule,omitzero"`
+	ExactMatch             bool            `json:"exact_match"`
+	SkipRule               string          `json:"skip_rule,omitzero"`
+	ComponentMap           TemplateCompMap `json:"component_map,omitzero" description:"If set, Wabaman will use the components defined in here if the template chosen by Wabaman matches the template name (map key)."`
 }
 
 type NewMessageRequest struct {
