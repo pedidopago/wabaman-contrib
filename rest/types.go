@@ -58,13 +58,16 @@ const (
 
 // Wabaman will use the components defined in here if the template
 // chosen by Wabaman matches the template name (map key).
-type TemplateCompMap map[string][]fbgraph.TemplateComponent
+type TemplateCompMap struct {
+	TemplateNamePrefix string                             `json:"template_name_prefix,omitzero"`
+	Components         []fbgraph.MessageTemplateComponent `json:"components,omitzero"`
+}
 
 type NewMessageRequestTemplate struct {
 	fbgraph.TemplateObject `json:",inline"`
-	ExactMatch             bool            `json:"exact_match"`
-	SkipRule               string          `json:"skip_rule,omitzero"`
-	ComponentsMap          TemplateCompMap `json:"components_map,omitzero" description:"If set, Wabaman will use the components defined in here if the template chosen by Wabaman matches the template name (map key)."`
+	ExactMatch             bool              `json:"exact_match"`
+	SkipRule               string            `json:"skip_rule,omitzero"`
+	ComponentsMap          []TemplateCompMap `json:"components_map,omitzero" description:"If set, Wabaman will use the components defined in here if the template chosen by Wabaman matches the template name by prefix."`
 }
 
 type NewMessageRequest struct {
