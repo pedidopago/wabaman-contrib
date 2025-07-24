@@ -593,6 +593,10 @@ type NewNoteRequest struct {
 
 type NewNoteResponse wsapi.HostNote
 
+type RegisterClientMessageRequest = RegisterDriverMessageRequest
+
+type RegisterClientMessageResponse = RegisterDriverMessageResponse
+
 type SentMessage struct {
 	ID                 uint64             `json:"id"`
 	PhoneID            uint               `json:"phone_id"`
