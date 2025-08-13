@@ -362,10 +362,12 @@ type CheckIntegrationRequest struct {
 }
 
 type CheckIntegrationResponse struct {
-	BusinessID uint     `json:"business_id"`
-	BranchIDs  []string `json:"branch_ids,omitempty"`
-	PhoneIDs   []uint   `json:"phone_ids,omitempty"`
-	ContactIDs []uint64 `json:"contact_ids,omitempty"`
+	BusinessID  uint     `json:"business_id"`
+	BranchIDs   []string `json:"branch_ids,omitempty"`
+	PhoneIDs    []uint   `json:"phone_ids,omitempty"`
+	PhoneId2FA  uint     `json:"phone_id_2fa,omitempty"`
+	BranchID2FA string   `json:"branch_id_2fa,omitempty"`
+	ContactIDs  []uint64 `json:"contact_ids,omitempty"`
 }
 
 type ErrorResponse struct {
