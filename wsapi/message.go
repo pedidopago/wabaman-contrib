@@ -31,6 +31,8 @@ const (
 	MessageTypePresenceTypingToClient     MessageType = 21 // js/ts client sends this to the server
 	MessageTypePresenceRequest            MessageType = 22 // js/ts client sends this to the server
 	MessageTypePresenceResponse           MessageType = 23 // server sends this to the clients
+	MessageTypeGetUnreadMessagesRequest   MessageType = 24 // js/ts client sends this to the server
+	MessageTypeGetUnreadMessagesResponse  MessageType = 25 // server sends this to the clients
 	MessageTypeMockClientMessages         MessageType = 230
 	MessageTypeGenericError               MessageType = 235
 	MessageTypeCloseError                 MessageType = 240
@@ -61,6 +63,8 @@ type Message struct {
 	PresenceResponse           *PresenceResponse           `json:"presence_response,omitempty"`
 	ScheduledMessage           *ScheduledMessageStub       `json:"scheduled_message,omitempty"`
 	CancelledScheduledMessages *CancelledScheduledMessages `json:"cancelled_scheduled_messages,omitempty"`
+	GetUnreadMessagesRequest   *GetUnreadMessagesRequest   `json:"get_unread_messages_request,omitempty"`
+	GetUnreadMessagesResponse  *GetUnreadMessagesResponse  `json:"get_unread_messages_response,omitempty"`
 }
 
 func (e Message) ToJSON() string {
