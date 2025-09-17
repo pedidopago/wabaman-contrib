@@ -16,7 +16,7 @@ import (
 
 var (
 	DebugTrace             bool
-	DefaultGraphAPIVersion = "v20.0"
+	DefaultGraphAPIVersion = "v23.0"
 )
 
 var DefaultHTTPClient = &http.Client{
