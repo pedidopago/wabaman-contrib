@@ -92,6 +92,11 @@ type HolidayScheduleObject struct {
 	EndTime   OpenCloseTime `json:"end_time"`
 }
 
+// Configure call signaling via signal initiation protocol (SIP).
+//
+// Note: When SIP is enabled, you cannot use calling related endpoints and will not receive calling related webhooks.
+//
+// https://developers.facebook.com/docs/whatsapp/cloud-api/calling/sip
 type SipServerObject struct {
 	Hostname             string            `json:"hostname"`
 	Port                 int               `json:"port"`
@@ -143,4 +148,61 @@ func (c *Client) GetWhatsappSettings(ctx context.Context, whatsappID string) (*W
 		return nil, fmt.Errorf("decode response: %w", err)
 	}
 	return result, nil
+}
+
+type MessageLimitingTier string
+
+const (
+	Tier50        MessageLimitingTier = "TIER_50"
+	Tier250       MessageLimitingTier = "TIER_250"
+	Timer1K       MessageLimitingTier = "TIER_1K"
+	Tier10K       MessageLimitingTier = "TIER_10K"
+	Tier100K      MessageLimitingTier = "TIER_100K"
+	TierNotSet    MessageLimitingTier = "TIER_NOT_SET" // Indicates the business phone number has not been used to send a message yet.
+	TierUnlimited MessageLimitingTier = "TIER_UNLIMITED"
+)
+
+func (c *Client) GetMessagingLimitingTier(ctx context.Context, whatsappID string) (MessageLimitingTier, error) {
+	apiVersion := DefaultGraphAPIVersion
+	if c.GraphAPIVersion != "" {
+		apiVersion = c.GraphAPIVersion
+	}
+
+	url := fmt.Sprintf("https://graph.facebook.com/%s/%s?fields=messaging_limit_tier", apiVersion, whatsappID)
+
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return "", fmt.Errorf("new request: %w", err)
+	}
+
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken))
+
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("request failed: %w", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return "", c.errorFromResponse(resp)
+	}
+
+	result := struct {
+		MessagingLimitTier MessageLimitingTier `json:"messaging_limit_tier"`
+	}{}
+
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return "", fmt.Errorf("decode response: %w", err)
+	}
+
+	return result.MessagingLimitTier, nil
+}
+
+func (tier MessageLimitingTier) CanEnableCallingAPI() bool {
+	switch tier {
+	case TierNotSet, Tier50, Tier250, "":
+		return false
+	}
+
+	return true
 }
