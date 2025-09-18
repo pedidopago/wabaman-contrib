@@ -269,7 +269,12 @@ func (c *Client) NewUploadSession(ownerID string, params NewUploadSessionParams)
 }
 
 func (c *Client) UploadHeaderHandle(uploadSessionID string, r io.Reader) (h string, err error) {
-	url := fmt.Sprintf("https://graph.facebook.com/v14.0/%s", uploadSessionID)
+	apiVersion := DefaultGraphAPIVersion
+	if c.GraphAPIVersion != "" {
+		apiVersion = c.GraphAPIVersion
+	}
+
+	url := fmt.Sprintf("https://graph.facebook.com/%s/%s", apiVersion, uploadSessionID)
 	req, err := http.NewRequest(http.MethodPost, url, r)
 	if err != nil {
 		return "", fmt.Errorf("new request: %w", err)
