@@ -157,7 +157,12 @@ func (c *Client) UploadMedia(phoneID string, mimeType string, r io.Reader, fsize
 }
 
 func (c *Client) GetMedia(mediaID string) (*GetMediaResult, error) {
-	url := fmt.Sprintf("https://graph.facebook.com/v14.0/%s", mediaID)
+	apiVersion := DefaultGraphAPIVersion
+	if c.GraphAPIVersion != "" {
+		apiVersion = c.GraphAPIVersion
+	}
+
+	url := fmt.Sprintf("https://graph.facebook.com/%s/%s", apiVersion, mediaID)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, fmt.Errorf("new request: %w", err)
@@ -240,7 +245,13 @@ func (c *Client) NewUploadSession(ownerID string, params NewUploadSessionParams)
 	if params.SessionType == "" {
 		params.SessionType = "attachment"
 	}
-	url := fmt.Sprintf("https://graph.facebook.com/v14.0/%s/uploads", ownerID)
+
+	apiVersion := DefaultGraphAPIVersion
+	if c.GraphAPIVersion != "" {
+		apiVersion = c.GraphAPIVersion
+	}
+
+	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/uploads", apiVersion, ownerID)
 	buf := new(bytes.Buffer)
 	if err := json.NewEncoder(buf).Encode(params); err != nil {
 		return "", fmt.Errorf("encode message: %w", err)
