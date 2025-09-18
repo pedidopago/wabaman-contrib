@@ -296,11 +296,23 @@ func (c *Client) UploadHeaderHandle(uploadSessionID string, r io.Reader) (h stri
 }
 
 func (c *Client) errorFromResponse(resp *http.Response) error {
+	if DebugTrace {
+		fmt.Printf("HTTP STATUS %d\nHEADERS:\n", resp.StatusCode)
+		for k, v := range resp.Header {
+			fmt.Printf("  %s: %s\n", k, strings.Join(v, ", "))
+		}
+	}
+
 	eparent := struct {
 		Error GraphError `json:"error"`
 	}{}
 	jbdbuff := new(bytes.Buffer)
 	io.Copy(jbdbuff, resp.Body)
+
+	if DebugTrace {
+		fmt.Printf("BODY:\n%s\n", jbdbuff.String())
+	}
+
 	if err := json.Unmarshal(jbdbuff.Bytes(), &eparent); err != nil {
 		return fmt.Errorf("http status: %d (%s); %w - %s", resp.StatusCode, resp.Status, err, jbdbuff.String())
 	}
