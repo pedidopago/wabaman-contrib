@@ -85,7 +85,12 @@ func (c *Client) UploadMedia(phoneID string, mimeType string, r io.Reader, fsize
 	pr, pw := io.Pipe()
 	mw := multipart.NewWriter(pw)
 
-	url := fmt.Sprintf("https://graph.facebook.com/v14.0/%s/media", phoneID)
+	apiVersion := DefaultGraphAPIVersion
+	if c.GraphAPIVersion != "" {
+		apiVersion = c.GraphAPIVersion
+	}
+
+	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/media", apiVersion, phoneID)
 
 	// do the request concurrently
 	var resp *http.Response
