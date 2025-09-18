@@ -39,7 +39,7 @@ func (c *Client) PostSMBAppData(ctx context.Context, whatsappID string, syncType
 		return nil, fmt.Errorf("encode message: %w", err)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, buf)
+	req, err := NewRequestWithContext(ctx, http.MethodPost, url, buf)
 	if err != nil {
 		return nil, fmt.Errorf("new request: %w", err)
 	}

@@ -124,7 +124,7 @@ func (c *Client) GetWhatsappSettings(ctx context.Context, whatsappID string) (*W
 
 	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/settings", apiVersion, whatsappID)
 
-	req, err := http.NewRequest(http.MethodGet, url, nil)
+	req, err := NewRequest(http.MethodGet, url, nil)
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
@@ -170,7 +170,7 @@ func (c *Client) GetMessagingLimitingTier(ctx context.Context, whatsappID string
 
 	url := fmt.Sprintf("https://graph.facebook.com/%s/%s?fields=messaging_limit_tier", apiVersion, whatsappID)
 
-	req, err := http.NewRequest(http.MethodGet, url, nil)
+	req, err := NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return "", fmt.Errorf("new request: %w", err)
 	}

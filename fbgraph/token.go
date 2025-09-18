@@ -43,7 +43,7 @@ func (c *Client) DebugToken(ctx context.Context, inputToken string) (TokenInfo, 
 
 	url := fmt.Sprintf("https://graph.facebook.com/%s/debug_token?input_token=%s&access_token=%s", apiVersion, inputToken, c.AccessToken)
 
-	req, err := http.NewRequest(http.MethodGet, url, nil)
+	req, err := NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return emptyd, fmt.Errorf("new request: %w", err)
 	}

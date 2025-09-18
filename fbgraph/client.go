@@ -54,7 +54,7 @@ func (c *Client) SendMessage(phoneID string, msg *MessageObject) (*MessageObject
 	if DebugTrace {
 		println("fbgraph SendMessage", url, "\n", buf.String())
 	}
-	req, err := http.NewRequest(http.MethodPost, url, buf)
+	req, err := NewRequest(http.MethodPost, url, buf)
 	if err != nil {
 		return nil, fmt.Errorf("new request: %w", err)
 	}
@@ -96,7 +96,7 @@ func (c *Client) UploadMedia(phoneID string, mimeType string, r io.Reader, fsize
 	var resp *http.Response
 	done := make(chan error)
 	go func() {
-		req, err := http.NewRequest(http.MethodPost, url, pr)
+		req, err := NewRequest(http.MethodPost, url, pr)
 		if err != nil {
 			done <- fmt.Errorf("new request: %w", err)
 			return
@@ -163,7 +163,7 @@ func (c *Client) GetMedia(mediaID string) (*GetMediaResult, error) {
 	}
 
 	url := fmt.Sprintf("https://graph.facebook.com/%s/%s", apiVersion, mediaID)
-	req, err := http.NewRequest(http.MethodGet, url, nil)
+	req, err := NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, fmt.Errorf("new request: %w", err)
 	}
@@ -185,7 +185,7 @@ func (c *Client) GetMedia(mediaID string) (*GetMediaResult, error) {
 }
 
 func (c *Client) DownloadMedia(mr *GetMediaResult, out io.Writer) error {
-	req, err := http.NewRequest(http.MethodGet, mr.URL, nil)
+	req, err := NewRequest(http.MethodGet, mr.URL, nil)
 	if err != nil {
 		return fmt.Errorf("new request: %w", err)
 	}
@@ -256,7 +256,7 @@ func (c *Client) NewUploadSession(ownerID string, params NewUploadSessionParams)
 	if err := json.NewEncoder(buf).Encode(params); err != nil {
 		return "", fmt.Errorf("encode message: %w", err)
 	}
-	req, err := http.NewRequest(http.MethodPost, url, buf)
+	req, err := NewRequest(http.MethodPost, url, buf)
 	if err != nil {
 		return "", fmt.Errorf("new request: %w", err)
 	}
@@ -286,7 +286,7 @@ func (c *Client) UploadHeaderHandle(uploadSessionID string, r io.Reader) (h stri
 	}
 
 	url := fmt.Sprintf("https://graph.facebook.com/%s/%s", apiVersion, uploadSessionID)
-	req, err := http.NewRequest(http.MethodPost, url, r)
+	req, err := NewRequest(http.MethodPost, url, r)
 	if err != nil {
 		return "", fmt.Errorf("new request: %w", err)
 	}

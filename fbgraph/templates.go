@@ -168,7 +168,7 @@ func (c *Client) GetMessageTemplate(ctx context.Context, id string) (*MessageTem
 
 	url := fmt.Sprintf("https://graph.facebook.com/%s/%s", apiversion, id)
 
-	req, err := http.NewRequest(http.MethodGet, url, nil)
+	req, err := NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, fmt.Errorf("new request: %w", err)
 	}
@@ -212,7 +212,7 @@ func (c *Client) GetMessageTemplates(ctx context.Context, params GetMessageTempl
 
 	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/message_templates?%s", apiversion, params.WhatsAppBusinessAccountID, encfields.Encode())
 
-	req, err := http.NewRequest(http.MethodGet, url, nil)
+	req, err := NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, fmt.Errorf("new request: %w", err)
 	}
@@ -248,7 +248,7 @@ func (c *Client) CreateMessageTemplate(ctx context.Context, wabaID string, templ
 		return "", fmt.Errorf("encode template: %w", err)
 	}
 
-	req, err := http.NewRequest(http.MethodPost, url, buf)
+	req, err := NewRequest(http.MethodPost, url, buf)
 	if err != nil {
 		return "", fmt.Errorf("new request: %w", err)
 	}
@@ -288,7 +288,7 @@ func (c *Client) UpdateMessageTemplateCategory(ctx context.Context, templateID s
 		return fmt.Errorf("encode template update: %w", err)
 	}
 
-	req, err := http.NewRequest(http.MethodPost, url, buf)
+	req, err := NewRequest(http.MethodPost, url, buf)
 	if err != nil {
 		return fmt.Errorf("new request: %w", err)
 	}
@@ -334,7 +334,7 @@ func (c *Client) UpdateMessageTemplate(ctx context.Context, templateID string, c
 		return fmt.Errorf("encode template update: %w", err)
 	}
 
-	req, err := http.NewRequest(http.MethodPost, url, buf)
+	req, err := NewRequest(http.MethodPost, url, buf)
 	if err != nil {
 		return fmt.Errorf("new request: %w", err)
 	}
@@ -369,7 +369,7 @@ func (c *Client) DeleteMessageTemplate(ctx context.Context, whatsappBusinessAcco
 	urlv.Set("name", templateName)
 	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/message_templates?%s", apiVersion, whatsappBusinessAccountID, urlv.Encode())
 
-	req, err := http.NewRequest(http.MethodDelete, url, nil)
+	req, err := NewRequest(http.MethodDelete, url, nil)
 	if err != nil {
 		return fmt.Errorf("new request: %w", err)
 	}
