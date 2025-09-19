@@ -248,6 +248,8 @@ type NewUploadSessionParams struct {
 }
 
 func (c *Client) NewUploadSession(fbAppID string, params NewUploadSessionParams) (id string, err error) {
+	c.lastGraphError = nil
+
 	if params.SessionType == "" {
 		params.SessionType = "attachment"
 	}
@@ -274,7 +276,15 @@ func (c *Client) NewUploadSession(fbAppID string, params NewUploadSessionParams)
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return "", c.errorFromResponse(resp)
+		gerr := c.errorFromResponse(resp)
+
+		if ge, ok := AsGraphError(gerr); ok {
+			if ge.Code == 4 {
+				return "", ErrApplicationRateLimitReached
+			}
+		}
+
+		return "", gerr
 	}
 	idstruct := struct {
 		ID string `json:"id"`
