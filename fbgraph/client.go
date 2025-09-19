@@ -241,7 +241,7 @@ type NewUploadSessionParams struct {
 	SessionType string `json:"session_type"`
 }
 
-func (c *Client) NewUploadSession(ownerID string, params NewUploadSessionParams) (id string, err error) {
+func (c *Client) NewUploadSession(fbAppID string, params NewUploadSessionParams) (id string, err error) {
 	if params.SessionType == "" {
 		params.SessionType = "attachment"
 	}
@@ -251,7 +251,7 @@ func (c *Client) NewUploadSession(ownerID string, params NewUploadSessionParams)
 		apiVersion = c.GraphAPIVersion
 	}
 
-	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/uploads", apiVersion, ownerID)
+	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/uploads", apiVersion, fbAppID)
 	buf := new(bytes.Buffer)
 	if err := json.NewEncoder(buf).Encode(params); err != nil {
 		return "", fmt.Errorf("encode message: %w", err)
