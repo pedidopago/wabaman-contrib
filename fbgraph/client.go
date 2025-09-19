@@ -27,6 +27,8 @@ type Client struct {
 	HTTPClient      *http.Client
 	AccessToken     string
 	GraphAPIVersion string // use this to override the default API version (check DefaultGraphAPIVersion)
+
+	lastGraphError *GraphError
 }
 
 func NewClient(accessToken string) *Client {
@@ -34,6 +36,10 @@ func NewClient(accessToken string) *Client {
 		HTTPClient:  DefaultHTTPClient,
 		AccessToken: accessToken,
 	}
+}
+
+func (c *Client) LastGraphError() *GraphError {
+	return c.lastGraphError
 }
 
 func (c *Client) SendMessage(phoneID string, msg *MessageObject) (*MessageObjectResult, error) {
@@ -300,7 +306,15 @@ func (c *Client) UploadHeaderHandle(uploadSessionID string, r io.Reader) (h stri
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return "", c.errorFromResponse(resp)
+		gerr := c.errorFromResponse(resp)
+
+		if ge, ok := AsGraphError(gerr); ok {
+			if ge.Code == 4 {
+				return "", ErrApplicationRateLimitReached
+			}
+		}
+
+		return "", gerr
 	}
 	hstruct := struct {
 		H string `json:"h"`
@@ -308,6 +322,9 @@ func (c *Client) UploadHeaderHandle(uploadSessionID string, r io.Reader) (h stri
 	if err := json.NewDecoder(resp.Body).Decode(&hstruct); err != nil {
 		return "", fmt.Errorf("decode response: %w", err)
 	}
+
+	c.lastGraphError = nil
+
 	return hstruct.H, nil
 }
 
@@ -336,5 +353,6 @@ func (c *Client) errorFromResponse(resp *http.Response) error {
 		return fmt.Errorf("http status: %d (%s); %s", resp.StatusCode, resp.Status, jbdbuff.String())
 	}
 	eparent.Error.HTTPStatusCode = resp.StatusCode
-	return &eparent.Error
+	c.lastGraphError = &eparent.Error
+	return c.lastGraphError
 }
