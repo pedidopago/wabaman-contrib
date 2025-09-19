@@ -286,6 +286,8 @@ func (c *Client) NewUploadSession(fbAppID string, params NewUploadSessionParams)
 }
 
 func (c *Client) UploadHeaderHandle(uploadSessionID string, r io.Reader) (h string, err error) {
+	c.lastGraphError = nil
+
 	apiVersion := DefaultGraphAPIVersion
 	if c.GraphAPIVersion != "" {
 		apiVersion = c.GraphAPIVersion
@@ -322,8 +324,6 @@ func (c *Client) UploadHeaderHandle(uploadSessionID string, r io.Reader) (h stri
 	if err := json.NewDecoder(resp.Body).Decode(&hstruct); err != nil {
 		return "", fmt.Errorf("decode response: %w", err)
 	}
-
-	c.lastGraphError = nil
 
 	return hstruct.H, nil
 }

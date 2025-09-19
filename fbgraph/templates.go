@@ -236,6 +236,8 @@ func (c *Client) GetMessageTemplates(ctx context.Context, params GetMessageTempl
 }
 
 func (c *Client) CreateMessageTemplate(ctx context.Context, wabaID string, template NewMessageTemplate) (id string, err error) {
+	c.lastGraphError = nil
+
 	apiVersion := DefaultGraphAPIVersion
 	if c.GraphAPIVersion != "" {
 		apiVersion = c.GraphAPIVersion
@@ -260,18 +262,31 @@ func (c *Client) CreateMessageTemplate(ctx context.Context, wabaID string, templ
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return "", c.errorFromResponse(resp)
+		gerr := c.errorFromResponse(resp)
+
+		if ge, ok := AsGraphError(gerr); ok {
+			if ge.Code == 4 {
+				return "", ErrApplicationRateLimitReached
+			}
+		}
+
+		return "", gerr
 	}
+
 	result := struct {
 		ID string `json:"id"`
 	}{}
+
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return "", fmt.Errorf("decode response: %w", err)
 	}
+
 	return result.ID, nil
 }
 
 func (c *Client) UpdateMessageTemplateCategory(ctx context.Context, templateID string, newCategory MessageTemplateCategory) error {
+	c.lastGraphError = nil
+
 	apiVersion := DefaultGraphAPIVersion
 	if c.GraphAPIVersion != "" {
 		apiVersion = c.GraphAPIVersion
@@ -303,7 +318,15 @@ func (c *Client) UpdateMessageTemplateCategory(ctx context.Context, templateID s
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return c.errorFromResponse(resp)
+		gerr := c.errorFromResponse(resp)
+
+		if ge, ok := AsGraphError(gerr); ok {
+			if ge.Code == 4 {
+				return ErrApplicationRateLimitReached
+			}
+		}
+
+		return gerr
 	}
 
 	result := struct {
@@ -318,6 +341,8 @@ func (c *Client) UpdateMessageTemplateCategory(ctx context.Context, templateID s
 }
 
 func (c *Client) UpdateMessageTemplate(ctx context.Context, templateID string, components []MessageTemplateComponent) error {
+	c.lastGraphError = nil
+
 	apiVersion := DefaultGraphAPIVersion
 	if c.GraphAPIVersion != "" {
 		apiVersion = c.GraphAPIVersion
@@ -347,19 +372,31 @@ func (c *Client) UpdateMessageTemplate(ctx context.Context, templateID string, c
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return c.errorFromResponse(resp)
+		gerr := c.errorFromResponse(resp)
+
+		if ge, ok := AsGraphError(gerr); ok {
+			if ge.Code == 4 {
+				return ErrApplicationRateLimitReached
+			}
+		}
+
+		return gerr
 	}
 
 	result := struct {
 		Success bool `json:"success"`
 	}{}
+
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return fmt.Errorf("decode response: %w", err)
 	}
+
 	return nil
 }
 
 func (c *Client) DeleteMessageTemplate(ctx context.Context, whatsappBusinessAccountID, templateName string) error {
+	c.lastGraphError = nil
+
 	apiVersion := DefaultGraphAPIVersion
 	if c.GraphAPIVersion != "" {
 		apiVersion = c.GraphAPIVersion
@@ -381,7 +418,15 @@ func (c *Client) DeleteMessageTemplate(ctx context.Context, whatsappBusinessAcco
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return c.errorFromResponse(resp)
+		gerr := c.errorFromResponse(resp)
+
+		if ge, ok := AsGraphError(gerr); ok {
+			if ge.Code == 4 {
+				return ErrApplicationRateLimitReached
+			}
+		}
+
+		return gerr
 	}
 
 	result := struct {
@@ -390,5 +435,6 @@ func (c *Client) DeleteMessageTemplate(ctx context.Context, whatsappBusinessAcco
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return fmt.Errorf("decode response: %w", err)
 	}
+
 	return nil
 }
