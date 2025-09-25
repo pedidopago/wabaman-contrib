@@ -28,7 +28,8 @@ type Client struct {
 	AccessToken     string
 	GraphAPIVersion string // use this to override the default API version (check DefaultGraphAPIVersion)
 
-	lastGraphError *GraphError
+	lastGraphError   *GraphError
+	lastErrorRawBody string
 }
 
 func NewClient(accessToken string) *Client {
@@ -40,6 +41,10 @@ func NewClient(accessToken string) *Client {
 
 func (c *Client) LastGraphError() *GraphError {
 	return c.lastGraphError
+}
+
+func (c *Client) LastErrorRawBody() string {
+	return c.lastErrorRawBody
 }
 
 func (c *Client) SendMessage(phoneID string, msg *MessageObject) (*MessageObjectResult, error) {
@@ -249,6 +254,7 @@ type NewUploadSessionParams struct {
 
 func (c *Client) NewUploadSession(fbAppID string, params NewUploadSessionParams) (id string, err error) {
 	c.lastGraphError = nil
+	c.lastErrorRawBody = ""
 
 	if params.SessionType == "" {
 		params.SessionType = "attachment"
@@ -297,6 +303,7 @@ func (c *Client) NewUploadSession(fbAppID string, params NewUploadSessionParams)
 
 func (c *Client) UploadHeaderHandle(uploadSessionID string, r io.Reader) (h string, err error) {
 	c.lastGraphError = nil
+	c.lastErrorRawBody = ""
 
 	apiVersion := DefaultGraphAPIVersion
 	if c.GraphAPIVersion != "" {
@@ -351,6 +358,8 @@ func (c *Client) errorFromResponse(resp *http.Response) error {
 	}{}
 	jbdbuff := new(bytes.Buffer)
 	io.Copy(jbdbuff, resp.Body)
+
+	c.lastErrorRawBody = jbdbuff.String()
 
 	if DebugTrace {
 		fmt.Printf("BODY:\n%s\n", jbdbuff.String())

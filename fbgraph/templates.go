@@ -237,6 +237,7 @@ func (c *Client) GetMessageTemplates(ctx context.Context, params GetMessageTempl
 
 func (c *Client) CreateMessageTemplate(ctx context.Context, wabaID string, template NewMessageTemplate) (id string, err error) {
 	c.lastGraphError = nil
+	c.lastErrorRawBody = ""
 
 	apiVersion := DefaultGraphAPIVersion
 	if c.GraphAPIVersion != "" {
@@ -286,6 +287,7 @@ func (c *Client) CreateMessageTemplate(ctx context.Context, wabaID string, templ
 
 func (c *Client) UpdateMessageTemplateCategory(ctx context.Context, templateID string, newCategory MessageTemplateCategory) error {
 	c.lastGraphError = nil
+	c.lastErrorRawBody = ""
 
 	apiVersion := DefaultGraphAPIVersion
 	if c.GraphAPIVersion != "" {
@@ -342,6 +344,7 @@ func (c *Client) UpdateMessageTemplateCategory(ctx context.Context, templateID s
 
 func (c *Client) UpdateMessageTemplate(ctx context.Context, templateID string, components []MessageTemplateComponent) error {
 	c.lastGraphError = nil
+	c.lastErrorRawBody = ""
 
 	apiVersion := DefaultGraphAPIVersion
 	if c.GraphAPIVersion != "" {
@@ -396,6 +399,7 @@ func (c *Client) UpdateMessageTemplate(ctx context.Context, templateID string, c
 
 func (c *Client) DeleteMessageTemplate(ctx context.Context, whatsappBusinessAccountID, templateName string) error {
 	c.lastGraphError = nil
+	c.lastErrorRawBody = ""
 
 	apiVersion := DefaultGraphAPIVersion
 	if c.GraphAPIVersion != "" {
