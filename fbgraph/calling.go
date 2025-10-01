@@ -261,3 +261,32 @@ func (c *Client) GetAppSubscribedWebhooks(ctx context.Context, appID, appSecret 
 
 	return result.Data, nil
 }
+
+func IsSubscribedToCalls(objs []WebhookObject, minVersion string) (bool, error) {
+	for _, obj := range objs {
+		if obj.Object == "whatsapp_business_account" {
+			if !obj.Active {
+				continue
+			}
+
+			for _, field := range obj.Fields {
+				if field.Name == "calls" {
+					if minVersion == "" {
+						return true, nil
+					}
+
+					cmp, err := CompareGraphAPIVersions(field.Version, minVersion)
+					if err != nil {
+						return false, fmt.Errorf("compare versions: %w", err)
+					}
+
+					if cmp >= 0 {
+						return true, nil
+					}
+				}
+			}
+		}
+	}
+
+	return false, nil
+}
