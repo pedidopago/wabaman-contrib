@@ -206,3 +206,58 @@ func (tier MessageLimitingTier) CanEnableCallingAPI() bool {
 
 	return true
 }
+
+type WebhookFieldDesc struct {
+	Name    string `json:"name"`
+	Version string `json:"version"`
+}
+
+type WebhookObject struct {
+	Object      string             `json:"object"`
+	CallbackURL string             `json:"callback_url"`
+	Active      bool               `json:"active"`
+	Fields      []WebhookFieldDesc `json:"fields"`
+}
+
+func (c *Client) GetAppSubscribedWebhooks(ctx context.Context, appID, appSecret string) ([]WebhookObject, error) {
+	c.lastErrorRawBody = ""
+	c.lastGraphError = nil
+
+	apiVersion := DefaultGraphAPIVersion
+	if c.GraphAPIVersion != "" {
+		apiVersion = c.GraphAPIVersion
+	}
+
+	specialToken := fmt.Sprintf("%s|%s", appID, appSecret)
+
+	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/subscriptions", apiVersion, appID)
+
+	req, err := NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("new request: %w", err)
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", specialToken))
+	req.Header.Set("Accept", "application/json")
+
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("request failed: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, c.errorFromResponse(resp)
+	}
+
+	result := struct {
+		Data []WebhookObject `json:"data"`
+	}{}
+
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, fmt.Errorf("decode response: %w", err)
+	}
+
+	return result.Data, nil
+}
