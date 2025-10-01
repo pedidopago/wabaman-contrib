@@ -155,7 +155,7 @@ type MessageLimitingTier string
 const (
 	Tier50        MessageLimitingTier = "TIER_50"
 	Tier250       MessageLimitingTier = "TIER_250"
-	Timer1K       MessageLimitingTier = "TIER_1K"
+	Tier1K        MessageLimitingTier = "TIER_1K"
 	Tier10K       MessageLimitingTier = "TIER_10K"
 	Tier100K      MessageLimitingTier = "TIER_100K"
 	TierNotSet    MessageLimitingTier = "TIER_NOT_SET" // Indicates the business phone number has not been used to send a message yet.
