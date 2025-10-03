@@ -28,6 +28,16 @@ const (
 	CallingStatusDisabled CallingStatus = "DISABLED"
 )
 
+var callingStatusValid = map[CallingStatus]bool{
+	CallingStatusNotSet:   false,
+	CallingStatusEnabled:  true,
+	CallingStatusDisabled: true,
+}
+
+func (s CallingStatus) IsValid() bool {
+	return callingStatusValid[s]
+}
+
 type CallIconButtonVisibility string
 
 const (
@@ -40,6 +50,16 @@ const (
 	CallVisibilityDisableAll CallIconButtonVisibility = "DISABLE ALL"
 )
 
+var callIconButtonVisibilityValid = map[CallIconButtonVisibility]bool{
+	CallVisibilityNotSet:     false,
+	CallVisibilityDefault:    true,
+	CallVisibilityDisableAll: true,
+}
+
+func (v CallIconButtonVisibility) IsValid() bool {
+	return callIconButtonVisibilityValid[v]
+}
+
 type CallHoursStatus string
 
 const (
@@ -47,6 +67,16 @@ const (
 	CallHoursStatusEnabled  CallHoursStatus = "ENABLED"
 	CallHoursStatusDisabled CallHoursStatus = "DISABLED"
 )
+
+var callHoursStatusValid = map[CallHoursStatus]bool{
+	CallHoursStatusNotSet:   false,
+	CallHoursStatusEnabled:  true,
+	CallHoursStatusDisabled: true,
+}
+
+func (s CallHoursStatus) IsValid() bool {
+	return callHoursStatusValid[s]
+}
 
 type CallHoursObject struct {
 	Status               CallHoursStatus             `json:"status"`
@@ -66,6 +96,20 @@ const (
 	DayOfWeekFriday    DayOfWeek = "FRIDAY"
 	DayOfWeekSaturday  DayOfWeek = "SATURDAY"
 )
+
+var dayOfWeekValid = map[DayOfWeek]bool{
+	DayOfWeekSunday:    true,
+	DayOfWeekMonday:    true,
+	DayOfWeekTuesday:   true,
+	DayOfWeekWednesday: true,
+	DayOfWeekThursday:  true,
+	DayOfWeekFriday:    true,
+	DayOfWeekSaturday:  true,
+}
+
+func (d DayOfWeek) IsValid() bool {
+	return dayOfWeekValid[d]
+}
 
 type OpenCloseTime string
 
