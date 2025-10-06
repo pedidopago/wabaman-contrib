@@ -1,9 +1,11 @@
 package fbgraph
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 )
 
@@ -218,6 +220,64 @@ func (c *Client) GetWhatsappSettings(ctx context.Context, whatsappID string) (*W
 		return nil, fmt.Errorf("decode response: %w", err)
 	}
 	return result, nil
+}
+
+// UpdateWhatsappSettings: Use this endpoint to update call settings configuration for an individual business phone number.
+//
+//Possible errors that can occur:
+//
+// Permissions/Authorization errors
+// Invalid status
+// Invalid schedule for call_hours
+// Holiday given in call_hours is a past date
+// Timezone is invalid in call_hours
+// weekly_operating_hours in call_hours cannot be empty
+// Date format in holiday_schedule for call_hours is invalid
+// More than 2 entries not allowed in weekly_operating_hours schedule in call_hours
+// Overlapping schedule in call_hours is not allowed
+// Calling restriction errors
+
+func (c *Client) UpdateWhatsappSettings(ctx context.Context, whatsappID string, settings *WhatsappSettings) error {
+	c.lastErrorRawBody = ""
+	c.lastGraphError = nil
+
+	apiVersion := DefaultGraphAPIVersion
+	if c.GraphAPIVersion != "" {
+		apiVersion = c.GraphAPIVersion
+	}
+
+	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/settings", apiVersion, whatsappID)
+
+	jd, err := json.Marshal(settings)
+	if err != nil {
+		return fmt.Errorf("marshal settings: %w", err)
+	}
+
+	rbuf := bytes.NewBuffer(jd)
+	rbuf.Write(jd)
+
+	req, err := NewRequestWithContext(ctx, http.MethodPost, url, rbuf)
+	if err != nil {
+		return fmt.Errorf("new request: %w", err)
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken))
+	req.Header.Set("Accept", "application/json")
+
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("request failed: %w", err)
+	}
+
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return c.errorFromResponse(resp)
+	}
+
+	io.Copy(io.Discard, resp.Body)
+
+	return nil
 }
 
 type MessageLimitingTier string
