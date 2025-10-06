@@ -180,7 +180,7 @@ type WhatsappSettings struct {
 		Status                   CallingStatus            `json:"status"`
 		CallIconVisibility       CallIconButtonVisibility `json:"call_icon_visibility"`
 		CallHours                CallHoursObject          `json:"call_hours"`
-		CallbackPermissionStatus string                   `json:"callback_permission_status"` // ENABLED, DISABLED
+		CallbackPermissionStatus CallingStatus            `json:"callback_permission_status"` // ENABLED, DISABLED
 		Sip                      struct {
 			Status  string            `json:"status"` // ENABLED, DISABLED (default)
 			Servers []SipServerObject `json:"servers,omitzero"`
