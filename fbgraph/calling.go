@@ -124,6 +124,32 @@ func NewOpenCloseTime(hour, minute int) OpenCloseTime {
 	return OpenCloseTime(fmt.Sprintf("%02d%02d", hour, minute))
 }
 
+func (t OpenCloseTime) IsValid() bool {
+	if len(t) != 4 {
+		return false
+	}
+
+	for _, c := range t {
+		if c < '0' || c > '9' {
+			return false
+		}
+	}
+
+	if t[0] > '2' {
+		return false
+	}
+
+	if t[0] == '2' && t[1] > '4' {
+		return false
+	}
+
+	if t[2] > '6' {
+		return false
+	}
+
+	return true
+}
+
 type WeeklyOperatingHourObject struct {
 	DayOfWeek DayOfWeek     `json:"day_of_week"`
 	OpenTime  OpenCloseTime `json:"open_time"`
