@@ -175,16 +175,18 @@ type SipServerObject struct {
 	RequestURIUserParams map[string]string `json:"request_uri_user_params,omitempty"`
 }
 
+type CallingSip struct {
+	Status  string            `json:"status"` // ENABLED, DISABLED (default)
+	Servers []SipServerObject `json:"servers,omitzero"`
+}
+
 type WhatsappSettings struct {
 	Calling struct {
 		Status                   CallingStatus            `json:"status"`
 		CallIconVisibility       CallIconButtonVisibility `json:"call_icon_visibility"`
 		CallHours                CallHoursObject          `json:"call_hours"`
 		CallbackPermissionStatus CallingStatus            `json:"callback_permission_status"` // ENABLED, DISABLED
-		Sip                      struct {
-			Status  string            `json:"status"` // ENABLED, DISABLED (default)
-			Servers []SipServerObject `json:"servers,omitzero"`
-		} `json:"sip"`
+		Sip                      *CallingSip              `json:"sip,omitempty"`
 	} `json:"calling"`
 }
 
