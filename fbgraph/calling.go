@@ -84,7 +84,7 @@ type CallHoursObject struct {
 	Status               CallHoursStatus             `json:"status"`
 	TimezoneID           string                      `json:"timezone_id"`
 	WeeklyOperatingHours []WeeklyOperatingHourObject `json:"weekly_operating_hours"`
-	HolidaySchedule      []HolidayScheduleObject     `json:"holiday_schedule"`
+	HolidaySchedule      []HolidayScheduleObject     `json:"holiday_schedule,omitempty"`
 }
 
 type DayOfWeek string
