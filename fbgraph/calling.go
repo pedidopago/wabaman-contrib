@@ -256,7 +256,6 @@ func (c *Client) UpdateWhatsappSettings(ctx context.Context, whatsappID string, 
 	}
 
 	rbuf := bytes.NewBuffer(jd)
-	rbuf.Write(jd)
 
 	req, err := NewRequestWithContext(ctx, http.MethodPost, url, rbuf)
 	if err != nil {
