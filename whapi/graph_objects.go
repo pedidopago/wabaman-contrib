@@ -61,6 +61,7 @@ const (
 	ChangeObjectFieldHistory          ChangeObjectField = "history"
 	ChangeObjectFieldSMBMessageEchoes ChangeObjectField = "smb_message_echoes"
 	ChangeObjectFieldSMBAppStateSync  ChangeObjectField = "smb_app_state_sync"
+	ChangeObjectFieldCalls            ChangeObjectField = "calls"
 )
 
 type ChangeObject struct {
@@ -91,6 +92,8 @@ type ValueObject struct {
 	StateSync []StateSyncObject `json:"state_sync,omitempty"`
 	// UserPreferences https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/reference/user_preferences
 	UserPreferences []UserPreferencesObject `json:"user_preferences,omitempty"`
+	// Calls https://developers.facebook.com/docs/whatsapp/cloud-api/calling/user-initiated-calls
+	Calls []CallObject `json:"calls,omitempty"`
 	// Metadata for the business that is subscribed to the webhook.
 	Metadata ValueObjectMetadata `json:"metadata,omitempty"`
 
@@ -638,6 +641,23 @@ const (
 	// Indicates a free entry point conversation.
 	OriginTypeReferralConversion OriginType = "referral_conversion"
 )
+
+type CallObject struct {
+	// The WhatsApp call ID
+	ID string `json:"id"`
+	// The WhatsApp user's phone number (callee)
+	To        string             `json:"to"`
+	From      string             `json:"from"`
+	Event     string             `json:"event"`
+	Timestamp string             `json:"timestamp"`
+	Session   *CallSessionObject `json:"session,omitempty"`
+}
+
+type CallSessionObject struct {
+	SDPType string `json:"sdp_type"`
+	// RFC 8866 SDP
+	SDP string `json:"sdp"`
+}
 
 type ErrorObject struct {
 	Code  ErrorCode `json:"code"`
