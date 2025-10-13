@@ -192,6 +192,19 @@ func (c *Client) CheckIntegration(ctx context.Context, req *rest.CheckIntegratio
 	return resp, nil
 }
 
+func (c *Client) CheckIntegrationV2(ctx context.Context, req *rest.CheckIntegrationV2Request) (*rest.CheckIntegrationV2Response, error) {
+	q := make(url.Values)
+	if req.StoreID != "" {
+		q.Set("store_id", req.StoreID)
+	}
+	qenc := q.Encode()
+	resp := &rest.CheckIntegrationV2Response{}
+	if err := c.get(ctx, fmt.Sprintf("/api/v2/check-integration?%s", qenc), resp); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (c *Client) GetBusinesses(ctx context.Context, req *rest.GetBusinessesRequest) (*rest.GetBusinessesResponse, error) {
 	q := make(url.Values)
 	if req.StoreID != "" {

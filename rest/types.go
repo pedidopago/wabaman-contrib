@@ -370,6 +370,25 @@ type CheckIntegrationResponse struct {
 	ContactIDs  []uint64 `json:"contact_ids,omitempty"`
 }
 
+type CheckIntegrationV2Request struct {
+	StoreID string
+}
+
+type CheckIntegrationPhoneSnippet struct {
+	ID                 uint   `json:"id"`
+	BranchID           string `json:"branch_id"`
+	BranchName         string `json:"branch_name"`
+	PhoneNumber        string `json:"phone_number"`
+	DriverName         string `json:"driver_name"`
+	ContactPhoneNumber string `json:"contact_phone_number"`
+	UseFor2FA          uint16 `json:"use_for_2fa"`
+}
+
+type CheckIntegrationV2Response struct {
+	AccountId int                            `json:"account_id"`
+	Phones    []CheckIntegrationPhoneSnippet `json:"phones"`
+}
+
 type ErrorResponse struct {
 	Message    string `json:"message"`
 	StatusCode int    `json:"status_code,omitempty"`
