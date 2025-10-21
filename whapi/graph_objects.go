@@ -646,12 +646,20 @@ type CallObject struct {
 	// The WhatsApp call ID
 	ID string `json:"id"`
 	// The WhatsApp user's phone number (callee)
-	To        string             `json:"to"`
-	From      string             `json:"from"`
-	Event     string             `json:"event"`
-	Timestamp string             `json:"timestamp"`
-	Session   *CallSessionObject `json:"session,omitempty"`
+	To        string              `json:"to"`
+	From      string              `json:"from"`
+	Event     string              `json:"event"`
+	Timestamp string              `json:"timestamp"`
+	Session   *CallSessionObject  `json:"session,omitempty"`
+	Direction CallObjectDirection `json:"direction,omitempty"`
 }
+
+type CallObjectDirection string
+
+const (
+	CallObjectDirectionUserInitiated     CallObjectDirection = "USER_INITIATED"
+	CallObjectDirectionBusinessInitiated CallObjectDirection = "BUSINESS_INITIATED"
+)
 
 type CallSessionObject struct {
 	SDPType string `json:"sdp_type"`
