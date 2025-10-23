@@ -33,6 +33,7 @@ const (
 	MessageTypePresenceResponse           MessageType = 23 // server sends this to the clients
 	MessageTypeGetUnreadMessagesRequest   MessageType = 24 // js/ts client sends this to the server
 	MessageTypeGetUnreadMessagesResponse  MessageType = 25 // server sends this to the clients
+	MessageTypeIncomingCallFromClient     MessageType = 30 // server sends this to the clients
 	MessageTypeMockClientMessages         MessageType = 230
 	MessageTypeGenericError               MessageType = 235
 	MessageTypeCloseError                 MessageType = 240
@@ -65,6 +66,7 @@ type Message struct {
 	CancelledScheduledMessages *CancelledScheduledMessages `json:"cancelled_scheduled_messages,omitempty"`
 	GetUnreadMessagesRequest   *GetUnreadMessagesRequest   `json:"get_unread_messages_request,omitempty"`
 	GetUnreadMessagesResponse  *GetUnreadMessagesResponse  `json:"get_unread_messages_response,omitempty"`
+	IncomingCallFromClient     *IncomingCallFromClient     `json:"incoming_call_from_client,omitempty"`
 }
 
 func (e Message) ToJSON() string {
