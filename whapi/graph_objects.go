@@ -668,8 +668,12 @@ type CallSessionObject struct {
 }
 
 type ErrorObject struct {
-	Code  ErrorCode `json:"code"`
-	Title string    `json:"title"` // ErrorTitle
+	Code      ErrorCode `json:"code"`
+	Title     string    `json:"title"` // ErrorTitle
+	Message   string    `json:"message,omitempty"`
+	ErrorData struct {
+		Details string `json:"details,omitempty"`
+	} `json:"error_data,omitempty"`
 }
 
 type ErrorCode int
