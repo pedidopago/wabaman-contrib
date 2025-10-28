@@ -10,3 +10,11 @@ type IncomingCallFromClient struct {
 	SDPType       string `json:"sdp_type"`
 	SDP           string `json:"sdp"`
 }
+
+type ConnectToCall struct {
+	CallID   string `json:"call_id"`
+	PhoneID  uint   `json:"phone_id"`
+	BranchID string `json:"branch_id"`
+	SDPType  string `json:"sdp_type"`
+	SDP      string `json:"sdp"`
+}
