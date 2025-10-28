@@ -18,3 +18,7 @@ type ConnectToCall struct {
 	SDPType  string `json:"sdp_type"`
 	SDP      string `json:"sdp"`
 }
+
+type TerminateCall struct {
+	CallID string `json:"call_id"`
+}
