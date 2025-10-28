@@ -22,3 +22,9 @@ type ConnectToCall struct {
 type TerminateCall struct {
 	CallID string `json:"call_id"`
 }
+
+type CallConsumed struct {
+	CallID    string `json:"call_id"`
+	AgentID   string `json:"agent_id"`
+	AgentName string `json:"agent_name"`
+}
