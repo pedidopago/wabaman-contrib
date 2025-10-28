@@ -461,19 +461,6 @@ func (c *Client) PreAcceptCall(ctx context.Context, whatsappID string, r *Accept
 	return nil
 }
 
-/*
-POST <PHONE_NUMBER_ID>/calls
-{
-  "messaging_product": "whatsapp",
-  "call_id": "wacid.ABGGFjFVU2AfAgo6V-Hc5eCgK5Gh",
-  "action": "accept",
-  "session" : {
-      "sdp_type" : "answer",
-      "sdp" : "<<RFC 8866 SDP>>"
-   },
-}
-*/
-
 func (c *Client) AcceptCall(ctx context.Context, whatsappID string, r *AcceptCallRequest) error {
 	c.lastErrorRawBody = ""
 	c.lastGraphError = nil
@@ -493,6 +480,58 @@ func (c *Client) AcceptCall(ctx context.Context, whatsappID string, r *AcceptCal
 		AcceptCallRequest: *r,
 		MessagingProduct:  "whatsapp",
 		Action:            "accept",
+	}
+
+	jd, err := json.Marshal(reqO)
+	if err != nil {
+		return fmt.Errorf("marshal request: %w", err)
+	}
+
+	rbuf := bytes.NewReader(jd)
+
+	req, err := NewRequestWithContext(ctx, http.MethodPost, url, rbuf)
+	if err != nil {
+		return fmt.Errorf("new request: %w", err)
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken))
+	req.Header.Set("Accept", "application/json")
+
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("request failed: %w", err)
+	}
+
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return c.errorFromResponse(resp)
+	}
+
+	io.Copy(io.Discard, resp.Body)
+
+	return nil
+}
+
+func (c *Client) TerminateCall(ctx context.Context, whatsappID string, callID string) error {
+	c.lastErrorRawBody = ""
+	c.lastGraphError = nil
+
+	apiVersion := DefaultGraphAPIVersion
+	if c.GraphAPIVersion != "" {
+		apiVersion = c.GraphAPIVersion
+	}
+
+	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/calls", apiVersion, whatsappID)
+
+	reqO := struct {
+		MessagingProduct string `json:"messaging_product"`
+		CallID           string `json:"call_id"`
+		Action           string `json:"action"`
+	}{
+		MessagingProduct: "whatsapp",
+		CallID:           callID,
+		Action:           "terminate",
 	}
 
 	jd, err := json.Marshal(reqO)
