@@ -393,23 +393,23 @@ func (c *Client) GetAppSubscribedWebhooks(ctx context.Context, appID, appSecret 
 	return result.Data, nil
 }
 
-type PreAcceptCallRequest struct {
-	CallID  string                      `json:"call_id"`
-	Session PreAcceptCallRequestSession `json:"session"`
+type AcceptCallRequest struct {
+	CallID  string             `json:"call_id"`
+	Session CallRequestSession `json:"session"`
 }
 
-type PreAcceptCallRequestSession struct {
+type CallRequestSession struct {
 	SDPType string `json:"sdp_type"`
 	SDP     string `json:"sdp"`
 }
 
-type preAcceptCallObject struct {
-	PreAcceptCallRequest `json:",inline"`
-	MessagingProduct     string `json:"messaging_product"` // always = "whatsapp"
-	Action               string `json:"action"`            // always = "pre_accept"
+type commonAcceptCallObject struct {
+	AcceptCallRequest `json:",inline"`
+	MessagingProduct  string `json:"messaging_product"` // always = "whatsapp"
+	Action            string `json:"action"`            // always = "pre_accept"
 }
 
-func (c *Client) PreAcceptCall(ctx context.Context, whatsappID string, r *PreAcceptCallRequest) error {
+func (c *Client) PreAcceptCall(ctx context.Context, whatsappID string, r *AcceptCallRequest) error {
 	c.lastErrorRawBody = ""
 	c.lastGraphError = nil
 
@@ -424,10 +424,75 @@ func (c *Client) PreAcceptCall(ctx context.Context, whatsappID string, r *PreAcc
 
 	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/calls", apiVersion, whatsappID)
 
-	reqO := preAcceptCallObject{
-		PreAcceptCallRequest: *r,
-		MessagingProduct:     "whatsapp",
-		Action:               "pre_accept",
+	reqO := commonAcceptCallObject{
+		AcceptCallRequest: *r,
+		MessagingProduct:  "whatsapp",
+		Action:            "pre_accept",
+	}
+
+	jd, err := json.Marshal(reqO)
+	if err != nil {
+		return fmt.Errorf("marshal request: %w", err)
+	}
+
+	rbuf := bytes.NewReader(jd)
+
+	req, err := NewRequestWithContext(ctx, http.MethodPost, url, rbuf)
+	if err != nil {
+		return fmt.Errorf("new request: %w", err)
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken))
+	req.Header.Set("Accept", "application/json")
+
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("request failed: %w", err)
+	}
+
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return c.errorFromResponse(resp)
+	}
+
+	io.Copy(io.Discard, resp.Body)
+
+	return nil
+}
+
+/*
+POST <PHONE_NUMBER_ID>/calls
+{
+  "messaging_product": "whatsapp",
+  "call_id": "wacid.ABGGFjFVU2AfAgo6V-Hc5eCgK5Gh",
+  "action": "accept",
+  "session" : {
+      "sdp_type" : "answer",
+      "sdp" : "<<RFC 8866 SDP>>"
+   },
+}
+*/
+
+func (c *Client) AcceptCall(ctx context.Context, whatsappID string, r *AcceptCallRequest) error {
+	c.lastErrorRawBody = ""
+	c.lastGraphError = nil
+
+	if r == nil {
+		return fmt.Errorf("request is nil")
+	}
+
+	apiVersion := DefaultGraphAPIVersion
+	if c.GraphAPIVersion != "" {
+		apiVersion = c.GraphAPIVersion
+	}
+
+	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/calls", apiVersion, whatsappID)
+
+	reqO := commonAcceptCallObject{
+		AcceptCallRequest: *r,
+		MessagingProduct:  "whatsapp",
+		Action:            "accept",
 	}
 
 	jd, err := json.Marshal(reqO)
