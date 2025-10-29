@@ -359,6 +359,7 @@ type CheckIntegrationRequest struct {
 	StoreID            string
 	BranchID           string
 	ContactPhoneNumber string
+	ReturnEarly        *bool
 }
 
 type CheckIntegrationResponse struct {

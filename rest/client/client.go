@@ -184,6 +184,10 @@ func (c *Client) CheckIntegration(ctx context.Context, req *rest.CheckIntegratio
 	if req.ContactPhoneNumber != "" {
 		q.Set("contact_phone_number", req.ContactPhoneNumber)
 	}
+	if req.ReturnEarly != nil {
+		q.Set("return_early", fmt.Sprintf("%t", *req.ReturnEarly))
+	}
+
 	qenc := q.Encode()
 	resp := &rest.CheckIntegrationResponse{}
 	if err := c.get(ctx, fmt.Sprintf("/api/v1/check-integration?%s", qenc), resp); err != nil {
