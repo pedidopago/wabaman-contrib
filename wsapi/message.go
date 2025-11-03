@@ -271,6 +271,7 @@ type HostNoteButton struct {
 type HostNoteUpdated struct {
 	HostNote         *HostNote `json:"host_note"`
 	SelectedButtonID string    `json:"selected_button_id,omitempty"`
+	UpdatedFields    []string  `json:"updated_fields,omitempty"`
 	AgentID          string    `json:"agent_id,omitempty"`
 	AgentName        string    `json:"agent_name,omitempty"`
 }
