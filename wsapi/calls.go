@@ -7,8 +7,6 @@ type IncomingCallFromClient struct {
 	WABAContactID string `json:"waba_contact_id"`
 	ContactID     uint64 `json:"contact_id"`
 	ContactName   string `json:"contact_name"`
-	SDPType       string `json:"sdp_type"`
-	SDP           string `json:"sdp"`
 }
 
 type ConnectToCall struct {
@@ -27,6 +25,8 @@ type CallConsumed struct {
 	CallID    string `json:"call_id"`
 	AgentID   string `json:"agent_id"`
 	AgentName string `json:"agent_name"`
+	SDPType   string `json:"sdp_type"` // must be answer
+	SDP       string `json:"sdp"`
 }
 
 type AcceptCall struct {
