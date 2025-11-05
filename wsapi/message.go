@@ -39,6 +39,7 @@ const (
 	MessageTypeCallConsumed               MessageType = 33 // server sends this to the clients
 	MessageTypeAcceptCall                 MessageType = 34 // js/ts client sends this to the server
 	MessageTypeRejectCall                 MessageType = 35 // js/ts client sends this to the server
+	MessageTypeSendBrowserCandidate       MessageType = 36 // js/ts client sends this to the server
 	MessageTypeMockClientMessages         MessageType = 230
 	MessageTypeGenericError               MessageType = 235
 	MessageTypeCloseError                 MessageType = 240
@@ -77,6 +78,7 @@ type Message struct {
 	CallConsumed               *CallConsumed               `json:"call_consumed,omitempty"`
 	AcceptCall                 *AcceptCall                 `json:"accept_call,omitempty"`
 	RejectCall                 *RejectCall                 `json:"reject_call,omitempty"`
+	SendBrowserCandidate       *SendBrowserCandidate       `json:"send_browser_candidate,omitempty"`
 }
 
 func (e Message) ToJSON() string {
