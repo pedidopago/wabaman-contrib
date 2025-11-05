@@ -28,3 +28,11 @@ type CallConsumed struct {
 	AgentID   string `json:"agent_id"`
 	AgentName string `json:"agent_name"`
 }
+
+type AcceptCall struct {
+	CallID string `json:"call_id"`
+}
+
+type RejectCall struct {
+	CallID string `json:"call_id"`
+}

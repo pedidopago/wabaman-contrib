@@ -37,6 +37,8 @@ const (
 	MessageTypeConnectToCall              MessageType = 31 // js/ts client sends this to the server
 	MessageTypeTerminateCall              MessageType = 32 // BIDIRECTIONAL - js/ts client sends this to the server (and the server sends it to the clients)
 	MessageTypeCallConsumed               MessageType = 33 // server sends this to the clients
+	MessageTypeAcceptCall                 MessageType = 34 // js/ts client sends this to the server
+	MessageTypeRejectCall                 MessageType = 35 // js/ts client sends this to the server
 	MessageTypeMockClientMessages         MessageType = 230
 	MessageTypeGenericError               MessageType = 235
 	MessageTypeCloseError                 MessageType = 240
@@ -73,6 +75,8 @@ type Message struct {
 	ConnectToCall              *ConnectToCall              `json:"connect_to_call,omitempty"`
 	TerminateCall              *TerminateCall              `json:"terminate_call,omitempty"`
 	CallConsumed               *CallConsumed               `json:"call_consumed,omitempty"`
+	AcceptCall                 *AcceptCall                 `json:"accept_call,omitempty"`
+	RejectCall                 *RejectCall                 `json:"reject_call,omitempty"`
 }
 
 func (e Message) ToJSON() string {
