@@ -74,7 +74,7 @@ type SendBrowserCandidate struct {
 		SdpMid string `json:"sdpMid"`
 		// If not null, sdpMLineIndex indicates the zero-based index number of the media description
 		// (as defined in RFC 4566) in the SDP with which the candidate is associated.
-		SdpMLineIndex *int16 `json:"sdpMLineIndex"`
+		SdpMLineIndex *uint16 `json:"sdpMLineIndex"`
 		// If protocol is "tcp", tcpType represents the type of TCP candidate. Otherwise, tcpType is null.
 		TcpType string `json:"tcpType"`
 		// A string indicating the type of candidate as one of the strings listed on RTCIceCandidate.type.
