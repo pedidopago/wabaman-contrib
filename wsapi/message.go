@@ -39,7 +39,7 @@ const (
 	MessageTypeCallConsumed               MessageType = 33 // server sends this to the clients
 	MessageTypeAcceptCall                 MessageType = 34 // js/ts client sends this to the server
 	MessageTypeRejectCall                 MessageType = 35 // js/ts client sends this to the server
-	MessageTypeSendBrowserCandidate       MessageType = 36 // js/ts client sends this to the server
+	MessageTypeSendBrowserCandidate       MessageType = 36 // BIDIRECTIONAL - js/ts client sends this to the server (and the server sends it to the clients)
 	MessageTypeCallStarted                MessageType = 37 // server sends this to the clients
 	MessageTypeCallEnded                  MessageType = 38 // server sends this to the clients
 	MessageTypeMockClientMessages         MessageType = 230
