@@ -1,5 +1,7 @@
 package wsapi
 
+import "time"
+
 type IncomingCallFromClient struct {
 	CallID             string `json:"call_id"`
 	PhoneID            uint   `json:"phone_id"`
@@ -85,4 +87,26 @@ type SendBrowserCandidate struct {
 		// even across ICE restarts.
 		UsernameFragment string `json:"usernameFragment"`
 	} `json:"candidate"`
+}
+
+type CallStarted struct {
+	CallID             string    `json:"call_id"`
+	PhoneID            uint      `json:"phone_id"`
+	BranchID           string    `json:"branch_id"`
+	WABAContactID      string    `json:"waba_contact_id"`
+	ContactPhoneNumber string    `json:"contact_phone_number"`
+	ContactID          uint64    `json:"contact_id"`
+	ContactName        string    `json:"contact_name"`
+	StartTime          time.Time `json:"start_time"`
+}
+
+type CallEnded struct {
+	CallID             string    `json:"call_id"`
+	PhoneID            uint      `json:"phone_id"`
+	BranchID           string    `json:"branch_id"`
+	WABAContactID      string    `json:"waba_contact_id"`
+	ContactPhoneNumber string    `json:"contact_phone_number"`
+	ContactID          uint64    `json:"contact_id"`
+	ContactName        string    `json:"contact_name"`
+	EndTime            time.Time `json:"end_time"`
 }
