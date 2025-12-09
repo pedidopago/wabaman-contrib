@@ -25,12 +25,15 @@ const (
 )
 
 type TemplateEvent struct {
-	StoreID    string                   `json:"store_id"`
-	BranchID   string                   `json:"branch_id,omitempty"`
-	PhoneID    uint                     `json:"phone_id,omitempty"`
-	Event      TemplateEventKind        `json:"event,omitempty"`
-	TemplateID string                   `json:"template_id,omitempty"`
-	Template   *fbgraph.MessageTemplate `json:"template,omitempty"`
+	StoreID           string                   `json:"store_id"`
+	BranchID          string                   `json:"branch_id,omitempty"`
+	PhoneID           uint                     `json:"phone_id,omitempty"`
+	Event             TemplateEventKind        `json:"event,omitempty"`
+	TemplateID        string                   `json:"template_id,omitempty"`
+	Template          *fbgraph.MessageTemplate `json:"template,omitempty"`
+	Reason            string                   `json:"reason,omitempty"`
+	DetailTitle       string                   `json:"detail_title,omitempty"`
+	DetailDescription string                   `json:"detail_description,omitempty"`
 }
 
 func (e TemplateEvent) ToJSON() string {
