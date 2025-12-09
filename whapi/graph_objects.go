@@ -130,6 +130,37 @@ func (v ValueObject) GetContactProfileName(waid string) string {
 	return ""
 }
 
+// ValueObject.Event types when `value` is a template event
+const (
+	// Indicates the template has been approved and can now be sent in template messages.
+	TemplateEventApproved = "APPROVED"
+	// ndicates the template has been archived to keep the list of templates in WhatsApp manager clean.
+	TemplateEventArchived = "ARCHIVED"
+	// Indicates the template has been deleted.
+	TemplateEventDeleted = "DELETED"
+	// Indicates the template has been disabled due to user feedback.
+	TemplateEventDisabled = "DISABLED"
+	// Indicates the template has received negative feedback and is at risk of being disabled.
+	TemplateEventFlagged = "FLAGGED"
+	// Indicates the template is in the appeal process.
+	TemplateEventInAppeal = "IN_APPEAL"
+	// Indicates the WhatsApp Business Account template is at its template limit.
+	TemplateEventLimitExceeded = "LIMIT_EXCEEDED"
+	// Indicates the template has been locked and cannot be edited.
+	TemplateEventLocked = "LOCKED"
+	// Indicates the template has been paused.
+	TemplateEventPaused = "PAUSED"
+	// Indicates the template is undergoing template review.
+	TemplateEventPending = "PENDING"
+	// Indicates the template is no longer flagged or disabled and can be sent in template messages again.
+	TemplateEventReinstated = "REINSTATED"
+	// Indicates template has been deleted via WhatsApp Manager.
+	TemplateEventPendingDeletion = "PENDING_DELETION"
+	// Indicates the template has been rejected. You can edit the template to have it
+	// undergo template review again or appeal the rejection.
+	TemplateEventRejected = "REJECTED"
+)
+
 type ValueObjectMetadata struct {
 	DisplayPhoneNumber string `json:"display_phone_number,omitempty"` // PHONE-NUMBER
 	PhoneNumberID      string `json:"phone_number_id,omitempty"`      // PHONE-NUMBER-ID
