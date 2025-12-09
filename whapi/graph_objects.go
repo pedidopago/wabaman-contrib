@@ -104,6 +104,21 @@ type ValueObject struct {
 	MessageTemplateName     string `json:"message_template_name,omitempty"`
 	MessageTemplateLanguage string `json:"message_template_language,omitempty"`
 	Reason                  string `json:"reason,omitempty"`
+	MessageTemplateCategory string `json:"message_template_category,omitempty"`
+	// only included if template disabled
+	DisableInfo struct {
+		DisableDate string `json:"disable_date,omitempty"`
+	} `json:"disable_info,omitempty"`
+	// only included if template locked or unlocked
+	OtherInfo struct {
+		Title       string `json:"title,omitempty"`
+		Description string `json:"description,omitempty"`
+	} `json:"other_info,omitempty"`
+	// only included if template rejected with INVALID_FORMAT reason
+	RejectionInfo struct {
+		Reason         string `json:"reason,omitempty"`
+		Recommendation string `json:"recommendation,omitempty"`
+	} `json:"rejection_info,omitempty"`
 }
 
 func (v ValueObject) GetContactProfileName(waid string) string {
