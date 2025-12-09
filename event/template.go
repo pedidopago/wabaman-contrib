@@ -10,13 +10,18 @@ type TemplateEventKind string
 
 const (
 	TemplateEventApproved        TemplateEventKind = "APPROVED"
+	TemplateEventArchived        TemplateEventKind = "ARCHIVED"
+	TemplateEventDeleted         TemplateEventKind = "DELETED"
 	TemplateEventDisabled        TemplateEventKind = "DISABLED"
+	TemplateEventFlagged         TemplateEventKind = "FLAGGED"
 	TemplateEventInAppeal        TemplateEventKind = "IN_APPEAL"
+	TemplateEventLimitExceeded   TemplateEventKind = "LIMIT_EXCEEDED"
+	TemplateEventLocked          TemplateEventKind = "LOCKED"
+	TemplateEventPaused          TemplateEventKind = "PAUSED"
 	TemplateEventPending         TemplateEventKind = "PENDING"
 	TemplateEventReinstated      TemplateEventKind = "REINSTATED"
-	TemplateEventRejected        TemplateEventKind = "REJECTED"
-	TemplateEventFlagged         TemplateEventKind = "FLAGGED"
 	TemplateEventPendingDeletion TemplateEventKind = "PENDING_DELETION"
+	TemplateEventRejected        TemplateEventKind = "REJECTED"
 )
 
 type TemplateEvent struct {
