@@ -197,33 +197,31 @@ func (c *Client) GetMedia(mediaID string) (*GetMediaResult, error) {
 	return result, nil
 }
 
-func (c *Client) DownloadMedia(mr *GetMediaResult, out io.Writer) error {
+func (c *Client) DownloadMedia(mr *GetMediaResult, out io.Writer) (nwritten int64, err error) {
 	req, err := NewRequest(http.MethodGet, mr.URL, nil)
 	if err != nil {
-		return fmt.Errorf("new request: %w", err)
+		return 0, fmt.Errorf("new request: %w", err)
 	}
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken))
 	req.Header.Set("Accept", mr.MimeType)
 	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("request failed: %w", err)
+		return 0, fmt.Errorf("request failed: %w", err)
 	}
 	log.Debug().Interface("media", mr).Int("http_status_code", resp.StatusCode).Interface("response_headers", resp.Header).Msg("downloading media")
 	defer resp.Body.Close()
 	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
 		nwritten, err := io.Copy(out, resp.Body)
 		if err != nil {
-			return err
+			return nwritten, err
 		}
-		mwritten := int64(mr.FileSize)
-		log.Debug().Int64("nwritten", nwritten).Int64("mwritten", mwritten).Msg("downloaded media")
-		if mwritten != nwritten {
-			return fmt.Errorf("was expecting %d bytes, but received %d", mwritten, nwritten)
-		}
-		return nil
+
+		return nwritten, nil
 	}
+
 	log.Warn().Interface("media", mr).Int("http_status_code", resp.StatusCode).Interface("response_headers", resp.Header).Msg("fbgraph download media failed")
-	return c.errorFromResponse(resp)
+
+	return 0, c.errorFromResponse(resp)
 }
 
 type GetMediaResult struct {
