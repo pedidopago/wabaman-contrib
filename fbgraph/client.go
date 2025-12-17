@@ -2,6 +2,8 @@ package fbgraph
 
 import (
 	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -234,9 +236,19 @@ type GetMediaResult struct {
 }
 
 func (mr *GetMediaResult) VerifyChecksum(r io.Reader) bool {
-	//FIXME: implement this
-	//TODO: implement this
-	return true
+	computedHex, err := hex.DecodeString(mr.Sha256)
+	if err != nil {
+		return false
+	}
+
+	hh := sha256.New()
+	if _, err := io.Copy(hh, r); err != nil {
+		return false
+	}
+
+	h256sum := hh.Sum(nil)
+
+	return bytes.Equal(computedHex, h256sum)
 }
 
 type NewUploadSessionParams struct {
