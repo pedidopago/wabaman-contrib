@@ -13,11 +13,13 @@ type IncomingCallFromClient struct {
 }
 
 type ConnectToCall struct {
-	CallID   string `json:"call_id"`
-	PhoneID  uint   `json:"phone_id"`
-	BranchID string `json:"branch_id"`
-	SDPType  string `json:"sdp_type"`
-	SDP      string `json:"sdp"`
+	CallID    string `json:"call_id"`
+	PhoneID   uint   `json:"phone_id"`
+	BranchID  string `json:"branch_id"`
+	SDPType   string `json:"sdp_type"`
+	SDP       string `json:"sdp"`
+	AgentID   string `json:"agent_id"`   // filled by the Wabaman server, not the client
+	AgentName string `json:"agent_name"` // filled by the Wabaman server, not the client
 }
 
 type TerminateCall struct {
