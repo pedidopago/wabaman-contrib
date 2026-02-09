@@ -91,6 +91,7 @@ type ICECandidate struct {
 }
 
 type SendBrowserCandidate struct {
+	PhoneID   uint         `json:"phone_id"`
 	CallID    string       `json:"call_id"`
 	Candidate ICECandidate `json:"candidate"`
 }
