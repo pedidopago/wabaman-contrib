@@ -27,11 +27,13 @@ type TerminateCall struct {
 }
 
 type CallConsumed struct {
-	CallID    string `json:"call_id"`
-	AgentID   string `json:"agent_id"`
-	AgentName string `json:"agent_name"`
-	SDPType   string `json:"sdp_type"` // must be answer
-	SDP       string `json:"sdp"`
+	PhoneID     uint   `json:"phone_id"`
+	BranchID    string `json:"branch_id"`
+	CallID      string `json:"call_id"`
+	AgentID     string `json:"agent_id"`
+	AgentName   string `json:"agent_name"`
+	ContactID   uint64 `json:"contact_id"`
+	ContactName string `json:"contact_name"`
 }
 
 type AcceptCall struct {
