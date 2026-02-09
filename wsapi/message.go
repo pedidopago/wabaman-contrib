@@ -43,6 +43,7 @@ const (
 	MessageTypeCallStarted                MessageType = 37 // server sends this to the clients
 	MessageTypeCallEnded                  MessageType = 38 // server sends this to the clients
 	MessageTypeCallOnAnswerSDP            MessageType = 39 // server sends this to the clients
+	MessageTypeCallStartTimer             MessageType = 40 // server sends this to the clients
 	MessageTypeMockClientMessages         MessageType = 230
 	MessageTypeGenericError               MessageType = 235
 	MessageTypeCloseError                 MessageType = 240
@@ -85,6 +86,7 @@ type Message struct {
 	CallStarted                *CallStarted                `json:"call_started,omitempty"`
 	CallEnded                  *CallEnded                  `json:"call_ended,omitempty"`
 	CallOnAnswerSDP            *CallOnAnswerSDP            `json:"call_on_answer_sdp,omitempty"`
+	CallStartTimer            *CallStartTimer            `json:"call_start_timer,omitempty"`
 }
 
 func (e Message) ToJSON() string {

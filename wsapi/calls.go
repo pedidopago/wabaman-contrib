@@ -123,3 +123,9 @@ type CallOnAnswerSDP struct {
 	BranchID string `json:"branch_id"`
 	SDP      string `json:"sdp"`
 }
+
+type CallStartTimer struct {
+	CallID   string `json:"call_id"`
+	PhoneID  uint   `json:"phone_id"`
+	BranchID string `json:"branch_id"`
+}
