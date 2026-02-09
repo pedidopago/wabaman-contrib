@@ -116,3 +116,10 @@ type CallEnded struct {
 	ContactName        string    `json:"contact_name"`
 	EndTime            time.Time `json:"end_time"`
 }
+
+type CallOnAnswerSDP struct {
+	CallID   string `json:"call_id"`
+	PhoneID  uint   `json:"phone_id"`
+	BranchID string `json:"branch_id"`
+	SDP      string `json:"sdp"`
+}

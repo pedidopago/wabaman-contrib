@@ -42,6 +42,7 @@ const (
 	MessageTypeSendBrowserCandidate       MessageType = 36 // BIDIRECTIONAL - js/ts client sends this to the server (and the server sends it to the clients)
 	MessageTypeCallStarted                MessageType = 37 // server sends this to the clients
 	MessageTypeCallEnded                  MessageType = 38 // server sends this to the clients
+	MessageTypeCallOnAnswerSDP            MessageType = 39 // server sends this to the clients
 	MessageTypeMockClientMessages         MessageType = 230
 	MessageTypeGenericError               MessageType = 235
 	MessageTypeCloseError                 MessageType = 240
@@ -83,6 +84,7 @@ type Message struct {
 	SendBrowserCandidate       *SendBrowserCandidate       `json:"send_browser_candidate,omitempty"`
 	CallStarted                *CallStarted                `json:"call_started,omitempty"`
 	CallEnded                  *CallEnded                  `json:"call_ended,omitempty"`
+	CallOnAnswerSDP            *CallOnAnswerSDP            `json:"call_on_answer_sdp,omitempty"`
 }
 
 func (e Message) ToJSON() string {
