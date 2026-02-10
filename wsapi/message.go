@@ -34,7 +34,7 @@ const (
 	MessageTypeGetUnreadMessagesRequest   MessageType = 24 // js/ts client sends this to the server
 	MessageTypeGetUnreadMessagesResponse  MessageType = 25 // server sends this to the clients
 	MessageTypeIncomingCallFromClient     MessageType = 30 // server sends this to the clients
-	MessageTypeConnectToCall              MessageType = 31 // js/ts client sends this to the server
+	MessageTypeSetupCallFromBrowser       MessageType = 31 // js/ts client sends this to the server
 	MessageTypeTerminateCall              MessageType = 32 // BIDIRECTIONAL - js/ts client sends this to the server (and the server sends it to the clients)
 	MessageTypeCallConsumed               MessageType = 33 // server sends this to the clients
 	MessageTypeAcceptCall                 MessageType = 34 // js/ts client sends this to the server
@@ -77,7 +77,7 @@ type Message struct {
 	GetUnreadMessagesRequest   *GetUnreadMessagesRequest   `json:"get_unread_messages_request,omitempty"`
 	GetUnreadMessagesResponse  *GetUnreadMessagesResponse  `json:"get_unread_messages_response,omitempty"`
 	IncomingCallFromClient     *IncomingCallFromClient     `json:"incoming_call_from_client,omitempty"`
-	ConnectToCall              *ConnectToCall              `json:"connect_to_call,omitempty"`
+	SetupCallFromBrowser       *SetupCallFromBrowser       `json:"setup_call_from_browser,omitempty"`
 	TerminateCall              *TerminateCall              `json:"terminate_call,omitempty"`
 	CallConsumed               *CallConsumed               `json:"call_consumed,omitempty"`
 	AcceptCall                 *AcceptCall                 `json:"accept_call,omitempty"`
@@ -86,7 +86,7 @@ type Message struct {
 	CallStarted                *CallStarted                `json:"call_started,omitempty"`
 	CallEnded                  *CallEnded                  `json:"call_ended,omitempty"`
 	CallOnAnswerSDP            *CallOnAnswerSDP            `json:"call_on_answer_sdp,omitempty"`
-	CallStartTimer            *CallStartTimer            `json:"call_start_timer,omitempty"`
+	CallStartTimer             *CallStartTimer             `json:"call_start_timer,omitempty"`
 }
 
 func (e Message) ToJSON() string {
