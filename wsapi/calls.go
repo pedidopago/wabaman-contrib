@@ -1,6 +1,9 @@
 package wsapi
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
 type IncomingCallFromClient struct {
 	CallID             string `json:"call_id"`
@@ -90,9 +93,9 @@ type ICECandidate struct {
 }
 
 type SendBrowserCandidate struct {
-	PhoneID   uint         `json:"phone_id"`
-	CallID    string       `json:"call_id"`
-	Candidate ICECandidate `json:"candidate"`
+	PhoneID   uint            `json:"phone_id"`
+	CallID    string          `json:"call_id"`
+	Candidate json.RawMessage `json:"candidate"`
 }
 
 type CallStarted struct {
