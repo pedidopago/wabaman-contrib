@@ -114,7 +114,7 @@ type CallEnded struct {
 	PhoneID            uint      `json:"phone_id"`
 	BranchID           string    `json:"branch_id"`
 	WABAContactID      string    `json:"waba_contact_id"`
-	ContactPhoneNumber string    `json:"contact_phone_number"`
+	ContactPhoneNumber string    `json:"contact_phone_number,omitempty"`
 	ContactID          uint64    `json:"contact_id"`
 	ContactName        string    `json:"contact_name"`
 	EndTime            time.Time `json:"end_time"`
