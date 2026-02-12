@@ -35,7 +35,7 @@ const (
 	MessageTypeGetUnreadMessagesResponse  MessageType = 25 // server sends this to the clients
 	MessageTypeIncomingCallFromClient     MessageType = 30 // server sends this to the clients
 	MessageTypeSetupCallFromBrowser       MessageType = 31 // js/ts client sends this to the server
-	MessageTypeTerminateCall              MessageType = 32 // BIDIRECTIONAL - js/ts client sends this to the server (and the server sends it to the clients)
+	MessageTypeTerminateCall              MessageType = 32 // js/ts client sends this to the server (and the server sends it to the clients)
 	MessageTypeCallConsumed               MessageType = 33 // server sends this to the clients
 	MessageTypeAcceptCall                 MessageType = 34 // js/ts client sends this to the server
 	MessageTypeRejectCall                 MessageType = 35 // js/ts client sends this to the server
