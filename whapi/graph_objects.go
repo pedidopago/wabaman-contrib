@@ -692,12 +692,47 @@ type CallObject struct {
 	// The WhatsApp call ID
 	ID string `json:"id"`
 	// The WhatsApp user's phone number (callee)
-	To        string              `json:"to"`
-	From      string              `json:"from"`
-	Event     string              `json:"event"`
-	Timestamp string              `json:"timestamp"`
-	Session   *CallSessionObject  `json:"session,omitempty"`
+	To    string `json:"to"`
+	From  string `json:"from"`
+	Event string `json:"event"`
+	// O registro de data e hora UNIX do evento de webhook
+	Timestamp Timestamp          `json:"timestamp"`
+	Session   *CallSessionObject `json:"session,omitempty"`
+	// A direção da ligação que está sendo feita.
+	//
+	// Pode conter:
+	//
+	// * BUSINESS_INITIATED, para ligações iniciadas pela empresa.
+	//
+	// * USER_INITIATED, para chamadas iniciadas por um usuário do WhatsApp.
 	Direction CallObjectDirection `json:"direction,omitempty"`
+	// Uma string arbitrária especificada no parâmetro de consulta biz_payload em um deep
+	// link de chamada. Só será retornado se a ligação tiver sido iniciada a partir de um
+	// link direto com esse parâmetro.
+	// https://developers.facebook.com/documentation/business-messaging/whatsapp/calling/call-button-messages-deep-links#send-payload-data-in-call-deeplink
+	DeeplinkPayload string `json:"deeplink_payload,omitempty"`
+	// A string arbitrária especificada no campo payload em um botão de chamada. Só será
+	// retornado se a ligação tiver sido iniciada em um botão de ligação com carga.
+	// https://developers.facebook.com/documentation/business-messaging/whatsapp/calling/call-button-messages-deep-links#send-interactive-message-with-a-whatsapp-call-button
+	CTAPayload string `json:"cta_payload"`
+	// O registro de data e hora Unix do início da ligação.
+	//
+	// Presente apenas quando a ligação foi atendida pela outra parte.
+	StartTime Timestamp `json:"start_time,omitempty"`
+	// O registro de data e hora Unix do término da ligação.
+	//
+	// Presente apenas quando a ligação foi atendida pela outra parte.
+	EndTime Timestamp `json:"end_time,omitempty"`
+	// Duração da ligação em segundos.
+	//
+	// Apenas quando a chamada foi atendida pela outra parte.
+	Duration DurationSeconds `json:"duration,omitempty"`
+	// Uma string arbitrária que a empresa inclui na ligação para rastreamento e registro.
+	//
+	// Só será retornado se fornecido por meio de uma
+	// [solicitação de início de ligação](https://developers.facebook.com/documentation/business-messaging/whatsapp/calling/reference#initiate-call)
+	// ou [solicitação de aceitação de ligação](https://developers.facebook.com/documentation/business-messaging/whatsapp/calling/user-initiated-calls#accept-call).
+	BizOpaqueCallbackDate string `json:"biz_opaque_callback_date,omitempty"`
 }
 
 type CallObjectDirection string
