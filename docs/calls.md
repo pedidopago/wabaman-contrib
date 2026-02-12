@@ -250,6 +250,9 @@ async function on_call_ended(call_ended) {
 }
 ```
 
+Exemplo mínimo de implementação:
+https://github.com/pedidopago/ms-wabaman/blob/feature/PPS-4460/cmd/wabaman-phone-admin/res/templates/admin_phone_id_sandbox.go.html
+
 ## TODOs (backend):
 
 - [ ] Fluxo de ligação de agente p/ cliente;
