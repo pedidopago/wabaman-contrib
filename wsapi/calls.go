@@ -132,3 +132,10 @@ type CallStartTimer struct {
 	PhoneID  uint   `json:"phone_id"`
 	BranchID string `json:"branch_id"`
 }
+
+type TerminateCallOrigin int
+
+const (
+	TerminateCallOriginWhatsApp TerminateCallOrigin = iota + 1
+	TerminateCallOriginBrowser
+)
