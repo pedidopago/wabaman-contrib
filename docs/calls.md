@@ -249,3 +249,9 @@ async function on_call_ended(call_ended) {
   //TODO: alterar UI que mostra visualmente que a ligação terminou
 }
 ```
+
+## TODOs (backend):
+
+- [ ] Fluxo de ligação de agente p/ cliente;
+- [ ] Fluxo de convidar agentes para uma ligação em andamento;
+- [ ] Fluxo de salvar e reproduzir ligações;
