@@ -20,7 +20,7 @@ jobs:
       - name: Install Go
         uses: actions/setup-go@v5
         with:
-          go-version: ">=1.18.0"
+          go-version: ">=1.23.0"
       - uses: actions/checkout@v1
         with:
           fetch-depth: 1
@@ -32,5 +32,5 @@ jobs:
       - name: Run static analysis
         run: |
           go vet ./...
-          go install honnef.co/go/tools/cmd/staticcheck@v0.3.3
-          staticcheck -go 1.18 ./...
+          go install honnef.co/go/tools/cmd/staticcheck@latest
+          staticcheck -go 1.23 ./...
