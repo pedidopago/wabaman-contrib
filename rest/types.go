@@ -94,6 +94,7 @@ type NewMessageRequest struct {
 	SkipWelcome             bool               `json:"skip_welcome,omitempty"`
 	Origin                  string             `json:"origin,omitempty"`
 	IsSecret                bool               `json:"is_secret,omitempty"`
+	SecretReplacement       string             `json:"secret_replacement,omitempty" description:"If set (and is_secret is true), Wabaamn will replace the message content with this value to protect sensitive information"`
 	ReadMessages            bool               `json:"read_messages,omitempty"`
 	Verbose                 bool               `json:"verbose,omitempty"`
 	DiscardWindowClosed     bool               `json:"discard_window_closed,omitempty" description:"If true, Wabaman will discard the=is message if the last 24h window is closed, of if the last_24h_window is not client-initiated"`
