@@ -173,6 +173,62 @@ func (c *Client) GetMessages(ctx context.Context, req rest.GetMessagesRequest) (
 	return uresp, nil
 }
 
+type getMessageByIDBogusOutput struct {
+	fn func(src io.Reader)
+}
+
+func (m *getMessageByIDBogusOutput) CopyFn(src io.Reader) {
+	m.fn(src)
+}
+
+func (c *Client) GetMessageByID(ctx context.Context, id string) (rest.AnyMessage, error) {
+	qparams := make(url.Values)
+	qparams.Set("id", id)
+
+	outputbuf := new(bytes.Buffer)
+	ofn := &getMessageByIDBogusOutput{
+		fn: func(src io.Reader) {
+			io.Copy(outputbuf, src)
+		},
+	}
+
+	if err := c.get(ctx, fmt.Sprintf("/api/v1/message?%s", qparams.Encode()), ofn); err != nil {
+		return nil, err
+	}
+
+	simplifiedMessageWrapper := struct {
+		Message struct {
+			ObjectType string `json:"object_type"`
+		} `json:"message"`
+	}{}
+
+	if err := json.Unmarshal(outputbuf.Bytes(), &simplifiedMessageWrapper); err != nil {
+		return nil, err
+	}
+
+	if simplifiedMessageWrapper.Message.ObjectType == "host" {
+		m := struct {
+			Message rest.SentMessage `json:"message"`
+		}{}
+		if err := json.Unmarshal(outputbuf.Bytes(), &m); err != nil {
+			return nil, err
+		}
+
+		mitem := m.Message
+		return &mitem, nil
+	}
+
+	m := struct {
+		Message rest.ReceivedMessage `json:"message"`
+	}{}
+	if err := json.Unmarshal(outputbuf.Bytes(), &m); err != nil {
+		return nil, err
+	}
+
+	mitem := m.Message
+	return &mitem, nil
+}
+
 func (c *Client) CheckIntegration(ctx context.Context, req *rest.CheckIntegrationRequest) (*rest.CheckIntegrationResponse, error) {
 	q := make(url.Values)
 	if req.StoreID != "" {
@@ -362,6 +418,10 @@ func (c *Client) post(ctx context.Context, suffix string, input, output any) err
 	return c.doRequest(ctx, http.MethodPost, suffix, input, output)
 }
 
+type BogusOutput interface {
+	CopyFn(src io.Reader)
+}
+
 func (c *Client) doRequest(ctx context.Context, method, suffix string, input, output any) error {
 	var rdr io.Reader
 	if input != nil {
@@ -400,6 +460,12 @@ func (c *Client) doRequest(ctx context.Context, method, suffix string, input, ou
 		return c.errorFromResponse(ctx, resp)
 	}
 	if output == nil {
+		// check if output implements BogusOutput
+		if bo, ok := output.(BogusOutput); ok {
+			bo.CopyFn(resp.Body)
+			return nil
+		}
+
 		io.Copy(io.Discard, resp.Body)
 		return nil
 	}

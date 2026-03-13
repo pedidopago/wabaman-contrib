@@ -175,6 +175,7 @@ type AnyMessage interface {
 	GetID() uint64
 	GetCreatedAtNano() int64
 	GetObjectType() string
+	GetMetadata() map[string]any
 }
 
 type NewMessageRequestForRedisQueue struct {
@@ -652,6 +653,7 @@ type SentMessage struct {
 	Origin             mariadb.NullString `json:"origin"`
 	CreatedAt          time.Time          `json:"created_at"`
 	CreatedAtNano      int64              `json:"created_at_nano"`
+	Metadata           map[string]any     `json:"metadata"`
 	ObjectType         string             `json:"object_type"`
 
 	Interactive  *fbgraph.InteractiveMessageObject `json:"interactive"`
@@ -673,6 +675,10 @@ func (m *SentMessage) GetCreatedAtNano() int64 {
 
 func (m *SentMessage) GetObjectType() string {
 	return m.ObjectType
+}
+
+func (m *SentMessage) GetMetadata() map[string]any {
+	return m.Metadata
 }
 
 type ReceivedMessage struct {
@@ -702,6 +708,7 @@ type ReceivedMessage struct {
 	CreatedAtNano          int64              `json:"created_at_nano"`
 	ReadAt                 mariadb.NullTime   `json:"read_at"`
 	ReadAtMetadata         mariadb.NullString `json:"read_at_metadata"`
+	Metadata               map[string]any     `json:"metadata"`
 	ObjectType             string             `json:"object_type"`
 }
 
@@ -715,6 +722,10 @@ func (m *ReceivedMessage) GetCreatedAtNano() int64 {
 
 func (m *ReceivedMessage) GetObjectType() string {
 	return m.ObjectType
+}
+
+func (m *ReceivedMessage) GetMetadata() map[string]any {
+	return m.Metadata
 }
 
 type NewTemplateRequest struct {
