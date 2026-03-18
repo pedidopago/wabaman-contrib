@@ -121,10 +121,42 @@ type ValueObject struct {
 	} `json:"rejection_info,omitempty"`
 }
 
-func (v ValueObject) GetContactProfileName(waid string) string {
+// GetContactProfileName returns the contact profile name for the given waid or userID.
+// If userID is provided, it returns the name by userID; otherwise, it returns the name by waid.
+func (v ValueObject) GetContactProfileName(waid, userID string) string {
+	if userID != "" {
+		return v.GetContactProfileNameByUserID(userID)
+	}
+
+	return v.GetContactProfileNameByWAID(waid)
+}
+
+// GetContactProfileNameByWAID returns the contact profile name for the given waid.
+func (v ValueObject) GetContactProfileNameByWAID(waid string) string {
 	for _, c := range v.Contacts {
 		if c.WAID == waid {
 			return c.Profile.Name
+		}
+	}
+	return ""
+}
+
+// GetContactProfileNameByUserID returns the contact profile name for the given userID.
+func (v ValueObject) GetContactProfileNameByUserID(userID string) string {
+	for _, c := range v.Contacts {
+		if c.UserID == userID {
+			return c.Profile.Name
+		}
+	}
+	return ""
+}
+
+// GetContactUserID returns the business-scoped user ID (BSUID) for the contact
+// identified by waid (the wa_id / phone number from msg.From).
+func (v ValueObject) GetContactUserID(waid string) string {
+	for _, c := range v.Contacts {
+		if c.WAID == waid {
+			return c.UserID
 		}
 	}
 	return ""
@@ -174,6 +206,10 @@ type ContactObject struct {
 	Profile struct {
 		Name string `json:"name"`
 	} `json:"profile"`
+	// The customer's business-scoped user ID (BSUID). This is a unique, alphanumeric
+	// identifier scoped per business. When a user adopts a WhatsApp username, this field
+	// will be populated even when wa_id no longer contains the phone number.
+	UserID string `json:"user_id,omitempty"`
 }
 
 type MessageObjectType string

@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// IncomingCallFromClient is broadcast by the server when a WhatsApp client initiates a voice call.
 type IncomingCallFromClient struct {
 	CallID             string `json:"call_id"`
 	PhoneID            uint   `json:"phone_id"`
@@ -15,6 +16,8 @@ type IncomingCallFromClient struct {
 	ContactName        string `json:"contact_name"`
 }
 
+// SetupCallFromBrowser is sent by a browser client to initiate WebRTC call setup.
+// AgentID and AgentName are filled by the server, not the client.
 type SetupCallFromBrowser struct {
 	CallID    string `json:"call_id"`
 	PhoneID   uint   `json:"phone_id"`
@@ -24,10 +27,14 @@ type SetupCallFromBrowser struct {
 	AgentName string `json:"agent_name"` // filled by the Wabaman server, not the client
 }
 
+// TerminateCall is sent to end an active call. It can be sent by either the browser client
+// or the server.
 type TerminateCall struct {
 	CallID string `json:"call_id"`
 }
 
+// CallConsumed is broadcast by the server when an agent picks up an incoming call,
+// signaling other clients that the call is no longer available.
 type CallConsumed struct {
 	PhoneID     uint   `json:"phone_id"`
 	BranchID    string `json:"branch_id"`
@@ -38,14 +45,18 @@ type CallConsumed struct {
 	ContactName string `json:"contact_name"`
 }
 
+// AcceptCall is sent by a browser client to accept an incoming call.
 type AcceptCall struct {
 	CallID string `json:"call_id"`
 }
 
+// RejectCall is sent by a browser client to reject an incoming call.
 type RejectCall struct {
 	CallID string `json:"call_id"`
 }
 
+// ICECandidate represents a WebRTC ICE candidate used during call negotiation.
+// Fields mirror the RTCIceCandidate Web API.
 type ICECandidate struct {
 	// A string containing the IP address of the candidate.
 	Address string `json:"address,omitempty"`
@@ -92,12 +103,15 @@ type ICECandidate struct {
 	UsernameFragment *string `json:"usernameFragment"`
 }
 
+// SendBrowserCandidate is a bidirectional message carrying an ICE candidate
+// between the browser client and the server during WebRTC negotiation.
 type SendBrowserCandidate struct {
 	PhoneID   uint            `json:"phone_id"`
 	CallID    string          `json:"call_id"`
 	Candidate json.RawMessage `json:"candidate"`
 }
 
+// CallStarted is broadcast by the server when a call has been successfully established.
 type CallStarted struct {
 	CallID             string    `json:"call_id"`
 	PhoneID            uint      `json:"phone_id"`
@@ -109,6 +123,7 @@ type CallStarted struct {
 	StartTime          time.Time `json:"start_time"`
 }
 
+// CallEnded is broadcast by the server when a call has ended.
 type CallEnded struct {
 	CallID             string    `json:"call_id"`
 	PhoneID            uint      `json:"phone_id"`
@@ -120,6 +135,7 @@ type CallEnded struct {
 	EndTime            time.Time `json:"end_time"`
 }
 
+// CallOnAnswerSDP is sent by the server to deliver the SDP answer during WebRTC negotiation.
 type CallOnAnswerSDP struct {
 	CallID   string `json:"call_id"`
 	PhoneID  uint   `json:"phone_id"`
@@ -127,12 +143,14 @@ type CallOnAnswerSDP struct {
 	SDP      string `json:"sdp"`
 }
 
+// CallStartTimer is broadcast by the server to signal clients to start the call duration timer.
 type CallStartTimer struct {
 	CallID   string `json:"call_id"`
 	PhoneID  uint   `json:"phone_id"`
 	BranchID string `json:"branch_id"`
 }
 
+// TerminateCallOrigin indicates which side initiated the call termination.
 type TerminateCallOrigin int
 
 const (

@@ -6,6 +6,8 @@ import (
 	"github.com/pedidopago/go-common/mariadb"
 )
 
+// Metadata holds contextual information about the account, business, phone, and contact
+// associated with a websocket message. It is sent by the server when a client connects.
 type Metadata struct {
 	Account  *AccountMetadata  `json:"account,omitempty"`
 	Business *BusinessMetadata `json:"business,omitempty"`
@@ -13,6 +15,8 @@ type Metadata struct {
 	Contact  *ContactMetadata  `json:"contact,omitempty"`
 }
 
+// MetadataToSend is the wire-format variant of [Metadata] with json.RawMessage fields
+// for lazy deserialization. Used when sending messages to the websocket API.
 type MetadataToSend struct {
 	Account  *AccountMetadata       `json:"account,omitempty"`
 	Business *BusinessMetadata      `json:"business,omitempty"`
@@ -20,11 +24,13 @@ type MetadataToSend struct {
 	Contact  *ContactMetadataToSend `json:"contact,omitempty"`
 }
 
+// AccountMetadata identifies the Wabaman account that owns the websocket connection.
 type AccountMetadata struct {
 	ID     uint   `json:"id,omitempty"`
 	APIKey string `json:"api_key,omitempty"`
 }
 
+// BusinessMetadata identifies the business (store) associated with the websocket connection.
 type BusinessMetadata struct {
 	ID        uint   `json:"id,omitempty"`
 	StoreID   string `json:"store_id,omitempty"`
@@ -32,6 +38,7 @@ type BusinessMetadata struct {
 	APIKey    string `json:"api_key,omitempty"`
 }
 
+// PhoneMetadata describes the WhatsApp Business phone number (sender) associated with the connection.
 type PhoneMetadata struct {
 	ID                        uint           `json:"id,omitempty"`
 	WhatsAppID                string         `json:"whatsapp_id,omitempty"`
@@ -43,11 +50,13 @@ type PhoneMetadata struct {
 	Metadata                  map[string]any `json:"metadata,omitempty"`
 }
 
+// ContactMetadata describes a WhatsApp contact (end-user) and their conversation state.
 type ContactMetadata struct {
 	ID                           uint64           `json:"id,omitempty"`
 	CustomerID                   string           `json:"customer_id,omitempty"`
 	CustomerName                 string           `json:"customer_name,omitempty"`
 	WABAContactID                string           `json:"waba_contact_id,omitempty"`
+	UserID                       string           `json:"user_id,omitempty"` // Business-scoped user ID (BSUID)
 	WABAProfileName              string           `json:"waba_profile_name,omitempty"`
 	Name                         string           `json:"name,omitempty"`
 	ContactPhoneNumber           string           `json:"contact_phone_number,omitempty"`
@@ -67,11 +76,14 @@ type ContactMetadata struct {
 	MarketingEnabled             bool             `json:"marketing_enabled,omitempty"`
 }
 
+// ContactMetadataToSend is the wire-format variant of [ContactMetadata] with json.RawMessage
+// fields for lazy deserialization.
 type ContactMetadataToSend struct {
 	ID                           uint64           `json:"id,omitempty"`
 	CustomerID                   string           `json:"customer_id,omitempty"`
 	CustomerName                 string           `json:"customer_name,omitempty"`
 	WABAContactID                string           `json:"waba_contact_id,omitempty"`
+	UserID                       string           `json:"user_id,omitempty"` // Business-scoped user ID (BSUID)
 	WABAProfileName              string           `json:"waba_profile_name,omitempty"`
 	Name                         string           `json:"name,omitempty"`
 	ContactPhoneNumber           string           `json:"contact_phone_number,omitempty"`

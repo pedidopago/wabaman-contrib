@@ -76,6 +76,7 @@ type NewMessageRequest struct {
 	FromNumber       string                            `json:"from_number,omitempty"`
 	ToNumber         string                            `json:"to_number,omitempty"`
 	ToCustomerID     string                            `json:"to_customer_id,omitempty" description:"If set, Wabaman will use the CustomerID (instead of 'to_number') to send the message."`
+	ToUserID         string                            `json:"to_user_id,omitempty" description:"If set, Wabaman will use the business-scoped user ID (BSUID) to look up the contact and resolve 'to_number'. Required for users who adopted WhatsApp usernames."`
 	Type             MessageType                       `json:"type"`
 	Text             *fbgraph.TextObject               `json:"text,omitempty"`
 	Template         *NewMessageRequestTemplate        `json:"template,omitempty"`

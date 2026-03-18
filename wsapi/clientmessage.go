@@ -16,6 +16,8 @@ type ClientMessage struct {
 	WABAMessageID string `json:"waba_message_id"`
 	// The id (phone number) of the sender.
 	WABAFromID string `json:"waba_from_id"`
+	// The business-scoped user ID (BSUID) of the sender.
+	UserID string `json:"user_id,omitempty"`
 	// The profile name of the sender.
 	WABAProfileName string    `json:"waba_profile_name"`
 	WABATimestamp   time.Time `json:"waba_timestamp"`
@@ -92,6 +94,7 @@ type Sticker struct {
 	PublicURL string `json:"public_url"`
 }
 
+// InteractiveType identifies the kind of interactive message reply sent by a client.
 type InteractiveType string
 
 const (

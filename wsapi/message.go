@@ -89,11 +89,13 @@ type Message struct {
 	CallStartTimer             *CallStartTimer             `json:"call_start_timer,omitempty"`
 }
 
+// ToJSON marshals the Message to a JSON string.
 func (e Message) ToJSON() string {
 	d, _ := json.Marshal(e)
 	return string(d)
 }
 
+// FromJSON unmarshals a JSON string into the Message.
 func (e *Message) FromJSON(data string) error {
 	return json.Unmarshal([]byte(data), e)
 }
@@ -127,6 +129,7 @@ type MessageToSend struct {
 	CancelledScheduledMessages *CancelledScheduledMessages `json:"cancelled_scheduled_messages,omitempty"`
 }
 
+// ClientMockData is used to generate fake client messages for testing purposes.
 type ClientMockData struct {
 	Count             int    `json:"count"`
 	Interval          int    `json:"interval"`
@@ -137,6 +140,8 @@ type ClientMockData struct {
 	Text              *Text  `json:"text,omitempty"`
 }
 
+// ReadByHostReceipt is sent by an agent to mark a message as read.
+// The server forwards it to the WhatsApp Cloud API to send a read receipt.
 type ReadByHostReceipt struct {
 	MessageID     uint64    `json:"message_id"`
 	WABAMessageID string    `json:"waba_message_id"`
@@ -146,6 +151,8 @@ type ReadByHostReceipt struct {
 	Metadata      string    `json:"metadata"`
 }
 
+// ClientReceipt represents a delivery/read status update for a message sent to a client.
+// The Type field indicates the status: "sent", "read", "delivered", or "failed".
 type ClientReceipt struct {
 	Type            string                   `json:"type"` // sent, read, delivered, failed
 	MessageID       uint64                   `json:"message_id"`
@@ -156,10 +163,12 @@ type ClientReceipt struct {
 	FailedReason    *SentMessageFailedReason `json:"failed_reason,omitempty"`
 }
 
+// ContactUpdate is broadcast to connected clients when a contact's information changes.
 type ContactUpdate struct {
 	ContactID          uint64         `json:"contact_id"`
 	HostPhoneID        uint           `json:"host_phone_id"`
 	WABAContactID      string         `json:"waba_contact_id"`
+	UserID             string         `json:"user_id,omitempty"` // Business-scoped user ID (BSUID)
 	WABAProfileName    string         `json:"waba_profile_name"`
 	ContactPhoneNumber string         `json:"contact_phone_number,omitempty"`
 	CustomerID         string         `json:"customer_id"`
@@ -172,10 +181,13 @@ type ContactUpdate struct {
 	FieldsAfter        map[string]any `json:"fields_after,omitempty"`
 }
 
+// ContactUpdateToSend is the wire-format variant of [ContactUpdate] with json.RawMessage
+// fields for lazy deserialization.
 type ContactUpdateToSend struct {
 	ContactID          uint64          `json:"contact_id"`
 	HostPhoneID        uint            `json:"host_phone_id"`
 	WABAContactID      string          `json:"waba_contact_id"`
+	UserID             string          `json:"user_id,omitempty"` // Business-scoped user ID (BSUID)
 	WABAProfileName    string          `json:"waba_profile_name"`
 	ContactPhoneNumber string          `json:"contact_phone_number,omitempty"`
 	CustomerID         string          `json:"customer_id"`
@@ -188,26 +200,33 @@ type ContactUpdateToSend struct {
 	FieldsAfter        map[string]any  `json:"fields_after,omitempty"`
 }
 
+// NewContact is broadcast to connected clients when a new contact is created
+// (e.g. when a previously unknown user sends their first message).
 type NewContact struct {
 	ContactID          uint64         `json:"contact_id"`
 	HostPhoneID        uint           `json:"host_phone_id"`
 	WABAContactID      string         `json:"waba_contact_id"`
+	UserID             string         `json:"user_id,omitempty"` // Business-scoped user ID (BSUID)
 	WABAProfileName    string         `json:"waba_profile_name"`
 	ContactPhoneNumber string         `json:"contact_phone_number,omitempty"`
 	CustomerID         string         `json:"customer_id"`
 	Metadata           map[string]any `json:"metadata"`
 }
 
+// NewContactToSend is the wire-format variant of [NewContact] with json.RawMessage
+// fields for lazy deserialization.
 type NewContactToSend struct {
 	ContactID          uint64          `json:"contact_id"`
 	HostPhoneID        uint            `json:"host_phone_id"`
 	WABAContactID      string          `json:"waba_contact_id"`
+	UserID             string          `json:"user_id,omitempty"` // Business-scoped user ID (BSUID)
 	WABAProfileName    string          `json:"waba_profile_name"`
 	ContactPhoneNumber string          `json:"contact_phone_number,omitempty"`
 	CustomerID         string          `json:"customer_id"`
 	Metadata           json.RawMessage `json:"metadata"`
 }
 
+// HostNoteFormat identifies the content format of a [HostNote].
 type HostNoteFormat string
 
 const (
@@ -217,11 +236,15 @@ const (
 	HostNoteFormatCustom  HostNoteFormat = "CUSTOM" // Custom JSON
 )
 
+// HostNoteImage is an image attachment within a [HostNote] of format IMAGES.
 type HostNoteImage struct {
 	URL         string `json:"url"`
 	Description string `json:"description"`
 }
 
+// HostNote is an internal note created by an agent on a contact's conversation.
+// Notes are not sent to the WhatsApp client; they are visible only to agents.
+// The Format field determines which content field (Text, Buttons, Images, or Custom) is populated.
 type HostNote struct {
 	ID            uint64         `json:"id"`
 	ContactID     uint64         `json:"contact_id"`
@@ -249,14 +272,17 @@ type HostNote struct {
 	ObjectType    string         `json:"object_type,omitempty"`
 }
 
+// GetID returns the internal ID of the host note.
 func (m *HostNote) GetID() uint64 {
 	return m.ID
 }
 
+// GetCreatedAtNano returns the creation timestamp in nanoseconds.
 func (m *HostNote) GetCreatedAtNano() int64 {
 	return m.CreatedAtNano
 }
 
+// GetObjectType returns the object type, defaulting to "host_note" when unset.
 func (m *HostNote) GetObjectType() string {
 	if m.ObjectType == "" {
 		return "host_note"
@@ -264,6 +290,7 @@ func (m *HostNote) GetObjectType() string {
 	return m.ObjectType
 }
 
+// GetOrigin returns the origin of the host note, or an empty string if nil.
 func (m *HostNote) GetOrigin() string {
 	if m == nil {
 		return ""
@@ -271,6 +298,7 @@ func (m *HostNote) GetOrigin() string {
 	return m.Origin
 }
 
+// HostNoteButton is an actionable button within a [HostNote] of format BUTTONS.
 type HostNoteButton struct {
 	ID         string `json:"id"`
 	Text       string `json:"text"`
@@ -282,6 +310,8 @@ type HostNoteButton struct {
 	SelectedAt time.Time `json:"selected_at,omitempty"`
 }
 
+// HostNoteUpdated is broadcast to connected clients when a host note is modified
+// (e.g. a button is selected or fields are changed).
 type HostNoteUpdated struct {
 	HostNote         *HostNote `json:"host_note"`
 	SelectedButtonID string    `json:"selected_button_id,omitempty"`
@@ -290,6 +320,7 @@ type HostNoteUpdated struct {
 	AgentName        string    `json:"agent_name,omitempty"`
 }
 
+// TagEventAction represents the kind of mutation performed on a tag or tag group.
 type TagEventAction string
 
 const (
@@ -298,6 +329,7 @@ const (
 	TagEventActionDeleted TagEventAction = "deleted"
 )
 
+// TagEventData is broadcast when a tag or tag group is created, updated, or deleted.
 type TagEventData struct {
 	BusinessID        uint           `json:"business_id,omitempty"`
 	StoreID           string         `json:"store_id,omitempty"`
@@ -313,6 +345,7 @@ type TagEventData struct {
 	PreviousIsVisible *bool          `json:"previous_is_visible,omitempty"`
 }
 
+// ReactionEventData is broadcast when a reaction (emoji) is added or removed from a message.
 type ReactionEventData struct {
 	WABAMessageID string    `json:"waba_message_id"`
 	WABAContactID string    `json:"waba_contact_id"`
@@ -322,6 +355,7 @@ type ReactionEventData struct {
 	CreatedAt     time.Time `json:"created_at,omitempty"`
 }
 
+// MessageContext contains information about the original message that a reply or forward refers to.
 type MessageContext struct {
 	MessageID           string `json:"message_id,omitempty"`
 	From                string `json:"from,omitempty"`
@@ -329,6 +363,7 @@ type MessageContext struct {
 	FrequentlyForwarded bool   `json:"frequently_forwarded,omitempty"`
 }
 
+// MessageReaction represents a single emoji reaction on a message.
 type MessageReaction struct {
 	ID            string    `json:"id,omitempty"`
 	WABAContactID string    `json:"waba_contact_id"`
@@ -340,12 +375,15 @@ type MessageReaction struct {
 	Error         string    `json:"error,omitempty"`
 }
 
+// ContactBroadcast is a generic event scoped to a contact, carrying an opaque JSON payload.
 type ContactBroadcast struct {
 	ContactID uint64          `json:"contact_id,omitempty"`
 	Type      string          `json:"type,omitempty"`
 	Data      json.RawMessage `json:"data,omitempty"`
 }
 
+// MessageUpdated is broadcast when a previously sent message is modified
+// (e.g. marked as confidential).
 type MessageUpdated struct {
 	WABAMessageID          string `json:"waba_message_id"`
 	WABAContactID          string `json:"waba_contact_id"`
@@ -355,6 +393,8 @@ type MessageUpdated struct {
 	IsMessageCConfidential bool   `json:"is_message_confidential"`
 }
 
+// ScheduledMessageStub is a lightweight representation of a scheduled message,
+// broadcast to clients when a message is scheduled for future delivery.
 type ScheduledMessageStub struct {
 	ID            uint64 `json:"id"`
 	PhoneID       uint   `json:"phone_id"`
@@ -367,6 +407,7 @@ type ScheduledMessageStub struct {
 	} `json:"scheduled"`
 }
 
+// CancelledScheduledMessages is broadcast when one or more scheduled messages are cancelled.
 type CancelledScheduledMessages struct {
 	PhoneID             uint     `json:"phone_id"`
 	BranchID            string   `json:"branch_id,omitempty"`
