@@ -273,7 +273,9 @@ type CommonMessageObject interface {
 	GetType() string
 	GetID() string
 	GetFrom() string
+	GetFromUserID() string
 	GetTo() string
+	GetToUserID() string
 	GetTimestamp() string
 	StructName() string
 }
@@ -642,8 +644,16 @@ func (m MessageEHObject) GetFrom() string {
 	return m.From
 }
 
+func (m MessageEHObject) GetFromUserID() string {
+	return m.FromUserID
+}
+
 func (m MessageEHObject) GetTo() string {
 	return m.To
+}
+
+func (m MessageEHObject) GetToUserID() string {
+	return m.ToUserID
 }
 
 func (m MessageEHObject) GetTimestamp() string {
