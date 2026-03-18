@@ -122,13 +122,16 @@ type ValueObject struct {
 }
 
 // GetContactProfileName returns the contact profile name for the given waid or userID.
-// If userID is provided, it returns the name by userID; otherwise, it returns the name by waid.
-func (v ValueObject) GetContactProfileName(waid, userID string) string {
-	if userID != "" {
-		return v.GetContactProfileNameByUserID(userID)
+func (v ValueObject) GetContactProfileName(waidOrUserID string) string {
+	if waidOrUserID == "" {
+		return ""
 	}
 
-	return v.GetContactProfileNameByWAID(waid)
+	if v := v.GetContactProfileNameByUserID(waidOrUserID); v != "" {
+		return v
+	}
+
+	return v.GetContactProfileNameByWAID(waidOrUserID)
 }
 
 // GetContactProfileNameByWAID returns the contact profile name for the given waid.
