@@ -154,12 +154,34 @@ func (v ValueObject) GetContactProfileNameByUserID(userID string) string {
 	return ""
 }
 
-// GetContactUserID returns the business-scoped user ID (BSUID) for the contact
-// identified by waid (the wa_id / phone number from msg.From).
-func (v ValueObject) GetContactUserID(waid string) string {
+// GetContactProfileUsername returns the contact profile name for the given waid or userID.
+func (v ValueObject) GetContactProfileUsername(waidOrUserID string) string {
+	if waidOrUserID == "" {
+		return ""
+	}
+
+	if v := v.GetContactProfileUsernameByUserID(waidOrUserID); v != "" {
+		return v
+	}
+
+	return v.GetContactProfileUsernameByWAID(waidOrUserID)
+}
+
+// GetContactProfileUsernameByWAID returns the contact profile name for the given waid.
+func (v ValueObject) GetContactProfileUsernameByWAID(waid string) string {
 	for _, c := range v.Contacts {
 		if c.WAID == waid {
-			return c.UserID
+			return c.Profile.Username
+		}
+	}
+	return ""
+}
+
+// GetContactProfileUsernameByUserID returns the contact profile name for the given userID.
+func (v ValueObject) GetContactProfileUsernameByUserID(userID string) string {
+	for _, c := range v.Contacts {
+		if c.UserID == userID {
+			return c.Profile.Username
 		}
 	}
 	return ""
@@ -207,7 +229,8 @@ type ContactObject struct {
 	WAID string `json:"wa_id"`
 	// An object containing customer profile information.
 	Profile struct {
-		Name string `json:"name"`
+		Name     string `json:"name"`
+		Username string `json:"username,omitempty"`
 	} `json:"profile"`
 	// The customer's business-scoped user ID (BSUID). This is a unique, alphanumeric
 	// identifier scoped per business. When a user adopts a WhatsApp username, this field
@@ -275,6 +298,12 @@ type MessageObject struct {
 	Errors   []ErrorObject          `json:"errors,omitempty"`
 	// The customer's phone number who sent the message to the business.
 	From string `json:"from"`
+	// Business-scoped user ID (BSUID) of the sender.
+	FromUserID string `json:"from_user_id,omitempty"`
+	// Business-scoped parent user ID of the sender.
+	FromParentUserID string `json:"from_parent_user_id,omitempty"`
+	// Only included if incoming message sent in a group
+	GroupID string `json:"group_id,omitempty"`
 	// The ID for the message that was received by the business. You could use
 	// messages endpoint to mark this specific message as read.
 	ID string `json:"id"`
@@ -487,10 +516,14 @@ type StatusObject struct {
 	// The customer's WhatsApp ID. A business can respond to a customer using
 	// this ID. This ID may not match the customer's phone number, which is
 	// returned by the API as input when sending a message to the customer.
-	RecipientID string                      `json:"recipient_id"`
-	Status      MessageStatus               `json:"status"`
-	Timestamp   string                      `json:"timestamp,omitempty"`
-	Errors      []wsapi.FBStatusObjectError `json:"errors,omitempty"`
+	RecipientID string `json:"recipient_id"`
+	// Business-scoped user ID (BSUID) of the recipient.
+	ToUserID string `json:"to_user_id,omitempty"`
+	// Business-scoped parent user ID of the recipient.
+	ToParentUserID string                      `json:"to_parent_user_id,omitempty"`
+	Status         MessageStatus               `json:"status"`
+	Timestamp      string                      `json:"timestamp,omitempty"`
+	Errors         []wsapi.FBStatusObjectError `json:"errors,omitempty"`
 }
 
 func (s StatusObject) JSONPrintErrors() string {
@@ -562,27 +595,37 @@ type HistoryErrorObject struct {
 }
 
 type HistoryThreadObject struct {
-	ID       string            `json:"id"` // WHATSAPP_USER_PHONE_NUMBER - The WhatsApp user's phone number.
+	ID      string `json:"id"` // WHATSAPP_USER_PHONE_NUMBER - The WhatsApp user's phone number.
+	Context struct {
+		WAID         string `json:"wa_id,omitempty"`          // WHATSAPP_USER_PHONE_NUMBER
+		UserID       string `json:"user_id,omitempty"`        // BSUID
+		ParentUserID string `json:"parent_user_id,omitempty"` // Only included if parent BSUIDs enabled before sync request
+		Username     string `json:"username,omitempty"`       // Only included if user has enabled usernames feature before sync request
+	} `json:"context,omitempty"`
 	Messages []MessageEHObject `json:"messages"`
 }
 
 //TODO: obtain all fields from https://developers.facebook.com/docs/graph-api/webhooks/reference/whatsapp_business_account/#smb_message_echoes
 
 type MessageEHObject struct {
-	From           string                  `json:"from"`      // BUSINESS_OR_WHATSAPP_USER_PHONE_NUMBER
-	To             string                  `json:"to"`        // only included if SMB message echo
-	ID             string                  `json:"id"`        // WHATSAPP_MESSAGE_ID
-	Timestamp      string                  `json:"timestamp"` // DEVICE_TIMESTAMP
-	Type           string                  `json:"type"`      // MESSAGE_TYPE
-	Text           *fbgraph.TextObject     `json:"text,omitempty"`
-	Image          *fbgraph.MediaObject    `json:"image,omitempty"`
-	Audio          *fbgraph.MediaObject    `json:"audio,omitempty"`
-	Document       *fbgraph.MediaObject    `json:"document,omitempty"`
-	Video          *fbgraph.MediaObject    `json:"video,omitempty"`
-	Sticker        *fbgraph.MediaObject    `json:"sticker,omitempty"`
-	Contacts       []fbgraph.ContactObject `json:"contacts,omitempty"`
-	Context        *fbgraph.MessageContext `json:"context,omitempty"`
-	HistoryContext struct {
+	From             string                  `json:"from"`                          // BUSINESS_OR_WHATSAPP_USER_PHONE_NUMBER
+	FromUserID       string                  `json:"from_user_id,omitempty"`        // Business-scoped user ID (BSUID) of the sender
+	FromParentUserID string                  `json:"from_parent_user_id,omitempty"` // Business-scoped parent user ID of the sender
+	To               string                  `json:"to"`                            // only included if SMB message echo; BUSINESS_OR_WHATSAPP_USER_PHONE_NUMBER
+	ToUserID         string                  `json:"to_user_id,omitempty"`          // Business-scoped user ID (BSUID) of the recipient
+	ToParentUserID   string                  `json:"to_parent_user_id,omitempty"`   // Business-scoped parent user ID of the recipient
+	ID               string                  `json:"id"`                            // WHATSAPP_MESSAGE_ID
+	Timestamp        string                  `json:"timestamp"`                     // DEVICE_TIMESTAMP
+	Type             string                  `json:"type"`                          // MESSAGE_TYPE
+	Text             *fbgraph.TextObject     `json:"text,omitempty"`
+	Image            *fbgraph.MediaObject    `json:"image,omitempty"`
+	Audio            *fbgraph.MediaObject    `json:"audio,omitempty"`
+	Document         *fbgraph.MediaObject    `json:"document,omitempty"`
+	Video            *fbgraph.MediaObject    `json:"video,omitempty"`
+	Sticker          *fbgraph.MediaObject    `json:"sticker,omitempty"`
+	Contacts         []fbgraph.ContactObject `json:"contacts,omitempty"`
+	Context          *fbgraph.MessageContext `json:"context,omitempty"`
+	HistoryContext   struct {
 		Status string `json:"status"` // MESSAGE_STATUS - DELIVERED ERROR PENDING PLAYED READ SENT
 	} `json:"history_context,omitempty"`
 }
@@ -731,9 +774,13 @@ type CallObject struct {
 	// The WhatsApp call ID
 	ID string `json:"id"`
 	// The WhatsApp user's phone number (callee)
-	To    string `json:"to"`
-	From  string `json:"from"`
-	Event string `json:"event"`
+	To string `json:"to"`
+	// Business-scoped user ID (BSUID) of the callee.
+	ToUserID string `json:"to_user_id,omitempty"`
+	// Business-scoped parent user ID of the callee.
+	ToParentUserID string `json:"to_parent_user_id,omitempty"`
+	From           string `json:"from"`
+	Event          string `json:"event"`
 	// O registro de data e hora UNIX do evento de webhook
 	Timestamp Timestamp          `json:"timestamp"`
 	Session   *CallSessionObject `json:"session,omitempty"`
