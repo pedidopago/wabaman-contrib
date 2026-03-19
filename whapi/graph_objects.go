@@ -355,7 +355,13 @@ func (m MessageObject) GetFromUserID() string {
 	return m.FromUserID
 }
 
+// GetTo is a noop for incoming messages.
 func (m MessageObject) GetTo() string {
+	return ""
+}
+
+// GetToUserID is a noop for incoming messages.
+func (m MessageObject) GetToUserID() string {
 	return ""
 }
 
