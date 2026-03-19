@@ -351,6 +351,10 @@ func (m MessageObject) GetFrom() string {
 	return m.From
 }
 
+func (m MessageObject) GetFromUserID() string {
+	return m.FromUserID
+}
+
 func (m MessageObject) GetTo() string {
 	return ""
 }
