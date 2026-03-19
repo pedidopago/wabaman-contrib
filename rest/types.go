@@ -421,6 +421,8 @@ type Contact struct {
 	PhoneID uint `json:"phone_id"`
 	// The whatsapp id (phone number) of the contact.
 	WABAContactID string `json:"waba_contact_id"`
+	// The business-scoped user ID (BSUID) assigned by Meta.
+	UserID mariadb.NullString `json:"user_id,omitempty"`
 	// The profile name of the contact.
 	WABAProfileName mariadb.NullString `json:"waba_profile_name"`
 	// The timestamp of the last time the contact was 'seen' online.
