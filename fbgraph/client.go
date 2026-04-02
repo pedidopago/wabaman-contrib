@@ -88,6 +88,49 @@ func (c *Client) SendMessage(phoneID string, msg *MessageObject) (*MessageObject
 	return result, nil
 }
 
+// SendMarketingMessage uses the Marketing Messages API to send a marketing message to a phone ID.
+// You need to have access to the Marketing Messages API and have the appropriate permissions.
+//
+// See https://developers.facebook.com/documentation/business-messaging/whatsapp/marketing-messages/overview
+func (c *Client) SendMarketingMessage(phoneID string, msg *MessageObject) (*MessageObjectResult, error) {
+	if msg == nil {
+		return nil, fmt.Errorf("message is nil")
+	}
+
+	apiVersion := DefaultGraphAPIVersion
+	if c.GraphAPIVersion != "" {
+		apiVersion = c.GraphAPIVersion
+	}
+
+	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/marketing_messages", apiVersion, phoneID)
+	buf := new(bytes.Buffer)
+	if err := json.NewEncoder(buf).Encode(msg); err != nil {
+		return nil, fmt.Errorf("encode message: %w", err)
+	}
+	if DebugTrace {
+		println("fbgraph SendMarketingMessage", url, "\n", buf.String())
+	}
+	req, err := NewRequest(http.MethodPost, url, buf)
+	if err != nil {
+		return nil, fmt.Errorf("new request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken))
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("request failed: %w", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return nil, c.errorFromResponse(resp)
+	}
+	result := &MessageObjectResult{}
+	if err := json.NewDecoder(resp.Body).Decode(result); err != nil {
+		return nil, fmt.Errorf("decode response: %w", err)
+	}
+	return result, nil
+}
+
 var quoteEscaper = strings.NewReplacer("\\", "\\\\", `"`, "\\\"")
 
 func escapeQuotes(s string) string {
