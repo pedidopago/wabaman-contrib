@@ -49,6 +49,11 @@ func (c *Client) LastErrorRawBody() string {
 	return c.lastErrorRawBody
 }
 
+// SendMessageFn is a function type for sending messages.
+// (*Client).SendMessage is the default implementation of this function.
+// (*Client).SendMarketingMessage is a specialized implementation for marketing messages.
+type SendMessageFn func(phoneID string, msg *MessageObject) (*MessageObjectResult, error)
+
 func (c *Client) SendMessage(phoneID string, msg *MessageObject) (*MessageObjectResult, error) {
 	if msg == nil {
 		return nil, fmt.Errorf("message is nil")
