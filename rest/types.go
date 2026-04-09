@@ -156,13 +156,23 @@ type NewMessageResponse struct {
 	SendMessageStatus NewMessageStatus `json:"send_message_status"`
 }
 
+type GetMessagesMessageType string
+
+const (
+	GetMessagesTypeAll      GetMessagesMessageType = "all"
+	GetMessagesTypeHost     GetMessagesMessageType = "host_message"
+	GetMessagesTypeClient   GetMessagesMessageType = "client_message"
+	GetMessagesTypeHostNote GetMessagesMessageType = "host_note"
+)
+
 type GetMessagesRequest struct {
-	PhoneID           uint   `url:"phone_id,omitempty"`
-	BranchID          string `url:"branch_id,omitempty"`
-	HostPhoneNumber   string `url:"host_phone_number,omitempty"`
-	ClientPhoneNumber string `url:"client_phone_number,omitempty"`
-	MaxResults        uint64 `url:"max_results,omitempty"`
-	Page              uint   `url:"page,omitempty"`
+	PhoneID           uint                   `url:"phone_id,omitempty"`
+	BranchID          string                 `url:"branch_id,omitempty"`
+	HostPhoneNumber   string                 `url:"host_phone_number,omitempty"`
+	ClientPhoneNumber string                 `url:"client_phone_number,omitempty"`
+	MaxResults        uint64                 `url:"max_results,omitempty"`
+	Page              uint                   `url:"page,omitempty"`
+	MessageType       GetMessagesMessageType `url:"message_type,omitempty"`
 }
 
 type GetMessagesResponse struct {
