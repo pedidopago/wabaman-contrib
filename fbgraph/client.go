@@ -25,6 +25,8 @@ var DefaultHTTPClient = &http.Client{
 	Timeout: time.Second * 120,
 }
 
+// Client is not safe for concurrent use. Each goroutine must use its own
+// Client instance; shared instances require external synchronization.
 type Client struct {
 	HTTPClient      *http.Client
 	AccessToken     string
