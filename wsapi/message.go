@@ -44,6 +44,8 @@ const (
 	MessageTypeCallEnded                  MessageType = 38 // server sends this to the clients
 	MessageTypeCallOnAnswerSDP            MessageType = 39 // server sends this to the clients
 	MessageTypeCallStartTimer             MessageType = 40 // server sends this to the clients
+	MessageTypeReconnectCall              MessageType = 41 // js/ts client sends this to the server
+	MessageTypeActiveCallNotification     MessageType = 42 // server sends this to the clients
 	MessageTypeMockClientMessages         MessageType = 230
 	MessageTypeGenericError               MessageType = 235
 	MessageTypeCloseError                 MessageType = 240
@@ -87,6 +89,8 @@ type Message struct {
 	CallEnded                  *CallEnded                  `json:"call_ended,omitempty"`
 	CallOnAnswerSDP            *CallOnAnswerSDP            `json:"call_on_answer_sdp,omitempty"`
 	CallStartTimer             *CallStartTimer             `json:"call_start_timer,omitempty"`
+	ReconnectCall              *ReconnectCall              `json:"reconnect_call,omitempty"`
+	ActiveCallNotification     *ActiveCallNotification     `json:"active_call_notification,omitempty"`
 }
 
 // ToJSON marshals the Message to a JSON string.

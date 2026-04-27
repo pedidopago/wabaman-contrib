@@ -14,6 +14,31 @@ type IncomingCallFromClient struct {
 	ContactPhoneNumber string `json:"contact_phone_number"`
 	ContactID          uint64 `json:"contact_id"`
 	ContactName        string `json:"contact_name"`
+	IsCallTakeover     bool   `json:"is_call_takeover,omitempty"`
+	OriginalAgentID    string `json:"original_agent_id,omitempty"`
+}
+
+// ReconnectCall is sent by a browser client to reconnect to an active call after a disconnection.
+// AgentID and AgentName are filled by the server, not the client.
+type ReconnectCall struct {
+	CallID    string `json:"call_id"`
+	PhoneID   uint   `json:"phone_id"`
+	BranchID  string `json:"branch_id"`
+	OfferSDP  string `json:"offer_sdp"`
+	AgentID   string `json:"agent_id"`   // filled by the Wabaman server, not the client
+	AgentName string `json:"agent_name"` // filled by the Wabaman server, not the client
+}
+
+// ActiveCallNotification is sent by the server to a reconnecting agent when it detects
+// the agent has an active call in progress.
+type ActiveCallNotification struct {
+	CallID             string `json:"call_id"`
+	PhoneID            uint   `json:"phone_id"`
+	BranchID           string `json:"branch_id"`
+	ContactID          uint64 `json:"contact_id"`
+	ContactName        string `json:"contact_name"`
+	ContactPhoneNumber string `json:"contact_phone_number"`
+	WABAContactID      string `json:"waba_contact_id"`
 }
 
 // SetupCallFromBrowser is sent by a browser client to initiate WebRTC call setup.
