@@ -41,6 +41,13 @@ type ActiveCallNotification struct {
 	WABAContactID      string `json:"waba_contact_id"`
 }
 
+// CallAnswerIntent is sent by a browser client to the server to indicate the agent is ready to answer the call.
+type CallAnswerIntent struct {
+	CallID    string `json:"call_id"`
+	AgentID   string `json:"agent_id,omitempty"`   // filled by the Wabaman server, not the client
+	AgentName string `json:"agent_name,omitempty"` // filled by the Wabaman server, not the client
+}
+
 // SetupCallFromBrowser is sent by a browser client to initiate WebRTC call setup.
 // AgentID and AgentName are filled by the server, not the client.
 type SetupCallFromBrowser struct {

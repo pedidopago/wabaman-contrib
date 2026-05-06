@@ -46,6 +46,7 @@ const (
 	MessageTypeCallStartTimer             MessageType = 40 // server sends this to the clients
 	MessageTypeReconnectCall              MessageType = 41 // js/ts client sends this to the server
 	MessageTypeActiveCallNotification     MessageType = 42 // server sends this to the clients
+	MessageTypeCallAnswerIntent           MessageType = 43 // js/ts client sends this to the server (and the server sends it to the clients)
 	MessageTypeMockClientMessages         MessageType = 230
 	MessageTypeGenericError               MessageType = 235
 	MessageTypeCloseError                 MessageType = 240
@@ -91,6 +92,7 @@ type Message struct {
 	CallStartTimer             *CallStartTimer             `json:"call_start_timer,omitempty"`
 	ReconnectCall              *ReconnectCall              `json:"reconnect_call,omitempty"`
 	ActiveCallNotification     *ActiveCallNotification     `json:"active_call_notification,omitempty"`
+	CallAnswerIntent           *CallAnswerIntent           `json:"call_answer_intent,omitempty"`
 }
 
 // ToJSON marshals the Message to a JSON string.
