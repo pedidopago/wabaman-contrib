@@ -1,6 +1,8 @@
 package whapi
 
 import (
+	"encoding/json"
+	"fmt"
 	"strconv"
 	"time"
 )
@@ -27,6 +29,20 @@ func (t Timestamp) ToTime() (time.Time, error) {
 }
 
 type DurationSeconds string
+
+func (d *DurationSeconds) UnmarshalJSON(data []byte) error {
+	var s string
+	if err := json.Unmarshal(data, &s); err == nil {
+		*d = DurationSeconds(s)
+		return nil
+	}
+	var n json.Number
+	if err := json.Unmarshal(data, &n); err != nil {
+		return fmt.Errorf("DurationSeconds: cannot unmarshal %s", string(data))
+	}
+	*d = DurationSeconds(n.String())
+	return nil
+}
 
 func (d DurationSeconds) ToDuration() (time.Duration, error) {
 	v, err := strconv.ParseInt(string(d), 10, 64)
