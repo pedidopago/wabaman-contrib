@@ -61,7 +61,8 @@ const (
 	ChangeObjectFieldHistory          ChangeObjectField = "history"
 	ChangeObjectFieldSMBMessageEchoes ChangeObjectField = "smb_message_echoes"
 	ChangeObjectFieldSMBAppStateSync  ChangeObjectField = "smb_app_state_sync"
-	ChangeObjectFieldCalls            ChangeObjectField = "calls"
+	ChangeObjectFieldCalls                        ChangeObjectField = "calls"
+	ChangeObjectFieldMessageTemplateQualityUpdate ChangeObjectField = "message_template_quality_update"
 )
 
 type ChangeObject struct {
@@ -105,6 +106,9 @@ type ValueObject struct {
 	MessageTemplateLanguage string `json:"message_template_language,omitempty"`
 	Reason                  string `json:"reason,omitempty"`
 	MessageTemplateCategory string `json:"message_template_category,omitempty"`
+	// template quality update fields:
+	PreviousQualityScore string `json:"previous_quality_score,omitempty"`
+	NewQualityScore      string `json:"new_quality_score,omitempty"`
 	// only included if template disabled
 	DisableInfo struct {
 		DisableDate string `json:"disable_date,omitempty"`
