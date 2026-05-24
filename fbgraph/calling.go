@@ -565,6 +565,167 @@ func (c *Client) TerminateCall(ctx context.Context, whatsappID string, callID st
 	return nil
 }
 
+type InitiateCallRequest struct {
+	To                    string             `json:"to"`
+	Session               CallRequestSession `json:"session"`
+	BizOpaqueCallbackData string             `json:"biz_opaque_callback_data,omitempty"`
+}
+
+type InitiateCallResponse struct {
+	CallID string `json:"call_id"`
+}
+
+func (c *Client) InitiateCall(ctx context.Context, phoneNumberID string, r InitiateCallRequest) (*InitiateCallResponse, error) {
+	c.lastErrorRawBody = ""
+	c.lastGraphError = nil
+
+	apiVersion := DefaultGraphAPIVersion
+	if c.GraphAPIVersion != "" {
+		apiVersion = c.GraphAPIVersion
+	}
+
+	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/calls", apiVersion, phoneNumberID)
+
+	reqO := struct {
+		MessagingProduct      string             `json:"messaging_product"`
+		To                    string             `json:"to"`
+		Action                string             `json:"action"`
+		Session               CallRequestSession `json:"session"`
+		BizOpaqueCallbackData string             `json:"biz_opaque_callback_data,omitempty"`
+	}{
+		MessagingProduct:      "whatsapp",
+		To:                    r.To,
+		Action:                "connect",
+		Session:               r.Session,
+		BizOpaqueCallbackData: r.BizOpaqueCallbackData,
+	}
+
+	jd, err := json.Marshal(reqO)
+	if err != nil {
+		return nil, fmt.Errorf("marshal request: %w", err)
+	}
+
+	rbuf := bytes.NewReader(jd)
+
+	req, err := NewRequestWithContext(ctx, http.MethodPost, url, rbuf)
+	if err != nil {
+		return nil, fmt.Errorf("new request: %w", err)
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken))
+	req.Header.Set("Accept", "application/json")
+
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("request failed: %w", err)
+	}
+
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return nil, c.errorFromResponse(resp)
+	}
+
+	raw := struct {
+		MessagingProduct string `json:"messaging_product"`
+		Calls            []struct {
+			ID string `json:"id"`
+		} `json:"calls"`
+	}{}
+
+	if err := json.NewDecoder(resp.Body).Decode(&raw); err != nil {
+		return nil, fmt.Errorf("decode response: %w", err)
+	}
+
+	if len(raw.Calls) == 0 {
+		return nil, fmt.Errorf("empty calls array in response")
+	}
+
+	return &InitiateCallResponse{CallID: raw.Calls[0].ID}, nil
+}
+
+type CallPermissionStatus string
+
+const (
+	CallPermissionStatusNoPermission CallPermissionStatus = "no_permission"
+	CallPermissionStatusTemporary    CallPermissionStatus = "temporary"
+	CallPermissionStatusPermanent    CallPermissionStatus = "permanent"
+)
+
+type CallPermissionsResponse struct {
+	MessagingProduct string               `json:"messaging_product"`
+	Permission       CallPermissionInfo   `json:"permission"`
+	Actions          []CallPermissionAction `json:"actions"`
+}
+
+type CallPermissionInfo struct {
+	Status         CallPermissionStatus `json:"status"`
+	ExpirationTime int64                `json:"expiration_time,omitempty"`
+}
+
+type CallPermissionAction struct {
+	ActionName       string                `json:"action_name"`
+	CanPerformAction bool                  `json:"can_perform_action"`
+	Limits           []CallPermissionLimit `json:"limits"`
+}
+
+type CallPermissionLimit struct {
+	TimePeriod          string `json:"time_period"`
+	MaxAllowed          int    `json:"max_allowed"`
+	CurrentUsage        int    `json:"current_usage"`
+	LimitExpirationTime int64  `json:"limit_expiration_time,omitempty"`
+}
+
+func (c *Client) GetCallPermissions(ctx context.Context, phoneNumberID, userWAID string) (*CallPermissionsResponse, error) {
+	apiVersion := DefaultGraphAPIVersion
+	if c.GraphAPIVersion != "" {
+		apiVersion = c.GraphAPIVersion
+	}
+
+	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/call_permissions?user_wa_id=%s", apiVersion, phoneNumberID, userWAID)
+
+	req, err := NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("new request: %w", err)
+	}
+
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken))
+
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("request failed: %w", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return nil, c.errorFromResponse(resp)
+	}
+
+	result := new(CallPermissionsResponse)
+	if err := json.NewDecoder(resp.Body).Decode(result); err != nil {
+		return nil, fmt.Errorf("decode response: %w", err)
+	}
+	return result, nil
+}
+
+func (c *Client) SendCallPermissionRequest(phoneNumberID, to, bodyText string) (*MessageObjectResult, error) {
+	msgObj := &MessageObject{
+		MessagingProduct: "whatsapp",
+		To:               to,
+		Type:             "interactive",
+		Interactive: &InteractiveMessageObject{
+			Type: InteractiveMessageCallPermissionRequest,
+			Action: &InteractiveMessageAction{
+				Name: "call_permission_request",
+			},
+		},
+	}
+	if bodyText != "" {
+		msgObj.Interactive.Body = &InteractiveTextObject{Text: bodyText}
+	}
+	return c.SendMessage(phoneNumberID, msgObj)
+}
+
 func IsSubscribedToCalls(objs []WebhookObject, minVersion string) (bool, error) {
 	for _, obj := range objs {
 		if obj.Object == "whatsapp_business_account" {

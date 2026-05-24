@@ -435,11 +435,15 @@ type MessageObjectImage struct {
 }
 
 type MessageObjectInteractive struct {
-	Type string `json:"type"` // button_reply or list_reply
+	// button_reply, list_reply, or call_permission_reply
+	Type string `json:"type"`
 	// Sent when a customer clicks a button
 	ButtonReply *ButtonReply `json:"button_reply,omitempty"`
 	// Sent when a customer selects an item from a list
 	ListReply *ListReply `json:"list_reply,omitempty"`
+	// Sent when a customer responds to a call permission request (accept/reject, temporary/permanent),
+	// or when permission is automatically granted/revoked.
+	CallPermissionReply *CallPermissionReply `json:"call_permission_reply,omitempty"`
 }
 
 type ButtonReply struct {
@@ -456,6 +460,25 @@ type ListReply struct {
 	Title string `json:"title"`
 	// Description of the selected row
 	Description string `json:"description"`
+}
+
+// CallPermissionReply represents the customer's response to a call permission request,
+// delivered inside messages[].interactive when interactive.type == "call_permission_reply".
+//
+// ResponseSource distinguishes a user-initiated decision from an automatic one
+// (the latter happens on callback_permission_status grants and on the auto-revoke
+// after 4 consecutive unanswered business-initiated calls).
+type CallPermissionReply struct {
+	// accept or reject
+	Response string `json:"response"`
+	// Whether the permission is permanent (true) or temporary (false). For temporary
+	// permissions, ExpirationTimestamp is set. For reject responses, this is false.
+	IsPermanent bool `json:"is_permanent"`
+	// Unix timestamp (as string per Meta convention) when a temporary permission expires.
+	// Absent for permanent permissions and for reject responses.
+	ExpirationTimestamp string `json:"expiration_timestamp,omitempty"`
+	// user_action or automatic
+	ResponseSource string `json:"response_source"`
 }
 
 type MessageObjectSticker struct {
@@ -540,6 +563,12 @@ type StatusObject struct {
 	Status         MessageStatus               `json:"status"`
 	Timestamp      string                      `json:"timestamp,omitempty"`
 	Errors         []wsapi.FBStatusObjectError `json:"errors,omitempty"`
+	// Type is the kind of status entry. Currently empty (default) for message status webhooks,
+	// and "call" for the calls status webhook variant introduced for business-initiated calling.
+	Type string `json:"type,omitempty"`
+	// BizOpaqueCallbackData is the arbitrary string the business passed in when initiating
+	// a call (or accepting one). Echoed back in subsequent call-related webhooks.
+	BizOpaqueCallbackData string `json:"biz_opaque_callback_data,omitempty"`
 }
 
 func (s StatusObject) JSONPrintErrors() string {
@@ -718,6 +747,11 @@ const (
 	MessageStatusRead MessageStatus = "read"
 	// A webhook is triggered when a business receives a message from a customer.
 	MessageStatusSent MessageStatus = "sent"
+
+	// Call status values for StatusObject when Type == "call".
+	MessageStatusCallRinging  MessageStatus = "RINGING"
+	MessageStatusCallAccepted MessageStatus = "ACCEPTED"
+	MessageStatusCallRejected MessageStatus = "REJECTED"
 )
 
 // WhatsApp defines a conversation as a 24-hour session of messaging between a

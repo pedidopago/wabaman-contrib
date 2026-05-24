@@ -189,3 +189,101 @@ const (
 	TerminateCallOriginWhatsApp TerminateCallOrigin = iota + 1
 	TerminateCallOriginBrowser
 )
+
+// RequestCallEligibility is sent by a browser client to ask whether a contact can be called
+// right now. The server replies with [CallEligibility] for the same (phone_id, contact_id) pair,
+// and additionally pushes unsolicited updates via [CallPermissionState] when the underlying
+// permission state changes.
+type RequestCallEligibility struct {
+	PhoneID   uint   `json:"phone_id"`
+	ContactID uint64 `json:"contact_id"`
+}
+
+// CallPermissionLimit mirrors a single limit entry from Meta's GET /call_permissions endpoint
+// (e.g. "start_call" allowed 100 per PT24H), surfaced verbatim so the UI can render usage.
+type CallPermissionLimit struct {
+	// ISO 8601 duration, e.g. PT24H or P7D.
+	TimePeriod string `json:"time_period"`
+	MaxAllowed int    `json:"max_allowed"`
+	CurrentUsage int  `json:"current_usage"`
+	// Unix timestamp; present only when the limit window is currently exhausted.
+	LimitExpirationTime int64 `json:"limit_expiration_time,omitempty"`
+}
+
+// CallEligibility is the server's reply to a [RequestCallEligibility] and also represents
+// the can-call-now state at a point in time.
+type CallEligibility struct {
+	PhoneID   uint   `json:"phone_id"`
+	ContactID uint64 `json:"contact_id"`
+	CanCall   bool   `json:"can_call"`
+	// no_permission | temporary | permanent
+	Status    string `json:"status"`
+	// Unix timestamp; 0 for permanent permissions or when no permission is granted.
+	ExpiresAt             int64                 `json:"expires_at,omitempty"`
+	ConsecutiveUnanswered uint8                 `json:"consecutive_unanswered"`
+	// One of: NO_PERMISSION | EXPIRED | RATE_LIMIT | INTERNAL. Empty when CanCall is true.
+	BlockedReason           string               `json:"blocked_reason,omitempty"`
+	StartCallLimits         []CallPermissionLimit `json:"start_call_limits,omitempty"`
+	PermissionRequestLimits []CallPermissionLimit `json:"permission_request_limits,omitempty"`
+}
+
+// CallPermissionState is the unsolicited server-push variant of [CallEligibility],
+// emitted when a call_permission_reply webhook updates the underlying state or after
+// a connected call resets the consecutive-unanswered counter.
+type CallPermissionState struct {
+	CallEligibility
+}
+
+// InitiateCallFromBrowser is sent by a browser client to start an outbound (business-initiated)
+// call to a contact. OfferSDP is the browser's local-side WebRTC offer toward the gateway
+// (ms-wabaman-webrtc); the gateway mints a separate offer for Cloud API.
+type InitiateCallFromBrowser struct {
+	PhoneID   uint   `json:"phone_id"`
+	ContactID uint64 `json:"contact_id"`
+	OfferSDP  string `json:"offer_sdp"`
+	// Filled by the server from the session, not the client.
+	AgentID   string `json:"agent_id,omitempty"`
+	AgentName string `json:"agent_name,omitempty"`
+}
+
+// CallInitiated confirms an outbound call has been accepted by Cloud API and a call_id assigned.
+type CallInitiated struct {
+	CallID    string `json:"call_id"`
+	PhoneID   uint   `json:"phone_id"`
+	ContactID uint64 `json:"contact_id"`
+}
+
+// CallInitiateFailed reports an outbound initiate failure. Reasons:
+//
+//	NO_PERMISSION   — user has not granted permission (or it has expired)
+//	RATE_LIMIT      — start_call action limit reached
+//	EXPIRED         — temporary permission has expired
+//	SDP_INVALID     — Cloud API rejected the SDP offer
+//	INTERNAL        — anything else (network, etc.)
+type CallInitiateFailed struct {
+	PhoneID   uint   `json:"phone_id"`
+	ContactID uint64 `json:"contact_id"`
+	Reason    string `json:"reason"`
+	Message   string `json:"message,omitempty"`
+	// Unix timestamp; present for RATE_LIMIT when the window expiration is known.
+	RetryAfter int64 `json:"retry_after,omitempty"`
+}
+
+// CallStatusUpdated is broadcast when an outbound call moves between lifecycle states.
+// Values: initiating | connecting | ringing | in_progress | completed | missed | rejected.
+type CallStatusUpdated struct {
+	CallID  string `json:"call_id"`
+	PhoneID uint   `json:"phone_id"`
+	Status  string `json:"status"`
+}
+
+// SendCallPermissionRequest is the agent's intent to send a call-permission request to a contact.
+// The server picks free-form vs template based on whether a 24h customer-service window is open.
+type SendCallPermissionRequest struct {
+	PhoneID   uint   `json:"phone_id"`
+	ContactID uint64 `json:"contact_id"`
+	BodyText  string `json:"body_text,omitempty"`
+	// Filled by the server from the session, not the client.
+	AgentID   string `json:"agent_id,omitempty"`
+	AgentName string `json:"agent_name,omitempty"`
+}

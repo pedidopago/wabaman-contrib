@@ -3,10 +3,11 @@ package fbgraph
 type InteractiveMessageType string
 
 const (
-	InteractiveMessageButton      InteractiveMessageType = "button"
-	InteractiveMessageList        InteractiveMessageType = "list"
-	InteractiveMessageProduct     InteractiveMessageType = "product"
-	InteractiveMessageProductList InteractiveMessageType = "product_list"
+	InteractiveMessageButton              InteractiveMessageType = "button"
+	InteractiveMessageList                InteractiveMessageType = "list"
+	InteractiveMessageProduct             InteractiveMessageType = "product"
+	InteractiveMessageProductList         InteractiveMessageType = "product_list"
+	InteractiveMessageCallPermissionRequest InteractiveMessageType = "call_permission_request"
 )
 
 type InteractiveMessageObject struct {
@@ -95,6 +96,8 @@ type InteractiveMessageAction struct {
 	// Unique identifier of the Facebook catalog linked to your WhatsApp Business
 	// Account. This ID can be retrieved via the [Meta Commerce Manager](https://business.facebook.com/commerce/).
 	CatalogID string `json:"catalog_id,omitempty"`
+	// Required for action-name based interactives such as call_permission_request.
+	Name string `json:"name,omitempty"`
 	// Required for Single Product Messages and Multi-Product Messages.
 	// Unique identifier of the product in a catalog.
 	//
