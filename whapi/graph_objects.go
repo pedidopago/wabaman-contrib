@@ -710,12 +710,21 @@ func (m MessageEHObject) StructName() string {
 //TODO: obtain all fields from https://developers.facebook.com/docs/graph-api/webhooks/reference/whatsapp_business_account/#smb_app_state_sync
 
 type UserPreferencesObject struct {
-	WAID     string `json:"wa_id"`
-	Detail   string `json:"detail"`
-	Category string `json:"category"`
-	Value    string `json:"value"`
+	WAID     string                  `json:"wa_id"`
+	Detail   string                  `json:"detail"`
+	Category UserPreferencesCategory `json:"category"`
+	Value    string                  `json:"value"`
 	// Timestamp string `json:"timestamp"`
 }
+
+// UserPreferencesCategory is the category of a user preference (e.g. marketing).
+// See https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/reference/user_preferences
+type UserPreferencesCategory string
+
+const (
+	// UserPreferencesCategoryMarketing is sent when a user opts in or out of marketing messages.
+	UserPreferencesCategoryMarketing UserPreferencesCategory = "marketing"
+)
 
 type StateSyncObjectAction string
 
