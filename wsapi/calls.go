@@ -203,9 +203,9 @@ type RequestCallEligibility struct {
 // (e.g. "start_call" allowed 100 per PT24H), surfaced verbatim so the UI can render usage.
 type CallPermissionLimit struct {
 	// ISO 8601 duration, e.g. PT24H or P7D.
-	TimePeriod string `json:"time_period"`
-	MaxAllowed int    `json:"max_allowed"`
-	CurrentUsage int  `json:"current_usage"`
+	TimePeriod   string `json:"time_period"`
+	MaxAllowed   int    `json:"max_allowed"`
+	CurrentUsage int    `json:"current_usage"`
 	// Unix timestamp; present only when the limit window is currently exhausted.
 	LimitExpirationTime int64 `json:"limit_expiration_time,omitempty"`
 }
@@ -217,12 +217,12 @@ type CallEligibility struct {
 	ContactID uint64 `json:"contact_id"`
 	CanCall   bool   `json:"can_call"`
 	// no_permission | temporary | permanent
-	Status    string `json:"status"`
+	Status string `json:"status"`
 	// Unix timestamp; 0 for permanent permissions or when no permission is granted.
-	ExpiresAt             int64                 `json:"expires_at,omitempty"`
-	ConsecutiveUnanswered uint8                 `json:"consecutive_unanswered"`
+	ExpiresAt             int64 `json:"expires_at,omitempty"`
+	ConsecutiveUnanswered uint8 `json:"consecutive_unanswered"`
 	// One of: NO_PERMISSION | EXPIRED | RATE_LIMIT | INTERNAL. Empty when CanCall is true.
-	BlockedReason           string               `json:"blocked_reason,omitempty"`
+	BlockedReason           string                `json:"blocked_reason,omitempty"`
 	StartCallLimits         []CallPermissionLimit `json:"start_call_limits,omitempty"`
 	PermissionRequestLimits []CallPermissionLimit `json:"permission_request_limits,omitempty"`
 }
@@ -286,4 +286,19 @@ type SendCallPermissionRequest struct {
 	// Filled by the server from the session, not the client.
 	AgentID   string `json:"agent_id,omitempty"`
 	AgentName string `json:"agent_name,omitempty"`
+}
+
+// SendCallPermissionResponse is sent by the server after handling a [SendCallPermissionRequest].
+// On failure, Success is false and Error carries a human-readable reason.
+// On success, WAMID is the WhatsApp message ID and Branch is "interactive" or "template".
+type SendCallPermissionResponse struct {
+	PhoneID   uint   `json:"phone_id"`
+	ContactID uint64 `json:"contact_id"`
+	Success   bool   `json:"success"`
+	// Set when Success is false.
+	Error string `json:"error,omitempty"`
+	// Set when Success is true: WhatsApp message ID returned by Meta.
+	WAMID string `json:"wamid,omitempty"`
+	// Set when Success is true: "interactive" (24h window) or "template" (fallback).
+	Branch string `json:"branch,omitempty"`
 }

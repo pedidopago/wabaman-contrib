@@ -49,18 +49,19 @@ const (
 	MessageTypeCallAnswerIntent           MessageType = 43 // js/ts client sends this to the server (and the server sends it to the clients)
 
 	// Business-initiated calling (PPS-4460). Numbers continue the call block.
-	MessageTypeRequestCallEligibility    MessageType = 44 // js/ts client sends this to the server
-	MessageTypeCallEligibility           MessageType = 45 // server sends this to the clients
-	MessageTypeInitiateCallFromBrowser   MessageType = 46 // js/ts client sends this to the server
-	MessageTypeCallInitiated             MessageType = 47 // server sends this to the clients
-	MessageTypeCallInitiateFailed        MessageType = 48 // server sends this to the clients
-	MessageTypeCallStatusUpdated         MessageType = 49 // server sends this to the clients
-	MessageTypeSendCallPermissionRequest MessageType = 50 // js/ts client sends this to the server
-	MessageTypeCallPermissionState       MessageType = 51 // server sends this to the clients
+	MessageTypeRequestCallEligibility     MessageType = 44 // js/ts client sends this to the server
+	MessageTypeCallEligibility            MessageType = 45 // server sends this to the clients
+	MessageTypeInitiateCallFromBrowser    MessageType = 46 // js/ts client sends this to the server
+	MessageTypeCallInitiated              MessageType = 47 // server sends this to the clients
+	MessageTypeCallInitiateFailed         MessageType = 48 // server sends this to the clients
+	MessageTypeCallStatusUpdated          MessageType = 49 // server sends this to the clients
+	MessageTypeSendCallPermissionRequest  MessageType = 50 // js/ts client sends this to the server
+	MessageTypeCallPermissionState        MessageType = 51 // server sends this to the clients
+	MessageTypeSendCallPermissionResponse MessageType = 52 // server sends this to the clients
 
-	MessageTypeMockClientMessages         MessageType = 230
-	MessageTypeGenericError               MessageType = 235
-	MessageTypeCloseError                 MessageType = 240
+	MessageTypeMockClientMessages MessageType = 230
+	MessageTypeGenericError       MessageType = 235
+	MessageTypeCloseError         MessageType = 240
 )
 
 // Message is the root level object of a ms-wabaman websocket.
@@ -104,14 +105,15 @@ type Message struct {
 	ReconnectCall              *ReconnectCall              `json:"reconnect_call,omitempty"`
 	ActiveCallNotification     *ActiveCallNotification     `json:"active_call_notification,omitempty"`
 	CallAnswerIntent           *CallAnswerIntent           `json:"call_answer_intent,omitempty"`
-	RequestCallEligibility    *RequestCallEligibility    `json:"request_call_eligibility,omitempty"`
-	CallEligibility           *CallEligibility           `json:"call_eligibility,omitempty"`
-	InitiateCallFromBrowser   *InitiateCallFromBrowser   `json:"initiate_call_from_browser,omitempty"`
-	CallInitiated             *CallInitiated             `json:"call_initiated,omitempty"`
-	CallInitiateFailed        *CallInitiateFailed        `json:"call_initiate_failed,omitempty"`
-	CallStatusUpdated         *CallStatusUpdated         `json:"call_status_updated,omitempty"`
-	SendCallPermissionRequest *SendCallPermissionRequest `json:"send_call_permission_request,omitempty"`
-	CallPermissionState       *CallPermissionState       `json:"call_permission_state,omitempty"`
+	RequestCallEligibility     *RequestCallEligibility     `json:"request_call_eligibility,omitempty"`
+	CallEligibility            *CallEligibility            `json:"call_eligibility,omitempty"`
+	InitiateCallFromBrowser    *InitiateCallFromBrowser    `json:"initiate_call_from_browser,omitempty"`
+	CallInitiated              *CallInitiated              `json:"call_initiated,omitempty"`
+	CallInitiateFailed         *CallInitiateFailed         `json:"call_initiate_failed,omitempty"`
+	CallStatusUpdated          *CallStatusUpdated          `json:"call_status_updated,omitempty"`
+	SendCallPermissionRequest  *SendCallPermissionRequest  `json:"send_call_permission_request,omitempty"`
+	SendCallPermissionResponse *SendCallPermissionResponse `json:"send_call_permission_response,omitempty"`
+	CallPermissionState        *CallPermissionState        `json:"call_permission_state,omitempty"`
 }
 
 // ToJSON marshals the Message to a JSON string.
