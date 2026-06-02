@@ -124,106 +124,98 @@ func (cm *ContactMetadata) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	known := map[string]any{
-		"inquiry_id":                    &cm.InquiryID,
-		"inquiry_display_id":            &cm.InquiryDisplayID,
-		"inquiry_agent_id":              &cm.InquiryAgentID,
-		"inquiry_agent_name":            &cm.InquiryAgentName,
-		"inquiry_ai_evaluation":         &cm.InquiryAIEvaluation,
-		"inquiry_created_at":            &cm.InquiryCreatedAt,
-		"inquiry_expire_date":           &cm.InquiryExpireDate,
-		"inquiry_seller_agent_id":       &cm.InquirySellerAgentID,
-		"inquiry_seller_agent_name":     &cm.InquirySellerAgentName,
-		"inquiry_quotated_at":           &cm.InquiryQuotatedAt,
-		"inquiry_done_at":               &cm.InquiryDoneAt,
-		"inquiry_last_status_update":    &cm.InquiryLastStatusUpdate,
-		"inquiry_inclusor_agent_id":     &cm.InquiryInclusorAgentID,
-		"inquiry_inclusor_agent_name":   &cm.InquiryInclusorAgentName,
-		"inquiry_specialist_agent_id":   &cm.InquirySpecialistAgentID,
-		"inquiry_specialist_agent_name": &cm.InquirySpecialistAgentName,
-		"account_id":                    &cm.AccountID,
-		"chatbot_initial_contact":       &cm.ChatbotInitialContact,
-		"chatbot_registration_date":     &cm.ChatbotRegistrationDate,
-		"initial_contact_date":          &cm.InitialContactDate,
-		"customer_name":                 &cm.CustomerName,
-		"customer_document_type":        &cm.CustomerDocumentType,
-		"customer_document":             &cm.CustomerDocument,
-		"last_order_seq":                &cm.LastOrderSeq,
-		"last_coupon_offered":           &cm.LastCouponOffered,
-		"order":                         &cm.Order,
-		"prescription":                  &cm.Prescription,
-	}
-
-	// Interned enum fields
-	if v, ok := raw["inquiry_status"]; ok {
-		p, err := internInquiryStatus(v)
-		if err != nil {
-			return err
-		}
-		cm.InquiryStatus = p
-	}
-	if v, ok := raw["chatbot_last_state"]; ok {
-		p, err := internChatbotLastState(v)
-		if err != nil {
-			return err
-		}
-		cm.ChatbotLastState = p
-	}
-	for _, bf := range []struct {
-		key string
-		dst *MetadataBool
-	}{
-		{"inquiry_can_bind_display_id", &cm.InquiryCanBindDisplayID},
-		{"inquiry_has_pendencies", &cm.InquiryHasPendencies},
-		{"inquiry_sell_opportunity_collected", &cm.InquirySellOpportunityCollected},
-		{"inquiry_is_chat_open", &cm.InquiryIsChatOpen},
-		{"inquiry_is_marketplace", &cm.InquiryIsMarketplace},
-		{"chatbot_disabled", &cm.ChatbotDisabled},
-		{"chatbot_is_pre_registration", &cm.ChatbotIsPreRegistration},
-	} {
-		if v, ok := raw[bf.key]; ok {
-			p, err := internMetadataBool(v)
-			if err != nil {
-				return err
-			}
-			*bf.dst = p
-		}
-	}
-	if v, ok := raw["initial_contact_channel"]; ok {
-		p, err := internInitialContactChannel(v)
-		if err != nil {
-			return err
-		}
-		cm.InitialContactChannel = p
-	}
-	if v, ok := raw["customer_document_country"]; ok {
-		p, err := internCustomerDocumentCountry(v)
-		if err != nil {
-			return err
-		}
-		cm.CustomerDocumentCountry = p
-	}
-
-	for key, dst := range known {
-		if v, ok := raw[key]; ok {
-			if err := json.Unmarshal(v, dst); err != nil {
-				return err
-			}
-		}
-	}
-
 	for k, v := range raw {
-		if _, isKnown := contactMetadataKnownKeys[k]; isKnown {
-			continue
+		var err error
+		switch k {
+		case "inquiry_id":
+			err = json.Unmarshal(v, &cm.InquiryID)
+		case "inquiry_status":
+			cm.InquiryStatus, err = internInquiryStatus(v)
+		case "inquiry_display_id":
+			err = json.Unmarshal(v, &cm.InquiryDisplayID)
+		case "inquiry_agent_id":
+			err = json.Unmarshal(v, &cm.InquiryAgentID)
+		case "inquiry_agent_name":
+			err = json.Unmarshal(v, &cm.InquiryAgentName)
+		case "inquiry_ai_evaluation":
+			err = json.Unmarshal(v, &cm.InquiryAIEvaluation)
+		case "inquiry_can_bind_display_id":
+			cm.InquiryCanBindDisplayID, err = internMetadataBool(v)
+		case "inquiry_created_at":
+			err = json.Unmarshal(v, &cm.InquiryCreatedAt)
+		case "inquiry_expire_date":
+			err = json.Unmarshal(v, &cm.InquiryExpireDate)
+		case "inquiry_seller_agent_id":
+			err = json.Unmarshal(v, &cm.InquirySellerAgentID)
+		case "inquiry_seller_agent_name":
+			err = json.Unmarshal(v, &cm.InquirySellerAgentName)
+		case "inquiry_has_pendencies":
+			cm.InquiryHasPendencies, err = internMetadataBool(v)
+		case "inquiry_sell_opportunity_collected":
+			cm.InquirySellOpportunityCollected, err = internMetadataBool(v)
+		case "inquiry_quotated_at":
+			err = json.Unmarshal(v, &cm.InquiryQuotatedAt)
+		case "inquiry_done_at":
+			err = json.Unmarshal(v, &cm.InquiryDoneAt)
+		case "inquiry_last_status_update":
+			err = json.Unmarshal(v, &cm.InquiryLastStatusUpdate)
+		case "inquiry_is_chat_open":
+			cm.InquiryIsChatOpen, err = internMetadataBool(v)
+		case "inquiry_is_marketplace":
+			cm.InquiryIsMarketplace, err = internMetadataBool(v)
+		case "inquiry_inclusor_agent_id":
+			err = json.Unmarshal(v, &cm.InquiryInclusorAgentID)
+		case "inquiry_inclusor_agent_name":
+			err = json.Unmarshal(v, &cm.InquiryInclusorAgentName)
+		case "inquiry_specialist_agent_id":
+			err = json.Unmarshal(v, &cm.InquirySpecialistAgentID)
+		case "inquiry_specialist_agent_name":
+			err = json.Unmarshal(v, &cm.InquirySpecialistAgentName)
+		case "account_id":
+			err = json.Unmarshal(v, &cm.AccountID)
+		case "chatbot_disabled":
+			cm.ChatbotDisabled, err = internMetadataBool(v)
+		case "chatbot_initial_contact":
+			err = json.Unmarshal(v, &cm.ChatbotInitialContact)
+		case "chatbot_is_pre_registration":
+			cm.ChatbotIsPreRegistration, err = internMetadataBool(v)
+		case "chatbot_last_state":
+			cm.ChatbotLastState, err = internChatbotLastState(v)
+		case "chatbot_registration_date":
+			err = json.Unmarshal(v, &cm.ChatbotRegistrationDate)
+		case "initial_contact_channel":
+			cm.InitialContactChannel, err = internInitialContactChannel(v)
+		case "initial_contact_date":
+			err = json.Unmarshal(v, &cm.InitialContactDate)
+		case "customer_name":
+			err = json.Unmarshal(v, &cm.CustomerName)
+		case "customer_document_country":
+			cm.CustomerDocumentCountry, err = internCustomerDocumentCountry(v)
+		case "customer_document_type":
+			err = json.Unmarshal(v, &cm.CustomerDocumentType)
+		case "customer_document":
+			err = json.Unmarshal(v, &cm.CustomerDocument)
+		case "last_order_seq":
+			err = json.Unmarshal(v, &cm.LastOrderSeq)
+		case "last_coupon_offered":
+			err = json.Unmarshal(v, &cm.LastCouponOffered)
+		case "order":
+			err = json.Unmarshal(v, &cm.Order)
+		case "prescription":
+			err = json.Unmarshal(v, &cm.Prescription)
+		default:
+			if cm.OtherFields == nil {
+				cm.OtherFields = make(map[string]any)
+			}
+			var decoded any
+			if err := json.Unmarshal(v, &decoded); err != nil {
+				return err
+			}
+			cm.OtherFields[k] = decoded
 		}
-		if cm.OtherFields == nil {
-			cm.OtherFields = make(map[string]any)
-		}
-		var decoded any
-		if err := json.Unmarshal(v, &decoded); err != nil {
+		if err != nil {
 			return err
 		}
-		cm.OtherFields[k] = decoded
 	}
 
 	return nil

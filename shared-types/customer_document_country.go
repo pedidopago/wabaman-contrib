@@ -1,6 +1,9 @@
 package types
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type CustomerDocumentCountry *string
 
@@ -38,16 +41,17 @@ var customerDocumentCountryIntern = map[string]CustomerDocumentCountry{
 }
 
 func internCustomerDocumentCountry(raw json.RawMessage) (CustomerDocumentCountry, error) {
-	if len(raw) == 4 && raw[0] == '"' && raw[1] == 'B' && raw[2] == 'R' && raw[3] == '"' {
+	if len(raw) == 4 && raw[1] == 'B' && raw[2] == 'R' {
 		return CustomerDocumentCountryBR, nil
 	}
-	var s string
-	if err := json.Unmarshal(raw, &s); err != nil {
-		return nil, err
+	if len(raw) < 2 || raw[0] != '"' || raw[len(raw)-1] != '"' {
+		return nil, fmt.Errorf("expected JSON string for CustomerDocumentCountry, got %s", raw)
 	}
-	if interned, ok := customerDocumentCountryIntern[s]; ok {
+	unquoted := raw[1 : len(raw)-1]
+	if interned, ok := customerDocumentCountryIntern[string(unquoted)]; ok {
 		return interned, nil
 	}
+	s := string(unquoted)
 	return &s, nil
 }
 

@@ -1,6 +1,9 @@
 package types
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type MetadataBool *bool
 
@@ -12,17 +15,14 @@ var (
 	MetadataBoolFalse MetadataBool = &boolFalse
 )
 
-var metadataBoolIntern = map[bool]MetadataBool{
-	true:  MetadataBoolTrue,
-	false: MetadataBoolFalse,
-}
-
 func internMetadataBool(raw json.RawMessage) (MetadataBool, error) {
-	var b bool
-	if err := json.Unmarshal(raw, &b); err != nil {
-		return nil, err
+	if len(raw) == 4 && raw[0] == 't' {
+		return MetadataBoolTrue, nil
 	}
-	return metadataBoolIntern[b], nil
+	if len(raw) == 5 && raw[0] == 'f' {
+		return MetadataBoolFalse, nil
+	}
+	return nil, fmt.Errorf("invalid boolean: %s", raw)
 }
 
 func EqualMetadataBool(a, b MetadataBool) bool {

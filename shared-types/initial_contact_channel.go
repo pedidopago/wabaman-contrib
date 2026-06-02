@@ -1,6 +1,9 @@
 package types
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type InitialContactChannel *string
 
@@ -38,13 +41,14 @@ var initialContactChannelIntern = map[string]InitialContactChannel{
 }
 
 func internInitialContactChannel(raw json.RawMessage) (InitialContactChannel, error) {
-	var s string
-	if err := json.Unmarshal(raw, &s); err != nil {
-		return nil, err
+	if len(raw) < 2 || raw[0] != '"' || raw[len(raw)-1] != '"' {
+		return nil, fmt.Errorf("expected JSON string for InitialContactChannel, got %s", raw)
 	}
-	if interned, ok := initialContactChannelIntern[s]; ok {
+	unquoted := raw[1 : len(raw)-1]
+	if interned, ok := initialContactChannelIntern[string(unquoted)]; ok {
 		return interned, nil
 	}
+	s := string(unquoted)
 	return &s, nil
 }
 

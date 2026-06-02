@@ -1,6 +1,9 @@
 package types
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type ChatbotLastState *string
 
@@ -47,13 +50,14 @@ var chatbotLastStateIntern = map[string]ChatbotLastState{
 }
 
 func internChatbotLastState(raw json.RawMessage) (ChatbotLastState, error) {
-	var s string
-	if err := json.Unmarshal(raw, &s); err != nil {
-		return nil, err
+	if len(raw) < 2 || raw[0] != '"' || raw[len(raw)-1] != '"' {
+		return nil, fmt.Errorf("expected JSON string for ChatbotLastState, got %s", raw)
 	}
-	if interned, ok := chatbotLastStateIntern[s]; ok {
+	unquoted := raw[1 : len(raw)-1]
+	if interned, ok := chatbotLastStateIntern[string(unquoted)]; ok {
 		return interned, nil
 	}
+	s := string(unquoted)
 	return &s, nil
 }
 

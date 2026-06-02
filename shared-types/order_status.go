@@ -1,6 +1,9 @@
 package types
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type OrderStatus *string
 
@@ -32,13 +35,14 @@ var orderStatusIntern = map[string]OrderStatus{
 }
 
 func internOrderStatus(raw json.RawMessage) (OrderStatus, error) {
-	var s string
-	if err := json.Unmarshal(raw, &s); err != nil {
-		return nil, err
+	if len(raw) < 2 || raw[0] != '"' || raw[len(raw)-1] != '"' {
+		return nil, fmt.Errorf("expected JSON string for OrderStatus, got %s", raw)
 	}
-	if interned, ok := orderStatusIntern[s]; ok {
+	unquoted := raw[1 : len(raw)-1]
+	if interned, ok := orderStatusIntern[string(unquoted)]; ok {
 		return interned, nil
 	}
+	s := string(unquoted)
 	return &s, nil
 }
 

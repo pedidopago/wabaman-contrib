@@ -1,6 +1,9 @@
 package types
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type InquiryStatus *string
 
@@ -38,13 +41,14 @@ var inquiryStatusIntern = map[string]InquiryStatus{
 }
 
 func internInquiryStatus(raw json.RawMessage) (InquiryStatus, error) {
-	var s string
-	if err := json.Unmarshal(raw, &s); err != nil {
-		return nil, err
+	if len(raw) < 2 || raw[0] != '"' || raw[len(raw)-1] != '"' {
+		return nil, fmt.Errorf("expected JSON string for InquiryStatus, got %s", raw)
 	}
-	if interned, ok := inquiryStatusIntern[s]; ok {
+	unquoted := raw[1 : len(raw)-1]
+	if interned, ok := inquiryStatusIntern[string(unquoted)]; ok {
 		return interned, nil
 	}
+	s := string(unquoted)
 	return &s, nil
 }
 

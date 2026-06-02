@@ -63,38 +63,40 @@ func (p *ContactMetadataPrescription) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	known := map[string]any{
-		"id":                 &p.ID,
-		"display_id":         &p.DisplayID,
-		"doctor_id":          &p.DoctorID,
-		"customer":           &p.Customer,
-		"file_url":           &p.FileURL,
-		"preseller_id":       &p.PresellerID,
-		"preseller_name":     &p.PresellerName,
-		"observation":        &p.Observation,
-		"observation_author": &p.ObservationAuthor,
-	}
-
-	for key, dst := range known {
-		if v, ok := raw[key]; ok {
-			if err := json.Unmarshal(v, dst); err != nil {
+	for k, v := range raw {
+		var err error
+		switch k {
+		case "id":
+			err = json.Unmarshal(v, &p.ID)
+		case "display_id":
+			err = json.Unmarshal(v, &p.DisplayID)
+		case "doctor_id":
+			err = json.Unmarshal(v, &p.DoctorID)
+		case "customer":
+			err = json.Unmarshal(v, &p.Customer)
+		case "file_url":
+			err = json.Unmarshal(v, &p.FileURL)
+		case "preseller_id":
+			err = json.Unmarshal(v, &p.PresellerID)
+		case "preseller_name":
+			err = json.Unmarshal(v, &p.PresellerName)
+		case "observation":
+			err = json.Unmarshal(v, &p.Observation)
+		case "observation_author":
+			err = json.Unmarshal(v, &p.ObservationAuthor)
+		default:
+			if p.OtherFields == nil {
+				p.OtherFields = make(map[string]any)
+			}
+			var decoded any
+			if err := json.Unmarshal(v, &decoded); err != nil {
 				return err
 			}
+			p.OtherFields[k] = decoded
 		}
-	}
-
-	for k, v := range raw {
-		if _, isKnown := contactMetadataPrescriptionKnownKeys[k]; isKnown {
-			continue
-		}
-		if p.OtherFields == nil {
-			p.OtherFields = make(map[string]any)
-		}
-		var decoded any
-		if err := json.Unmarshal(v, &decoded); err != nil {
+		if err != nil {
 			return err
 		}
-		p.OtherFields[k] = decoded
 	}
 
 	return nil
@@ -161,38 +163,40 @@ func (c *PrescriptionCustomer) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	known := map[string]any{
-		"doctor_customer_id": &c.DoctorCustomerID,
-		"account_id":         &c.AccountID,
-		"customer_id":        &c.CustomerID,
-		"name":               &c.Name,
-		"cpf":                &c.CPF,
-		"phone":              &c.Phone,
-		"email":              &c.Email,
-		"birthdate":          &c.Birthdate,
-		"address":            &c.Address,
-	}
-
-	for key, dst := range known {
-		if v, ok := raw[key]; ok {
-			if err := json.Unmarshal(v, dst); err != nil {
+	for k, v := range raw {
+		var err error
+		switch k {
+		case "doctor_customer_id":
+			err = json.Unmarshal(v, &c.DoctorCustomerID)
+		case "account_id":
+			err = json.Unmarshal(v, &c.AccountID)
+		case "customer_id":
+			err = json.Unmarshal(v, &c.CustomerID)
+		case "name":
+			err = json.Unmarshal(v, &c.Name)
+		case "cpf":
+			err = json.Unmarshal(v, &c.CPF)
+		case "phone":
+			err = json.Unmarshal(v, &c.Phone)
+		case "email":
+			err = json.Unmarshal(v, &c.Email)
+		case "birthdate":
+			err = json.Unmarshal(v, &c.Birthdate)
+		case "address":
+			err = json.Unmarshal(v, &c.Address)
+		default:
+			if c.OtherFields == nil {
+				c.OtherFields = make(map[string]any)
+			}
+			var decoded any
+			if err := json.Unmarshal(v, &decoded); err != nil {
 				return err
 			}
+			c.OtherFields[k] = decoded
 		}
-	}
-
-	for k, v := range raw {
-		if _, isKnown := prescriptionCustomerKnownKeys[k]; isKnown {
-			continue
-		}
-		if c.OtherFields == nil {
-			c.OtherFields = make(map[string]any)
-		}
-		var decoded any
-		if err := json.Unmarshal(v, &decoded); err != nil {
+		if err != nil {
 			return err
 		}
-		c.OtherFields[k] = decoded
 	}
 
 	return nil
@@ -257,37 +261,38 @@ func (a *PrescriptionCustomerAddress) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	known := map[string]any{
-		"country":    &a.Country,
-		"street":     &a.Street,
-		"number":     &a.Number,
-		"complement": &a.Complement,
-		"city":       &a.City,
-		"uf":         &a.UF,
-		"district":   &a.District,
-		"zip":        &a.Zip,
-	}
-
-	for key, dst := range known {
-		if v, ok := raw[key]; ok {
-			if err := json.Unmarshal(v, dst); err != nil {
+	for k, v := range raw {
+		var err error
+		switch k {
+		case "country":
+			err = json.Unmarshal(v, &a.Country)
+		case "street":
+			err = json.Unmarshal(v, &a.Street)
+		case "number":
+			err = json.Unmarshal(v, &a.Number)
+		case "complement":
+			err = json.Unmarshal(v, &a.Complement)
+		case "city":
+			err = json.Unmarshal(v, &a.City)
+		case "uf":
+			err = json.Unmarshal(v, &a.UF)
+		case "district":
+			err = json.Unmarshal(v, &a.District)
+		case "zip":
+			err = json.Unmarshal(v, &a.Zip)
+		default:
+			if a.OtherFields == nil {
+				a.OtherFields = make(map[string]any)
+			}
+			var decoded any
+			if err := json.Unmarshal(v, &decoded); err != nil {
 				return err
 			}
+			a.OtherFields[k] = decoded
 		}
-	}
-
-	for k, v := range raw {
-		if _, isKnown := prescriptionCustomerAddressKnownKeys[k]; isKnown {
-			continue
-		}
-		if a.OtherFields == nil {
-			a.OtherFields = make(map[string]any)
-		}
-		var decoded any
-		if err := json.Unmarshal(v, &decoded); err != nil {
+		if err != nil {
 			return err
 		}
-		a.OtherFields[k] = decoded
 	}
 
 	return nil

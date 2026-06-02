@@ -55,34 +55,26 @@ func (p *OrderPrescription) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	for _, bf := range []struct {
-		key string
-		dst *MetadataBool
-	}{
-		{"is_medical", &p.IsMedical},
-		{"retained", &p.Retained},
-	} {
-		if v, ok := raw[bf.key]; ok {
-			val, err := internMetadataBool(v)
-			if err != nil {
+	for k, v := range raw {
+		var err error
+		switch k {
+		case "is_medical":
+			p.IsMedical, err = internMetadataBool(v)
+		case "retained":
+			p.Retained, err = internMetadataBool(v)
+		default:
+			if p.OtherFields == nil {
+				p.OtherFields = make(map[string]any)
+			}
+			var decoded any
+			if err := json.Unmarshal(v, &decoded); err != nil {
 				return err
 			}
-			*bf.dst = val
+			p.OtherFields[k] = decoded
 		}
-	}
-
-	for k, v := range raw {
-		if _, isKnown := prescriptionKnownKeys[k]; isKnown {
-			continue
-		}
-		if p.OtherFields == nil {
-			p.OtherFields = make(map[string]any)
-		}
-		var decoded any
-		if err := json.Unmarshal(v, &decoded); err != nil {
+		if err != nil {
 			return err
 		}
-		p.OtherFields[k] = decoded
 	}
 
 	return nil
@@ -129,38 +121,26 @@ func (o *ContactMetadataOrder) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	known := map[string]any{
-		"prescription": &o.Prescription,
-	}
-
-	if v, ok := raw["status"]; ok {
-		p, err := internOrderStatus(v)
+	for k, v := range raw {
+		var err error
+		switch k {
+		case "status":
+			o.Status, err = internOrderStatus(v)
+		case "prescription":
+			err = json.Unmarshal(v, &o.Prescription)
+		default:
+			if o.OtherFields == nil {
+				o.OtherFields = make(map[string]any)
+			}
+			var decoded any
+			if err := json.Unmarshal(v, &decoded); err != nil {
+				return err
+			}
+			o.OtherFields[k] = decoded
+		}
 		if err != nil {
 			return err
 		}
-		o.Status = p
-	}
-
-	for key, dst := range known {
-		if v, ok := raw[key]; ok {
-			if err := json.Unmarshal(v, dst); err != nil {
-				return err
-			}
-		}
-	}
-
-	for k, v := range raw {
-		if _, isKnown := contactMetadataOrderKnownKeys[k]; isKnown {
-			continue
-		}
-		if o.OtherFields == nil {
-			o.OtherFields = make(map[string]any)
-		}
-		var decoded any
-		if err := json.Unmarshal(v, &decoded); err != nil {
-			return err
-		}
-		o.OtherFields[k] = decoded
 	}
 
 	return nil
