@@ -27,8 +27,8 @@ func TestContactMetadata_UnmarshalOnlyKnownFields(t *testing.T) {
 	if cm.InquiryStatus == nil || *cm.InquiryStatus != "open" {
 		t.Errorf("InquiryStatus = %v, want open", cm.InquiryStatus)
 	}
-	if cm.ChatbotDisabled == nil || *cm.ChatbotDisabled != true {
-		t.Errorf("ChatbotDisabled = %v, want true", cm.ChatbotDisabled)
+	if cm.ChatbotDisabled != MetadataBoolTrue {
+		t.Errorf("ChatbotDisabled pointer comparison failed")
 	}
 	if cm.AccountID == nil || *cm.AccountID != "acc-456" {
 		t.Errorf("AccountID = %v, want acc-456", cm.AccountID)
@@ -149,8 +149,8 @@ func TestContactMetadata_UnmarshalEmpty(t *testing.T) {
 func TestContactMetadata_MarshalOnlyKnownFields(t *testing.T) {
 	cm := ContactMetadata{
 		InquiryID:       ptr("inq-1"),
-		InquiryStatus:   ptr("open"),
-		ChatbotDisabled: ptr(true),
+		InquiryStatus:   InquiryStatusPending,
+		ChatbotDisabled: MetadataBoolTrue,
 	}
 
 	data, err := json.Marshal(cm)
@@ -166,8 +166,8 @@ func TestContactMetadata_MarshalOnlyKnownFields(t *testing.T) {
 	if m["inquiry_id"] != "inq-1" {
 		t.Errorf("inquiry_id = %v, want inq-1", m["inquiry_id"])
 	}
-	if m["inquiry_status"] != "open" {
-		t.Errorf("inquiry_status = %v, want open", m["inquiry_status"])
+	if m["inquiry_status"] != "PENDING" {
+		t.Errorf("inquiry_status = %v, want PENDING", m["inquiry_status"])
 	}
 	if m["chatbot_disabled"] != true {
 		t.Errorf("chatbot_disabled = %v, want true", m["chatbot_disabled"])
@@ -441,8 +441,8 @@ func TestContactMetadata_RealWorldPayload(t *testing.T) {
 	if cm.InquiryAIEvaluation == nil || *cm.InquiryAIEvaluation != "OTHERS" {
 		t.Errorf("InquiryAIEvaluation = %v", cm.InquiryAIEvaluation)
 	}
-	if cm.InquiryCanBindDisplayID == nil || *cm.InquiryCanBindDisplayID != false {
-		t.Errorf("InquiryCanBindDisplayID = %v", cm.InquiryCanBindDisplayID)
+	if cm.InquiryCanBindDisplayID != MetadataBoolFalse {
+		t.Error("InquiryCanBindDisplayID pointer comparison failed")
 	}
 	if cm.InquiryCreatedAt == nil {
 		t.Error("InquiryCreatedAt is nil")
@@ -456,8 +456,8 @@ func TestContactMetadata_RealWorldPayload(t *testing.T) {
 	if cm.InquirySellerAgentName == nil || *cm.InquirySellerAgentName != "Luis Zlochevsky" {
 		t.Errorf("InquirySellerAgentName = %v", cm.InquirySellerAgentName)
 	}
-	if cm.InquirySellOpportunityCollected == nil || *cm.InquirySellOpportunityCollected != false {
-		t.Errorf("InquirySellOpportunityCollected = %v", cm.InquirySellOpportunityCollected)
+	if cm.InquirySellOpportunityCollected != MetadataBoolFalse {
+		t.Error("InquirySellOpportunityCollected pointer comparison failed")
 	}
 	if cm.InquiryQuotatedAt == nil {
 		t.Error("InquiryQuotatedAt is nil")
@@ -468,11 +468,11 @@ func TestContactMetadata_RealWorldPayload(t *testing.T) {
 	if cm.ChatbotInitialContact == nil {
 		t.Error("ChatbotInitialContact is nil")
 	}
-	if cm.ChatbotIsPreRegistration == nil || *cm.ChatbotIsPreRegistration != false {
-		t.Errorf("ChatbotIsPreRegistration = %v", cm.ChatbotIsPreRegistration)
+	if cm.ChatbotIsPreRegistration != MetadataBoolFalse {
+		t.Error("ChatbotIsPreRegistration pointer comparison failed")
 	}
-	if cm.ChatbotLastState == nil || *cm.ChatbotLastState != "chatbot_create_inquiry" {
-		t.Errorf("ChatbotLastState = %v", cm.ChatbotLastState)
+	if cm.ChatbotLastState != ChatbotLastStateCreateInquiry {
+		t.Error("ChatbotLastState pointer comparison failed")
 	}
 	if cm.ChatbotRegistrationDate == nil {
 		t.Error("ChatbotRegistrationDate is nil")
@@ -483,11 +483,11 @@ func TestContactMetadata_RealWorldPayload(t *testing.T) {
 	if cm.InitialContactDate == nil {
 		t.Error("InitialContactDate is nil")
 	}
-	if cm.InquiryIsChatOpen == nil || *cm.InquiryIsChatOpen != true {
-		t.Errorf("InquiryIsChatOpen = %v", cm.InquiryIsChatOpen)
+	if cm.InquiryIsChatOpen != MetadataBoolTrue {
+		t.Error("InquiryIsChatOpen pointer comparison failed")
 	}
-	if cm.InquiryIsMarketplace == nil || *cm.InquiryIsMarketplace != false {
-		t.Errorf("InquiryIsMarketplace = %v", cm.InquiryIsMarketplace)
+	if cm.InquiryIsMarketplace != MetadataBoolFalse {
+		t.Error("InquiryIsMarketplace pointer comparison failed")
 	}
 
 	// Overflow fields — all the non-known keys
