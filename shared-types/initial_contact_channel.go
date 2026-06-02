@@ -26,15 +26,15 @@ var (
 )
 
 var initialContactChannelIntern = map[string]InitialContactChannel{
-	"whatsapp":           InitialContactChannelWhatsApp,
-	"new_conversation":   InitialContactChannelNewConversation,
-	"zuckr":              InitialContactChannelZuckr,
-	"marketplace":        InitialContactChannelMarketplace,
-	"website":            InitialContactChannelWebsite,
-	"ms-prescription":    InitialContactChannelMsPrescription,
-	"website_ecommerce":  InitialContactChannelWebsiteEcommerce,
-	"email":              InitialContactChannelEmail,
-	"$del":               InitialContactChannelDel,
+	"whatsapp":          InitialContactChannelWhatsApp,
+	"new_conversation":  InitialContactChannelNewConversation,
+	"zuckr":             InitialContactChannelZuckr,
+	"marketplace":       InitialContactChannelMarketplace,
+	"website":           InitialContactChannelWebsite,
+	"ms-prescription":   InitialContactChannelMsPrescription,
+	"website_ecommerce": InitialContactChannelWebsiteEcommerce,
+	"email":             InitialContactChannelEmail,
+	"$del":              InitialContactChannelDel,
 }
 
 func internInitialContactChannel(raw json.RawMessage) (InitialContactChannel, error) {

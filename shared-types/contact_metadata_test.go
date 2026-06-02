@@ -490,13 +490,16 @@ func TestContactMetadata_RealWorldPayload(t *testing.T) {
 		t.Error("InquiryIsMarketplace pointer comparison failed")
 	}
 
+	if cm.LastOrderSeq == nil || *cm.LastOrderSeq != 10 {
+		t.Errorf("LastOrderSeq = %v", cm.LastOrderSeq)
+	}
+
 	// Overflow fields — all the non-known keys
 	expectedOverflow := []string{
 		"chatbot_name_updated",
 		"has_pendencies",
 		"inquiry_quotations_price_net_sum",
 		"inquiry_sell_opportunity_collected_last_note_id",
-		"last_order_seq",
 		"seller_name",
 	}
 	if len(cm.OtherFields) != len(expectedOverflow) {
