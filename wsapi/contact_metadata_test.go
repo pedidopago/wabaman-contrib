@@ -358,6 +358,16 @@ func TestContactMetadata_UnmarshalOverflowNeverDuplicatesKnownFields(t *testing.
 		"inquiry_expire_date": "2025-12-31T23:59:59Z",
 		"inquiry_seller_agent_id": "seller-1",
 		"inquiry_seller_agent_name": "Seller",
+		"inquiry_has_pendencies": true,
+		"inquiry_sell_opportunity_collected": false,
+		"inquiry_quotated_at": "2025-06-01T00:00:00Z",
+		"inquiry_done_at": "2025-06-02T00:00:00Z",
+		"inquiry_last_status_update": "2025-06-01T12:00:00Z",
+		"inquiry_inclusor_agent_id": "inc-1",
+		"inquiry_inclusor_agent_name": "Inclusor",
+		"inquiry_specialist_agent_id": "spec-1",
+		"inquiry_specialist_agent_name": "Specialist",
+		"order_status": "pending",
 		"account_id": "acc-1",
 		"chatbot_disabled": false,
 		"extra": "overflow"
@@ -448,6 +458,17 @@ func TestContactMetadata_RealWorldPayload(t *testing.T) {
 		t.Errorf("InquirySellerAgentName = %v", cm.InquirySellerAgentName)
 	}
 
+	// Now-known fields
+	if cm.InquirySellOpportunityCollected == nil || *cm.InquirySellOpportunityCollected != false {
+		t.Errorf("InquirySellOpportunityCollected = %v", cm.InquirySellOpportunityCollected)
+	}
+	if cm.InquiryQuotatedAt == nil {
+		t.Error("InquiryQuotatedAt is nil")
+	}
+	if cm.InquiryLastStatusUpdate == nil {
+		t.Error("InquiryLastStatusUpdate is nil")
+	}
+
 	// Overflow fields — all the non-known keys
 	expectedOverflow := []string{
 		"chatbot_initial_contact",
@@ -460,10 +481,7 @@ func TestContactMetadata_RealWorldPayload(t *testing.T) {
 		"initial_contact_date",
 		"inquiry_is_chat_open",
 		"inquiry_is_marketplace",
-		"inquiry_last_status_update",
-		"inquiry_quotated_at",
 		"inquiry_quotations_price_net_sum",
-		"inquiry_sell_opportunity_collected",
 		"inquiry_sell_opportunity_collected_last_note_id",
 		"last_order_seq",
 		"seller_name",

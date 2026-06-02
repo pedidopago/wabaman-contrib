@@ -17,9 +17,19 @@ type ContactMetadata struct {
 	InquiryExpireDate       *time.Time `json:"inquiry_expire_date,omitzero"`
 	InquirySellerAgentID    *string    `json:"inquiry_seller_agent_id,omitzero"`
 	InquirySellerAgentName  *string    `json:"inquiry_seller_agent_name,omitzero"`
-	AccountID               *string    `json:"account_id,omitzero"`
-	ChatbotDisabled         *bool      `json:"chatbot_disabled,omitzero"`
-	OtherFields             map[string]any `json:"-"`
+	InquiryHasPendencies           *bool      `json:"inquiry_has_pendencies,omitzero"`
+	InquirySellOpportunityCollected *bool     `json:"inquiry_sell_opportunity_collected,omitzero"`
+	InquiryQuotatedAt              *time.Time `json:"inquiry_quotated_at,omitzero"`
+	InquiryDoneAt                  *time.Time `json:"inquiry_done_at,omitzero"`
+	InquiryLastStatusUpdate      *time.Time `json:"inquiry_last_status_update,omitzero"`
+	InquiryInclusorAgentID         *string    `json:"inquiry_inclusor_agent_id,omitzero"`
+	InquiryInclusorAgentName       *string    `json:"inquiry_inclusor_agent_name,omitzero"`
+	InquirySpecialistAgentID       *string    `json:"inquiry_specialist_agent_id,omitzero"`
+	InquirySpecialistAgentName     *string    `json:"inquiry_specialist_agent_name,omitzero"`
+	OrderStatus                    *string    `json:"order_status,omitzero"`
+	AccountID                      *string    `json:"account_id,omitzero"`
+	ChatbotDisabled                *bool      `json:"chatbot_disabled,omitzero"`
+	OtherFields                    map[string]any `json:"-"`
 }
 
 var contactMetadataKnownKeys = map[string]struct{}{
@@ -33,9 +43,19 @@ var contactMetadataKnownKeys = map[string]struct{}{
 	"inquiry_created_at":          {},
 	"inquiry_expire_date":         {},
 	"inquiry_seller_agent_id":     {},
-	"inquiry_seller_agent_name":   {},
-	"account_id":                  {},
-	"chatbot_disabled":            {},
+	"inquiry_seller_agent_name":          {},
+	"inquiry_has_pendencies":             {},
+	"inquiry_sell_opportunity_collected": {},
+	"inquiry_quotated_at":                {},
+	"inquiry_done_at":                    {},
+	"inquiry_last_status_update":      {},
+	"inquiry_inclusor_agent_id":          {},
+	"inquiry_inclusor_agent_name":        {},
+	"inquiry_specialist_agent_id":        {},
+	"inquiry_specialist_agent_name":      {},
+	"order_status":                       {},
+	"account_id":                         {},
+	"chatbot_disabled":                   {},
 }
 
 func (cm ContactMetadata) MarshalJSON() ([]byte, error) {
@@ -85,9 +105,19 @@ func (cm *ContactMetadata) UnmarshalJSON(data []byte) error {
 		"inquiry_created_at":          &cm.InquiryCreatedAt,
 		"inquiry_expire_date":         &cm.InquiryExpireDate,
 		"inquiry_seller_agent_id":     &cm.InquirySellerAgentID,
-		"inquiry_seller_agent_name":   &cm.InquirySellerAgentName,
-		"account_id":                  &cm.AccountID,
-		"chatbot_disabled":            &cm.ChatbotDisabled,
+		"inquiry_seller_agent_name":          &cm.InquirySellerAgentName,
+		"inquiry_has_pendencies":             &cm.InquiryHasPendencies,
+		"inquiry_sell_opportunity_collected": &cm.InquirySellOpportunityCollected,
+		"inquiry_quotated_at":                &cm.InquiryQuotatedAt,
+		"inquiry_done_at":                    &cm.InquiryDoneAt,
+		"inquiry_last_status_update":      &cm.InquiryLastStatusUpdate,
+		"inquiry_inclusor_agent_id":          &cm.InquiryInclusorAgentID,
+		"inquiry_inclusor_agent_name":        &cm.InquiryInclusorAgentName,
+		"inquiry_specialist_agent_id":        &cm.InquirySpecialistAgentID,
+		"inquiry_specialist_agent_name":      &cm.InquirySpecialistAgentName,
+		"order_status":                       &cm.OrderStatus,
+		"account_id":                         &cm.AccountID,
+		"chatbot_disabled":                   &cm.ChatbotDisabled,
 	}
 
 	for key, dst := range known {
