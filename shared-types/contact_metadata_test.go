@@ -1,4 +1,4 @@
-package wsapi
+package types
 
 import (
 	"encoding/json"
@@ -457,8 +457,6 @@ func TestContactMetadata_RealWorldPayload(t *testing.T) {
 	if cm.InquirySellerAgentName == nil || *cm.InquirySellerAgentName != "Luis Zlochevsky" {
 		t.Errorf("InquirySellerAgentName = %v", cm.InquirySellerAgentName)
 	}
-
-	// Now-known fields
 	if cm.InquirySellOpportunityCollected == nil || *cm.InquirySellOpportunityCollected != false {
 		t.Errorf("InquirySellOpportunityCollected = %v", cm.InquirySellOpportunityCollected)
 	}
@@ -468,17 +466,29 @@ func TestContactMetadata_RealWorldPayload(t *testing.T) {
 	if cm.InquiryLastStatusUpdate == nil {
 		t.Error("InquiryLastStatusUpdate is nil")
 	}
+	if cm.ChatbotInitialContact == nil {
+		t.Error("ChatbotInitialContact is nil")
+	}
+	if cm.ChatbotIsPreRegistration == nil || *cm.ChatbotIsPreRegistration != false {
+		t.Errorf("ChatbotIsPreRegistration = %v", cm.ChatbotIsPreRegistration)
+	}
+	if cm.ChatbotLastState == nil || *cm.ChatbotLastState != "chatbot_create_inquiry" {
+		t.Errorf("ChatbotLastState = %v", cm.ChatbotLastState)
+	}
+	if cm.ChatbotRegistrationDate == nil {
+		t.Error("ChatbotRegistrationDate is nil")
+	}
+	if cm.InitialContactChannel == nil || *cm.InitialContactChannel != "whatsapp" {
+		t.Errorf("InitialContactChannel = %v", cm.InitialContactChannel)
+	}
+	if cm.InitialContactDate == nil {
+		t.Error("InitialContactDate is nil")
+	}
 
 	// Overflow fields — all the non-known keys
 	expectedOverflow := []string{
-		"chatbot_initial_contact",
-		"chatbot_is_pre_registration",
-		"chatbot_last_state",
 		"chatbot_name_updated",
-		"chatbot_registration_date",
 		"has_pendencies",
-		"initial_contact_channel",
-		"initial_contact_date",
 		"inquiry_is_chat_open",
 		"inquiry_is_marketplace",
 		"inquiry_quotations_price_net_sum",

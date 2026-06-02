@@ -3,6 +3,8 @@ package wsapi
 import (
 	"encoding/json"
 
+	types "github.com/pedidopago/wabaman-contrib/shared-types"
+
 	"github.com/pedidopago/go-common/mariadb"
 )
 
@@ -61,7 +63,7 @@ type ContactData struct {
 	Name                         string           `json:"name,omitempty"`
 	ContactPhoneNumber           string           `json:"contact_phone_number,omitempty"`
 	IsNewContact                 bool             `json:"is_new_contact,omitempty"`
-	Metadata                     *ContactMetadata `json:"metadata,omitempty"`
+	Metadata                     *types.ContactMetadata `json:"metadata,omitempty"`
 	LastActivity                 mariadb.NullTime `json:"last_activity,omitempty"`
 	LastMessagePreview           string           `json:"last_message_preview,omitempty"`
 	LastMessagePreviewOrigin     string           `json:"last_message_preview_origin,omitempty"`
