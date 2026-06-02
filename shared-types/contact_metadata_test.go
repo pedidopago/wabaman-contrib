@@ -477,19 +477,23 @@ func TestContactMetadata_RealWorldPayload(t *testing.T) {
 	if cm.ChatbotRegistrationDate == nil {
 		t.Error("ChatbotRegistrationDate is nil")
 	}
-	if cm.InitialContactChannel == nil || *cm.InitialContactChannel != "whatsapp" {
-		t.Errorf("InitialContactChannel = %v", cm.InitialContactChannel)
+	if cm.InitialContactChannel != InitialContactChannelWhatsApp {
+		t.Error("InitialContactChannel pointer comparison failed")
 	}
 	if cm.InitialContactDate == nil {
 		t.Error("InitialContactDate is nil")
+	}
+	if cm.InquiryIsChatOpen == nil || *cm.InquiryIsChatOpen != true {
+		t.Errorf("InquiryIsChatOpen = %v", cm.InquiryIsChatOpen)
+	}
+	if cm.InquiryIsMarketplace == nil || *cm.InquiryIsMarketplace != false {
+		t.Errorf("InquiryIsMarketplace = %v", cm.InquiryIsMarketplace)
 	}
 
 	// Overflow fields — all the non-known keys
 	expectedOverflow := []string{
 		"chatbot_name_updated",
 		"has_pendencies",
-		"inquiry_is_chat_open",
-		"inquiry_is_marketplace",
 		"inquiry_quotations_price_net_sum",
 		"inquiry_sell_opportunity_collected_last_note_id",
 		"last_order_seq",
@@ -510,9 +514,6 @@ func TestContactMetadata_RealWorldPayload(t *testing.T) {
 	}
 	if cm.OtherFields["seller_name"] != "Luis Zlochevsky" {
 		t.Errorf("seller_name = %v", cm.OtherFields["seller_name"])
-	}
-	if cm.OtherFields["inquiry_is_chat_open"] != true {
-		t.Errorf("inquiry_is_chat_open = %v", cm.OtherFields["inquiry_is_chat_open"])
 	}
 
 	// Round-trip: marshal back and compare

@@ -6,35 +6,37 @@ import (
 )
 
 type ContactMetadata struct {
-	InquiryID                       *string        `json:"inquiry_id,omitzero"`
-	InquiryStatus                   InquiryStatus  `json:"inquiry_status,omitzero"`
-	InquiryDisplayID                *string        `json:"inquiry_display_id,omitzero"`
-	InquiryAgentID                  *string        `json:"inquiry_agent_id,omitzero"`
-	InquiryAgentName                *string        `json:"inquiry_agent_name,omitzero"`
-	InquiryAIEvaluation             *string        `json:"inquiry_ai_evaluation,omitzero"`
-	InquiryCanBindDisplayID         *bool          `json:"inquiry_can_bind_display_id,omitzero"`
-	InquiryCreatedAt                *time.Time     `json:"inquiry_created_at,omitzero"`
-	InquiryExpireDate               *time.Time     `json:"inquiry_expire_date,omitzero"`
-	InquirySellerAgentID            *string        `json:"inquiry_seller_agent_id,omitzero"`
-	InquirySellerAgentName          *string        `json:"inquiry_seller_agent_name,omitzero"`
-	InquiryHasPendencies            *bool          `json:"inquiry_has_pendencies,omitzero"`
-	InquirySellOpportunityCollected *bool          `json:"inquiry_sell_opportunity_collected,omitzero"`
-	InquiryQuotatedAt               *time.Time     `json:"inquiry_quotated_at,omitzero"`
-	InquiryDoneAt                   *time.Time     `json:"inquiry_done_at,omitzero"`
-	InquiryLastStatusUpdate         *time.Time     `json:"inquiry_last_status_update,omitzero"`
-	InquiryInclusorAgentID          *string        `json:"inquiry_inclusor_agent_id,omitzero"`
-	InquiryInclusorAgentName        *string        `json:"inquiry_inclusor_agent_name,omitzero"`
-	InquirySpecialistAgentID        *string        `json:"inquiry_specialist_agent_id,omitzero"`
-	InquirySpecialistAgentName      *string        `json:"inquiry_specialist_agent_name,omitzero"`
-AccountID                       *string        `json:"account_id,omitzero"`
-	ChatbotDisabled                 *bool          `json:"chatbot_disabled,omitzero"`
-	ChatbotInitialContact           *time.Time     `json:"chatbot_initial_contact,omitzero"`
-	ChatbotIsPreRegistration        *bool          `json:"chatbot_is_pre_registration,omitzero"`
-	ChatbotLastState                *string        `json:"chatbot_last_state,omitzero"`
-	ChatbotRegistrationDate         *time.Time     `json:"chatbot_registration_date,omitzero"`
-	InitialContactChannel           *string        `json:"initial_contact_channel,omitzero"`
-	InitialContactDate              *time.Time     `json:"initial_contact_date,omitzero"`
-	OtherFields                     map[string]any `json:"-"`
+	InquiryID                       *string               `json:"inquiry_id,omitzero"`
+	InquiryStatus                   InquiryStatus         `json:"inquiry_status,omitzero"`
+	InquiryDisplayID                *string               `json:"inquiry_display_id,omitzero"`
+	InquiryAgentID                  *string               `json:"inquiry_agent_id,omitzero"`
+	InquiryAgentName                *string               `json:"inquiry_agent_name,omitzero"`
+	InquiryAIEvaluation             *string               `json:"inquiry_ai_evaluation,omitzero"`
+	InquiryCanBindDisplayID         *bool                 `json:"inquiry_can_bind_display_id,omitzero"`
+	InquiryCreatedAt                *time.Time            `json:"inquiry_created_at,omitzero"`
+	InquiryExpireDate               *time.Time            `json:"inquiry_expire_date,omitzero"`
+	InquirySellerAgentID            *string               `json:"inquiry_seller_agent_id,omitzero"`
+	InquirySellerAgentName          *string               `json:"inquiry_seller_agent_name,omitzero"`
+	InquiryHasPendencies            *bool                 `json:"inquiry_has_pendencies,omitzero"`
+	InquirySellOpportunityCollected *bool                 `json:"inquiry_sell_opportunity_collected,omitzero"`
+	InquiryQuotatedAt               *time.Time            `json:"inquiry_quotated_at,omitzero"`
+	InquiryDoneAt                   *time.Time            `json:"inquiry_done_at,omitzero"`
+	InquiryLastStatusUpdate         *time.Time            `json:"inquiry_last_status_update,omitzero"`
+	InquiryIsChatOpen               *bool                 `json:"inquiry_is_chat_open,omitzero"`
+	InquiryIsMarketplace            *bool                 `json:"inquiry_is_marketplace,omitzero"`
+	InquiryInclusorAgentID          *string               `json:"inquiry_inclusor_agent_id,omitzero"`
+	InquiryInclusorAgentName        *string               `json:"inquiry_inclusor_agent_name,omitzero"`
+	InquirySpecialistAgentID        *string               `json:"inquiry_specialist_agent_id,omitzero"`
+	InquirySpecialistAgentName      *string               `json:"inquiry_specialist_agent_name,omitzero"`
+	AccountID                       *string               `json:"account_id,omitzero"`
+	ChatbotDisabled                 *bool                 `json:"chatbot_disabled,omitzero"`
+	ChatbotInitialContact           *time.Time            `json:"chatbot_initial_contact,omitzero"`
+	ChatbotIsPreRegistration        *bool                 `json:"chatbot_is_pre_registration,omitzero"`
+	ChatbotLastState                *string               `json:"chatbot_last_state,omitzero"`
+	ChatbotRegistrationDate         *time.Time            `json:"chatbot_registration_date,omitzero"`
+	InitialContactChannel           InitialContactChannel `json:"initial_contact_channel,omitzero"`
+	InitialContactDate              *time.Time            `json:"initial_contact_date,omitzero"`
+	OtherFields                     map[string]any        `json:"-"`
 }
 
 var contactMetadataKnownKeys = map[string]struct{}{
@@ -54,11 +56,13 @@ var contactMetadataKnownKeys = map[string]struct{}{
 	"inquiry_quotated_at":                {},
 	"inquiry_done_at":                    {},
 	"inquiry_last_status_update":         {},
+	"inquiry_is_chat_open":               {},
+	"inquiry_is_marketplace":             {},
 	"inquiry_inclusor_agent_id":          {},
 	"inquiry_inclusor_agent_name":        {},
 	"inquiry_specialist_agent_id":        {},
 	"inquiry_specialist_agent_name":      {},
-"account_id":                         {},
+	"account_id":                         {},
 	"chatbot_disabled":                   {},
 	"chatbot_initial_contact":            {},
 	"chatbot_is_pre_registration":        {},
@@ -120,17 +124,18 @@ func (cm *ContactMetadata) UnmarshalJSON(data []byte) error {
 		"inquiry_quotated_at":                &cm.InquiryQuotatedAt,
 		"inquiry_done_at":                    &cm.InquiryDoneAt,
 		"inquiry_last_status_update":         &cm.InquiryLastStatusUpdate,
+		"inquiry_is_chat_open":               &cm.InquiryIsChatOpen,
+		"inquiry_is_marketplace":             &cm.InquiryIsMarketplace,
 		"inquiry_inclusor_agent_id":          &cm.InquiryInclusorAgentID,
 		"inquiry_inclusor_agent_name":        &cm.InquiryInclusorAgentName,
 		"inquiry_specialist_agent_id":        &cm.InquirySpecialistAgentID,
 		"inquiry_specialist_agent_name":      &cm.InquirySpecialistAgentName,
-"account_id":                         &cm.AccountID,
+		"account_id":                         &cm.AccountID,
 		"chatbot_disabled":                   &cm.ChatbotDisabled,
 		"chatbot_initial_contact":            &cm.ChatbotInitialContact,
 		"chatbot_is_pre_registration":        &cm.ChatbotIsPreRegistration,
 		"chatbot_last_state":                 &cm.ChatbotLastState,
 		"chatbot_registration_date":          &cm.ChatbotRegistrationDate,
-		"initial_contact_channel":            &cm.InitialContactChannel,
 		"initial_contact_date":               &cm.InitialContactDate,
 	}
 
@@ -141,6 +146,13 @@ func (cm *ContactMetadata) UnmarshalJSON(data []byte) error {
 			return err
 		}
 		cm.InquiryStatus = p
+	}
+	if v, ok := raw["initial_contact_channel"]; ok {
+		p, err := internInitialContactChannel(v)
+		if err != nil {
+			return err
+		}
+		cm.InitialContactChannel = p
 	}
 
 	for key, dst := range known {
