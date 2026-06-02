@@ -12,7 +12,7 @@ type Metadata struct {
 	Account  *AccountMetadata  `json:"account,omitempty"`
 	Business *BusinessMetadata `json:"business,omitempty"`
 	Phone    *PhoneMetadata    `json:"phone,omitempty"`
-	Contact  *ContactMetadata  `json:"contact,omitempty"`
+	Contact  *ContactData      `json:"contact,omitempty"`
 }
 
 // MetadataToSend is the wire-format variant of [Metadata] with json.RawMessage fields
@@ -50,8 +50,8 @@ type PhoneMetadata struct {
 	Metadata                  map[string]any `json:"metadata,omitempty"`
 }
 
-// ContactMetadata describes a WhatsApp contact (end-user) and their conversation state.
-type ContactMetadata struct {
+// ContactData describes a WhatsApp contact (end-user) and their conversation state.
+type ContactData struct {
 	ID                           uint64           `json:"id,omitempty"`
 	CustomerID                   string           `json:"customer_id,omitempty"`
 	CustomerName                 string           `json:"customer_name,omitempty"`
@@ -61,7 +61,7 @@ type ContactMetadata struct {
 	Name                         string           `json:"name,omitempty"`
 	ContactPhoneNumber           string           `json:"contact_phone_number,omitempty"`
 	IsNewContact                 bool             `json:"is_new_contact,omitempty"`
-	Metadata                     map[string]any   `json:"metadata,omitempty"`
+	Metadata                     *ContactMetadata `json:"metadata,omitempty"`
 	LastActivity                 mariadb.NullTime `json:"last_activity,omitempty"`
 	LastMessagePreview           string           `json:"last_message_preview,omitempty"`
 	LastMessagePreviewOrigin     string           `json:"last_message_preview_origin,omitempty"`

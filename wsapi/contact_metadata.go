@@ -1,0 +1,116 @@
+package wsapi
+
+import (
+	"encoding/json"
+	"time"
+)
+
+type ContactMetadata struct {
+	InquiryID               *string    `json:"inquiry_id,omitzero"`
+	InquiryStatus           *string    `json:"inquiry_status,omitzero"`
+	InquiryDisplayID        *string    `json:"inquiry_display_id,omitzero"`
+	InquiryAgentID          *string    `json:"inquiry_agent_id,omitzero"`
+	InquiryAgentName        *string    `json:"inquiry_agent_name,omitzero"`
+	InquiryAIEvaluation     *string    `json:"inquiry_ai_evaluation,omitzero"`
+	InquiryCanBindDisplayID *bool      `json:"inquiry_can_bind_display_id,omitzero"`
+	InquiryCreatedAt        *time.Time `json:"inquiry_created_at,omitzero"`
+	InquiryExpireDate       *time.Time `json:"inquiry_expire_date,omitzero"`
+	InquirySellerAgentID    *string    `json:"inquiry_seller_agent_id,omitzero"`
+	InquirySellerAgentName  *string    `json:"inquiry_seller_agent_name,omitzero"`
+	AccountID               *string    `json:"account_id,omitzero"`
+	ChatbotDisabled         *bool      `json:"chatbot_disabled,omitzero"`
+	OtherFields             map[string]any `json:"-"`
+}
+
+var contactMetadataKnownKeys = map[string]struct{}{
+	"inquiry_id":                  {},
+	"inquiry_status":              {},
+	"inquiry_display_id":          {},
+	"inquiry_agent_id":            {},
+	"inquiry_agent_name":          {},
+	"inquiry_ai_evaluation":       {},
+	"inquiry_can_bind_display_id": {},
+	"inquiry_created_at":          {},
+	"inquiry_expire_date":         {},
+	"inquiry_seller_agent_id":     {},
+	"inquiry_seller_agent_name":   {},
+	"account_id":                  {},
+	"chatbot_disabled":            {},
+}
+
+func (cm ContactMetadata) MarshalJSON() ([]byte, error) {
+	type alias ContactMetadata
+	knownBytes, err := json.Marshal(alias(cm))
+	if err != nil {
+		return nil, err
+	}
+
+	if len(cm.OtherFields) == 0 {
+		return knownBytes, nil
+	}
+
+	var merged map[string]json.RawMessage
+	if err := json.Unmarshal(knownBytes, &merged); err != nil {
+		return nil, err
+	}
+
+	for k, v := range cm.OtherFields {
+		if _, known := contactMetadataKnownKeys[k]; known {
+			continue
+		}
+		raw, err := json.Marshal(v)
+		if err != nil {
+			return nil, err
+		}
+		merged[k] = raw
+	}
+
+	return json.Marshal(merged)
+}
+
+func (cm *ContactMetadata) UnmarshalJSON(data []byte) error {
+	var raw map[string]json.RawMessage
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return err
+	}
+
+	known := map[string]any{
+		"inquiry_id":                  &cm.InquiryID,
+		"inquiry_status":              &cm.InquiryStatus,
+		"inquiry_display_id":          &cm.InquiryDisplayID,
+		"inquiry_agent_id":            &cm.InquiryAgentID,
+		"inquiry_agent_name":          &cm.InquiryAgentName,
+		"inquiry_ai_evaluation":       &cm.InquiryAIEvaluation,
+		"inquiry_can_bind_display_id": &cm.InquiryCanBindDisplayID,
+		"inquiry_created_at":          &cm.InquiryCreatedAt,
+		"inquiry_expire_date":         &cm.InquiryExpireDate,
+		"inquiry_seller_agent_id":     &cm.InquirySellerAgentID,
+		"inquiry_seller_agent_name":   &cm.InquirySellerAgentName,
+		"account_id":                  &cm.AccountID,
+		"chatbot_disabled":            &cm.ChatbotDisabled,
+	}
+
+	for key, dst := range known {
+		if v, ok := raw[key]; ok {
+			if err := json.Unmarshal(v, dst); err != nil {
+				return err
+			}
+		}
+	}
+
+	for k, v := range raw {
+		if _, isKnown := contactMetadataKnownKeys[k]; isKnown {
+			continue
+		}
+		if cm.OtherFields == nil {
+			cm.OtherFields = make(map[string]any)
+		}
+		var decoded any
+		if err := json.Unmarshal(v, &decoded); err != nil {
+			return err
+		}
+		cm.OtherFields[k] = decoded
+	}
+
+	return nil
+}
