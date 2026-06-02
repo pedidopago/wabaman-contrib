@@ -367,8 +367,7 @@ func TestContactMetadata_UnmarshalOverflowNeverDuplicatesKnownFields(t *testing.
 		"inquiry_inclusor_agent_name": "Inclusor",
 		"inquiry_specialist_agent_id": "spec-1",
 		"inquiry_specialist_agent_name": "Specialist",
-		"order_status": "pending",
-		"account_id": "acc-1",
+"account_id": "acc-1",
 		"chatbot_disabled": false,
 		"extra": "overflow"
 	}`
@@ -547,5 +546,101 @@ func TestContactMetadata_RealWorldPayload(t *testing.T) {
 		if string(wantJSON) != string(gotJSON) {
 			t.Errorf("round-trip key %q: got %s, want %s", key, gotJSON, wantJSON)
 		}
+	}
+}
+
+func TestContactMetadata_InquiryStatusInterning(t *testing.T) {
+	input := `{"inquiry_status": "AVAILABLE"}`
+
+	var cm ContactMetadata
+	if err := json.Unmarshal([]byte(input), &cm); err != nil {
+		t.Fatal(err)
+	}
+
+	if cm.InquiryStatus != InquiryStatusAvailable {
+		t.Error("pointer comparison failed: InquiryStatus should be the interned InquiryStatusAvailable pointer")
+	}
+
+	for _, tc := range []struct {
+		json     string
+		sentinel *string
+	}{
+		{`{"inquiry_status": "CANCELLED"}`, InquiryStatusCancelled},
+		{`{"inquiry_status": "DONE"}`, InquiryStatusDone},
+		{`{"inquiry_status": "EXPIRED"}`, InquiryStatusExpired},
+		{`{"inquiry_status": "IN_ATTENDANCE"}`, InquiryStatusInAttendance},
+		{`{"inquiry_status": "ORDERED"}`, InquiryStatusOrdered},
+		{`{"inquiry_status": "PENDING"}`, InquiryStatusPending},
+		{`{"inquiry_status": "$del"}`, InquiryStatusDel},
+	} {
+		var cm2 ContactMetadata
+		if err := json.Unmarshal([]byte(tc.json), &cm2); err != nil {
+			t.Fatal(err)
+		}
+		if cm2.InquiryStatus != tc.sentinel {
+			t.Errorf("pointer comparison failed for %s", *tc.sentinel)
+		}
+	}
+}
+
+func TestContactMetadata_InquiryStatusUnknownValue(t *testing.T) {
+	input := `{"inquiry_status": "SOME_FUTURE_STATUS"}`
+
+	var cm ContactMetadata
+	if err := json.Unmarshal([]byte(input), &cm); err != nil {
+		t.Fatal(err)
+	}
+
+	if cm.InquiryStatus == nil {
+		t.Fatal("InquiryStatus should not be nil")
+	}
+	if *cm.InquiryStatus != "SOME_FUTURE_STATUS" {
+		t.Errorf("InquiryStatus = %v, want SOME_FUTURE_STATUS", *cm.InquiryStatus)
+	}
+	if cm.InquiryStatus == InquiryStatusAvailable {
+		t.Error("unknown value should not match any sentinel pointer")
+	}
+}
+
+func TestContactMetadata_InquiryStatusMarshal(t *testing.T) {
+	cm := ContactMetadata{InquiryStatus: InquiryStatusAvailable}
+
+	data, err := json.Marshal(cm)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var m map[string]any
+	if err := json.Unmarshal(data, &m); err != nil {
+		t.Fatal(err)
+	}
+
+	if m["inquiry_status"] != "AVAILABLE" {
+		t.Errorf("inquiry_status = %v, want AVAILABLE", m["inquiry_status"])
+	}
+}
+
+func TestEqualInquiryStatus(t *testing.T) {
+	if !EqualInquiryStatus(InquiryStatusAvailable, InquiryStatusAvailable) {
+		t.Error("same pointer should be equal")
+	}
+
+	s := "AVAILABLE"
+	if !EqualInquiryStatus(&s, InquiryStatusAvailable) {
+		t.Error("same value different pointer should be equal")
+	}
+
+	if EqualInquiryStatus(InquiryStatusAvailable, InquiryStatusCancelled) {
+		t.Error("different values should not be equal")
+	}
+
+	if !EqualInquiryStatus(nil, nil) {
+		t.Error("nil == nil should be true")
+	}
+	if EqualInquiryStatus(nil, InquiryStatusAvailable) {
+		t.Error("nil != non-nil should be false")
+	}
+	if EqualInquiryStatus(InquiryStatusAvailable, nil) {
+		t.Error("non-nil != nil should be false")
 	}
 }
