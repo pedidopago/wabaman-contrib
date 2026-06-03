@@ -59,6 +59,8 @@ const (
 	MessageTypeCallPermissionState        MessageType = 51 // server sends this to the clients
 	MessageTypeSendCallPermissionResponse MessageType = 52 // server sends this to the clients
 
+	MessageTypeUnreadCountChanged MessageType = 53 // server sends this to the clients
+
 	MessageTypeMockClientMessages MessageType = 230
 	MessageTypeGenericError       MessageType = 235
 	MessageTypeCloseError         MessageType = 240
@@ -114,6 +116,7 @@ type Message struct {
 	SendCallPermissionRequest  *SendCallPermissionRequest  `json:"send_call_permission_request,omitempty"`
 	SendCallPermissionResponse *SendCallPermissionResponse `json:"send_call_permission_response,omitempty"`
 	CallPermissionState        *CallPermissionState        `json:"call_permission_state,omitempty"`
+	UnreadCountChanged         *UnreadCountChanged         `json:"unread_count_changed,omitempty"`
 }
 
 // ToJSON marshals the Message to a JSON string.
@@ -432,6 +435,13 @@ type ScheduledMessageStub struct {
 		At         string `json:"at,omitempty"`
 		Persistent bool   `json:"persistent,omitempty"`
 	} `json:"scheduled"`
+}
+
+// UnreadCountChanged is broadcast when a contact's unread message count changes.
+type UnreadCountChanged struct {
+	PhoneID   uint   `json:"phone_id"`
+	ContactID uint64 `json:"contact_id"`
+	Count     int    `json:"count"`
 }
 
 // CancelledScheduledMessages is broadcast when one or more scheduled messages are cancelled.
