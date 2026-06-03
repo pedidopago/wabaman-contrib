@@ -3,6 +3,9 @@ package types
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
+
+	"github.com/pedidopago/zajson"
 )
 
 type OrderStatus *string
@@ -35,6 +38,9 @@ var orderStatusIntern = map[string]OrderStatus{
 }
 
 func internOrderStatus(raw json.RawMessage) (OrderStatus, error) {
+	if len(raw) == 4 && raw[0] == 'n' {
+		return nil, nil
+	}
 	if len(raw) < 2 || raw[0] != '"' || raw[len(raw)-1] != '"' {
 		return nil, fmt.Errorf("expected JSON string for OrderStatus, got %s", raw)
 	}
@@ -44,6 +50,24 @@ func internOrderStatus(raw json.RawMessage) (OrderStatus, error) {
 	}
 	s := string(unquoted)
 	return &s, nil
+}
+
+func ZReadOrderStatus(r *zajson.Reader) (OrderStatus, error) {
+	if r.PeekNull() {
+		if err := r.ReadNull(); err != nil {
+			return nil, err
+		}
+		return nil, nil
+	}
+	s, err := r.ReadString()
+	if err != nil {
+		return nil, err
+	}
+	if interned, ok := orderStatusIntern[s]; ok {
+		return interned, nil
+	}
+	cs := strings.Clone(s)
+	return &cs, nil
 }
 
 func EqualOrderStatus(a, b OrderStatus) bool {

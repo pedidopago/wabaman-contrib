@@ -3,6 +3,9 @@ package types
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
+
+	"github.com/pedidopago/zajson"
 )
 
 type InquiryStatus *string
@@ -41,6 +44,9 @@ var inquiryStatusIntern = map[string]InquiryStatus{
 }
 
 func internInquiryStatus(raw json.RawMessage) (InquiryStatus, error) {
+	if len(raw) == 4 && raw[0] == 'n' {
+		return nil, nil
+	}
 	if len(raw) < 2 || raw[0] != '"' || raw[len(raw)-1] != '"' {
 		return nil, fmt.Errorf("expected JSON string for InquiryStatus, got %s", raw)
 	}
@@ -50,6 +56,24 @@ func internInquiryStatus(raw json.RawMessage) (InquiryStatus, error) {
 	}
 	s := string(unquoted)
 	return &s, nil
+}
+
+func ZReadInquiryStatus(r *zajson.Reader) (InquiryStatus, error) {
+	if r.PeekNull() {
+		if err := r.ReadNull(); err != nil {
+			return nil, err
+		}
+		return nil, nil
+	}
+	s, err := r.ReadString()
+	if err != nil {
+		return nil, err
+	}
+	if interned, ok := inquiryStatusIntern[s]; ok {
+		return interned, nil
+	}
+	cs := strings.Clone(s)
+	return &cs, nil
 }
 
 func EqualInquiryStatus(a, b InquiryStatus) bool {

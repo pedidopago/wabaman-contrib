@@ -5,13 +5,13 @@ import "encoding/json"
 type ContactMetadataOrder struct {
 	Status       OrderStatus        `json:"status,omitzero"`
 	Prescription *OrderPrescription `json:"prescription,omitzero"`
-	OtherFields  map[string]any     `json:"-"`
+	OtherFields  map[string]any     `json:"-" zajson:"-,remain"`
 }
 
 type OrderPrescription struct {
 	IsMedical   MetadataBool   `json:"is_medical,omitzero"`
 	Retained    MetadataBool   `json:"retained,omitzero"`
-	OtherFields map[string]any `json:"-"`
+	OtherFields map[string]any `json:"-" zajson:"-,remain"`
 }
 
 var prescriptionKnownKeys = map[string]struct{}{

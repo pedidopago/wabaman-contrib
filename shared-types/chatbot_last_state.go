@@ -3,6 +3,9 @@ package types
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
+
+	"github.com/pedidopago/zajson"
 )
 
 type ChatbotLastState *string
@@ -50,6 +53,9 @@ var chatbotLastStateIntern = map[string]ChatbotLastState{
 }
 
 func internChatbotLastState(raw json.RawMessage) (ChatbotLastState, error) {
+	if len(raw) == 4 && raw[0] == 'n' {
+		return nil, nil
+	}
 	if len(raw) < 2 || raw[0] != '"' || raw[len(raw)-1] != '"' {
 		return nil, fmt.Errorf("expected JSON string for ChatbotLastState, got %s", raw)
 	}
@@ -59,6 +65,24 @@ func internChatbotLastState(raw json.RawMessage) (ChatbotLastState, error) {
 	}
 	s := string(unquoted)
 	return &s, nil
+}
+
+func ZReadChatbotLastState(r *zajson.Reader) (ChatbotLastState, error) {
+	if r.PeekNull() {
+		if err := r.ReadNull(); err != nil {
+			return nil, err
+		}
+		return nil, nil
+	}
+	s, err := r.ReadString()
+	if err != nil {
+		return nil, err
+	}
+	if interned, ok := chatbotLastStateIntern[s]; ok {
+		return interned, nil
+	}
+	cs := strings.Clone(s)
+	return &cs, nil
 }
 
 func EqualChatbotLastState(a, b ChatbotLastState) bool {

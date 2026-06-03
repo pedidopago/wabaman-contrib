@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+//go:generate zajson -heap -types ContactMetadata,ContactMetadataOrder,OrderPrescription,ContactMetadataPrescription,PrescriptionCustomer,PrescriptionCustomerAddress
+
 type ContactMetadata struct {
 	InquiryID                       *string                      `json:"inquiry_id,omitzero"`
 	InquiryStatus                   InquiryStatus                `json:"inquiry_status,omitzero"`
@@ -44,7 +46,7 @@ type ContactMetadata struct {
 	LastCouponOffered               *string                      `json:"last_coupon_offered,omitzero"`
 	Order                           *ContactMetadataOrder        `json:"order,omitzero"`
 	Prescription                    *ContactMetadataPrescription `json:"prescription,omitzero"`
-	OtherFields                     map[string]any               `json:"-"`
+	OtherFields                     map[string]any               `json:"-" zajson:"-,remain"`
 }
 
 var contactMetadataKnownKeys = map[string]struct{}{

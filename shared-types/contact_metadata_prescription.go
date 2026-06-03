@@ -12,7 +12,7 @@ type ContactMetadataPrescription struct {
 	PresellerName     *string               `json:"preseller_name,omitzero"`
 	Observation       *string               `json:"observation,omitzero"`
 	ObservationAuthor *string               `json:"observation_author,omitzero"`
-	OtherFields       map[string]any        `json:"-"`
+	OtherFields       map[string]any        `json:"-" zajson:"-,remain"`
 }
 
 var contactMetadataPrescriptionKnownKeys = map[string]struct{}{
@@ -112,7 +112,7 @@ type PrescriptionCustomer struct {
 	Email            *string                      `json:"email,omitzero"`
 	Birthdate        *string                      `json:"birthdate,omitzero"`
 	Address          *PrescriptionCustomerAddress `json:"address,omitzero"`
-	OtherFields      map[string]any               `json:"-"`
+	OtherFields      map[string]any               `json:"-" zajson:"-,remain"`
 }
 
 var prescriptionCustomerKnownKeys = map[string]struct{}{
@@ -211,7 +211,7 @@ type PrescriptionCustomerAddress struct {
 	UF          *string        `json:"uf,omitzero"`
 	District    *string        `json:"district,omitzero"`
 	Zip         *string        `json:"zip,omitzero"`
-	OtherFields map[string]any `json:"-"`
+	OtherFields map[string]any `json:"-" zajson:"-,remain"`
 }
 
 var prescriptionCustomerAddressKnownKeys = map[string]struct{}{

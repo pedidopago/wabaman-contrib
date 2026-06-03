@@ -3,6 +3,9 @@ package types
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
+
+	"github.com/pedidopago/zajson"
 )
 
 type InitialContactChannel *string
@@ -41,6 +44,9 @@ var initialContactChannelIntern = map[string]InitialContactChannel{
 }
 
 func internInitialContactChannel(raw json.RawMessage) (InitialContactChannel, error) {
+	if len(raw) == 4 && raw[0] == 'n' {
+		return nil, nil
+	}
 	if len(raw) < 2 || raw[0] != '"' || raw[len(raw)-1] != '"' {
 		return nil, fmt.Errorf("expected JSON string for InitialContactChannel, got %s", raw)
 	}
@@ -50,6 +56,24 @@ func internInitialContactChannel(raw json.RawMessage) (InitialContactChannel, er
 	}
 	s := string(unquoted)
 	return &s, nil
+}
+
+func ZReadInitialContactChannel(r *zajson.Reader) (InitialContactChannel, error) {
+	if r.PeekNull() {
+		if err := r.ReadNull(); err != nil {
+			return nil, err
+		}
+		return nil, nil
+	}
+	s, err := r.ReadString()
+	if err != nil {
+		return nil, err
+	}
+	if interned, ok := initialContactChannelIntern[s]; ok {
+		return interned, nil
+	}
+	cs := strings.Clone(s)
+	return &cs, nil
 }
 
 func EqualInitialContactChannel(a, b InitialContactChannel) bool {

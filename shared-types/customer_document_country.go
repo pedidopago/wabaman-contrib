@@ -3,6 +3,9 @@ package types
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
+
+	"github.com/pedidopago/zajson"
 )
 
 type CustomerDocumentCountry *string
@@ -41,6 +44,9 @@ var customerDocumentCountryIntern = map[string]CustomerDocumentCountry{
 }
 
 func internCustomerDocumentCountry(raw json.RawMessage) (CustomerDocumentCountry, error) {
+	if len(raw) == 4 && raw[0] == 'n' {
+		return nil, nil
+	}
 	if len(raw) == 4 && raw[1] == 'B' && raw[2] == 'R' {
 		return CustomerDocumentCountryBR, nil
 	}
@@ -53,6 +59,28 @@ func internCustomerDocumentCountry(raw json.RawMessage) (CustomerDocumentCountry
 	}
 	s := string(unquoted)
 	return &s, nil
+}
+
+func ZReadCustomerDocumentCountry(r *zajson.Reader) (CustomerDocumentCountry, error) {
+	if r.PeekNull() {
+		if err := r.ReadNull(); err != nil {
+			return nil, err
+		}
+		return nil, nil
+	}
+	s, err := r.ReadString()
+	if err != nil {
+		return nil, err
+	}
+	// BR fast-path: skip map lookup for the 90%+ case
+	if len(s) == 2 && s[0] == 'B' && s[1] == 'R' {
+		return CustomerDocumentCountryBR, nil
+	}
+	if interned, ok := customerDocumentCountryIntern[s]; ok {
+		return interned, nil
+	}
+	cs := strings.Clone(s)
+	return &cs, nil
 }
 
 func EqualCustomerDocumentCountry(a, b CustomerDocumentCountry) bool {

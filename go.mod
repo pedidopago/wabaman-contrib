@@ -1,10 +1,12 @@
 module github.com/pedidopago/wabaman-contrib
 
-go 1.24
+go 1.26.3
 
 require (
+	github.com/gabstv/mmm v1.3.0
 	github.com/google/go-querystring v1.1.0
 	github.com/pedidopago/go-common v0.0.7-0.20230126195326-1f897f94edc6
+	github.com/pedidopago/zajson v0.0.0-20260603210834-27e673c43e5c
 	github.com/rs/zerolog v1.28.0
 )
 
