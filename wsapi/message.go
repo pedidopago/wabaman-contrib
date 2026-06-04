@@ -233,14 +233,14 @@ type ContactUpdateToSend struct {
 // NewContact is broadcast to connected clients when a new contact is created
 // (e.g. when a previously unknown user sends their first message).
 type NewContact struct {
-	ContactID          uint64         `json:"contact_id"`
-	HostPhoneID        uint           `json:"host_phone_id"`
-	WABAContactID      string         `json:"waba_contact_id"`
-	UserID             string         `json:"user_id,omitempty"` // Business-scoped user ID (BSUID)
-	WABAProfileName    string         `json:"waba_profile_name"`
-	ContactPhoneNumber string         `json:"contact_phone_number,omitempty"`
-	CustomerID         string         `json:"customer_id"`
-	Metadata           map[string]any `json:"metadata"`
+	ContactID          uint64                `json:"contact_id"`
+	HostPhoneID        uint                  `json:"host_phone_id"`
+	WABAContactID      string                `json:"waba_contact_id"`
+	UserID             string                `json:"user_id,omitempty"` // Business-scoped user ID (BSUID)
+	WABAProfileName    string                `json:"waba_profile_name"`
+	ContactPhoneNumber string                `json:"contact_phone_number,omitempty"`
+	CustomerID         string                `json:"customer_id"`
+	Metadata           *ContactMetadataField `json:"metadata,omitzero"`
 }
 
 // NewContactToSend is the wire-format variant of [NewContact] with json.RawMessage
