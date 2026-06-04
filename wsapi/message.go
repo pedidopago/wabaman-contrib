@@ -59,7 +59,7 @@ const (
 	MessageTypeCallPermissionState        MessageType = 51 // server sends this to the clients
 	MessageTypeSendCallPermissionResponse MessageType = 52 // server sends this to the clients
 
-	MessageTypeUnreadCountChanged MessageType = 53 // server sends this to the clients
+	MessageTypeUnreadCountChanged MessageType = 60 // server sends this to the clients
 
 	MessageTypeMockClientMessages MessageType = 230
 	MessageTypeGenericError       MessageType = 235
@@ -439,9 +439,11 @@ type ScheduledMessageStub struct {
 
 // UnreadCountChanged is broadcast when a contact's unread message count changes.
 type UnreadCountChanged struct {
-	PhoneID   uint   `json:"phone_id"`
-	ContactID uint64 `json:"contact_id"`
-	Count     int    `json:"count"`
+	PhoneID       uint   `json:"phone_id"`
+	BranchID      string `json:"branch_id,omitzero"`
+	ContactID     uint64 `json:"contact_id"`
+	WABAContactID string `json:"waba_contact_id,omitzero"`
+	Count         int    `json:"count"`
 }
 
 // CancelledScheduledMessages is broadcast when one or more scheduled messages are cancelled.
