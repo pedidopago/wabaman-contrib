@@ -42,14 +42,14 @@ type BusinessMetadata struct {
 
 // PhoneMetadata describes the WhatsApp Business phone number (sender) associated with the connection.
 type PhoneMetadata struct {
-	ID                        uint           `json:"id,omitempty"`
-	WhatsAppID                string         `json:"whatsapp_id,omitempty"`
-	WhatsAppBusinessAccountID string         `json:"whatsapp_business_account_id,omitempty"`
-	PhoneNumber               string         `json:"phone_number,omitempty"`
-	BranchID                  string         `json:"branch_id,omitempty"`
-	LanguageCode              string         `json:"language_code,omitempty"`
-	DriverName                string         `json:"driver_name,omitempty"`
-	Metadata                  map[string]any `json:"metadata,omitempty"`
+	ID                        uint            `json:"id,omitempty"`
+	WhatsAppID                string          `json:"whatsapp_id,omitempty"`
+	WhatsAppBusinessAccountID string          `json:"whatsapp_business_account_id,omitempty"`
+	PhoneNumber               string          `json:"phone_number,omitempty"`
+	BranchID                  string          `json:"branch_id,omitempty"`
+	LanguageCode              string          `json:"language_code,omitempty"`
+	DriverName                string          `json:"driver_name,omitempty"`
+	Metadata                  json.RawMessage `json:"metadata,omitempty"`
 }
 
 // ContactMetadata is an alias kept for backward compatibility with consumers
@@ -58,28 +58,28 @@ type ContactMetadata = ContactData
 
 // ContactData describes a WhatsApp contact (end-user) and their conversation state.
 type ContactData struct {
-	ID                           uint64                 `json:"id,omitzero"`
-	CustomerID                   string                 `json:"customer_id,omitzero"`
-	CustomerName                 string                 `json:"customer_name,omitzero"`
-	WABAContactID                string                 `json:"waba_contact_id,omitzero"`
-	UserID                       string                 `json:"user_id,omitzero"` // Business-scoped user ID (BSUID)
-	WABAProfileName              string                 `json:"waba_profile_name,omitzero"`
-	Name                         string                 `json:"name,omitzero"`
-	ContactPhoneNumber           string                 `json:"contact_phone_number,omitzero"`
-	IsNewContact                 bool                   `json:"is_new_contact,omitzero"`
-	Metadata                     *ContactMetadataField  `json:"metadata,omitzero"`
-	LastActivity                 mariadb.NullTime       `json:"last_activity,omitzero"`
-	LastMessagePreview           string                 `json:"last_message_preview,omitzero"`
-	LastMessagePreviewOrigin     string                 `json:"last_message_preview_origin,omitzero"`
-	LastMessagePreviewStatus     string                 `json:"last_message_preview_status,omitzero"`
-	LastMessageTimestamp         mariadb.NullTime       `json:"last_message_timestamp,omitzero"`
-	LastMessageReceivedTimestamp mariadb.NullTime       `json:"last_message_received_timestamp,omitzero"`
-	UnreadMessages               *int                   `json:"unread_messages,omitzero"`
-	ERPLastSync                  mariadb.NullTime       `json:"erp_last_sync,omitzero"`
-	ColorTags                    []ColorTag             `json:"color_tags,omitzero"`
-	Last24HWindow                string                 `json:"last_24h_window,omitzero"`
-	Last24HWindowUnix            int64                  `json:"last_24h_window_unix,omitzero"`
-	MarketingEnabled             bool                   `json:"marketing_enabled,omitzero"`
+	ID                           uint64                `json:"id,omitzero"`
+	CustomerID                   string                `json:"customer_id,omitzero"`
+	CustomerName                 string                `json:"customer_name,omitzero"`
+	WABAContactID                string                `json:"waba_contact_id,omitzero"`
+	UserID                       string                `json:"user_id,omitzero"` // Business-scoped user ID (BSUID)
+	WABAProfileName              string                `json:"waba_profile_name,omitzero"`
+	Name                         string                `json:"name,omitzero"`
+	ContactPhoneNumber           string                `json:"contact_phone_number,omitzero"`
+	IsNewContact                 bool                  `json:"is_new_contact,omitzero"`
+	Metadata                     *ContactMetadataField `json:"metadata,omitzero"`
+	LastActivity                 mariadb.NullTime      `json:"last_activity,omitzero"`
+	LastMessagePreview           string                `json:"last_message_preview,omitzero"`
+	LastMessagePreviewOrigin     string                `json:"last_message_preview_origin,omitzero"`
+	LastMessagePreviewStatus     string                `json:"last_message_preview_status,omitzero"`
+	LastMessageTimestamp         mariadb.NullTime      `json:"last_message_timestamp,omitzero"`
+	LastMessageReceivedTimestamp mariadb.NullTime      `json:"last_message_received_timestamp,omitzero"`
+	UnreadMessages               *int                  `json:"unread_messages,omitzero"`
+	ERPLastSync                  mariadb.NullTime      `json:"erp_last_sync,omitzero"`
+	ColorTags                    []ColorTag            `json:"color_tags,omitzero"`
+	Last24HWindow                string                `json:"last_24h_window,omitzero"`
+	Last24HWindowUnix            int64                 `json:"last_24h_window_unix,omitzero"`
+	MarketingEnabled             bool                  `json:"marketing_enabled,omitzero"`
 }
 
 // ContactMetadataField carries a contact metadata payload as raw JSON bytes,

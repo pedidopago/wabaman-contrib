@@ -195,20 +195,20 @@ type ClientReceipt struct {
 
 // ContactUpdate is broadcast to connected clients when a contact's information changes.
 type ContactUpdate struct {
-	ContactID          uint64         `json:"contact_id"`
-	HostPhoneID        uint           `json:"host_phone_id"`
-	WABAContactID      string         `json:"waba_contact_id"`
-	UserID             string         `json:"user_id,omitempty"` // Business-scoped user ID (BSUID)
-	WABAProfileName    string         `json:"waba_profile_name"`
-	ContactPhoneNumber string         `json:"contact_phone_number,omitempty"`
-	CustomerID         string         `json:"customer_id"`
-	CustomerName       string         `json:"customer_name"`
-	Name               string         `json:"name"`
-	Metadata           map[string]any `json:"metadata"`
-	ColorTags          []ColorTag     `json:"color_tags,omitempty"`
-	UpdatedFields      []string       `json:"updated_fields"`
-	FieldsBefore       map[string]any `json:"fields_before,omitempty"`
-	FieldsAfter        map[string]any `json:"fields_after,omitempty"`
+	ContactID          uint64                `json:"contact_id"`
+	HostPhoneID        uint                  `json:"host_phone_id"`
+	WABAContactID      string                `json:"waba_contact_id"`
+	UserID             string                `json:"user_id,omitempty"` // Business-scoped user ID (BSUID)
+	WABAProfileName    string                `json:"waba_profile_name"`
+	ContactPhoneNumber string                `json:"contact_phone_number,omitempty"`
+	CustomerID         string                `json:"customer_id"`
+	CustomerName       string                `json:"customer_name"`
+	Name               string                `json:"name"`
+	Metadata           *ContactMetadataField `json:"metadata,omitzero"`
+	ColorTags          []ColorTag            `json:"color_tags,omitempty"`
+	UpdatedFields      []string              `json:"updated_fields"`
+	FieldsBefore       map[string]any        `json:"fields_before,omitempty"`
+	FieldsAfter        map[string]any        `json:"fields_after,omitempty"`
 }
 
 // ContactUpdateToSend is the wire-format variant of [ContactUpdate] with json.RawMessage
