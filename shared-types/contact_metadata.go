@@ -37,6 +37,7 @@ type ContactMetadata struct {
 	ChatbotLastState                ChatbotLastState             `json:"chatbot_last_state,omitzero"`
 	ChatbotRegistrationDate         *time.Time                   `json:"chatbot_registration_date,omitzero"`
 	SkipWelcome                     MetadataBool                 `json:"skip_welcome,omitzero"`
+	MarketingDisabledReason         *string                      `json:"marketing_disabled_reason,omitzero"`
 	InitialContactChannel           InitialContactChannel        `json:"initial_contact_channel,omitzero"`
 	InitialContactDate              *time.Time                   `json:"initial_contact_date,omitzero"`
 	CustomerName                    *string                      `json:"customer_name,omitzero"`
@@ -80,6 +81,7 @@ var contactMetadataKnownKeys = map[string]struct{}{
 	"chatbot_last_state":                 {},
 	"chatbot_registration_date":          {},
 	"skip_welcome":                       {},
+	"marketing_disabled_reason":          {},
 	"initial_contact_channel":            {},
 	"initial_contact_date":               {},
 	"customer_name":                      {},
@@ -189,6 +191,8 @@ func (cm *ContactMetadata) UnmarshalJSON(data []byte) error {
 			err = json.Unmarshal(v, &cm.ChatbotRegistrationDate)
 		case "skip_welcome":
 			cm.SkipWelcome, err = internMetadataBool(v)
+		case "marketing_disabled_reason":
+			err = json.Unmarshal(v, &cm.MarketingDisabledReason)
 		case "initial_contact_channel":
 			cm.InitialContactChannel, err = internInitialContactChannel(v)
 		case "initial_contact_date":

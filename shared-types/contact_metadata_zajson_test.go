@@ -876,6 +876,28 @@ func TestZ_ContactMetadata_SkipWelcomeMarshal(t *testing.T) {
 	}
 }
 
+func TestZ_ContactMetadata_MarketingDisabledReason(t *testing.T) {
+	input := []byte(`{"marketing_disabled_reason": "user_opt_out"}`)
+
+	cm := zunmarshal[*ContactMetadata](t, input)
+
+	if cm.MarketingDisabledReason == nil || *cm.MarketingDisabledReason != "user_opt_out" {
+		t.Errorf("MarketingDisabledReason = %v, want user_opt_out", cm.MarketingDisabledReason)
+	}
+	if _, exists := cm.OtherFields["marketing_disabled_reason"]; exists {
+		t.Error("marketing_disabled_reason should be a known field, not in OtherFields")
+	}
+
+	data := zmarshal(t, cm)
+	var m map[string]any
+	if err := json.Unmarshal(data, &m); err != nil {
+		t.Fatalf("Z output is not valid JSON: %v\nraw: %s", err, data)
+	}
+	if m["marketing_disabled_reason"] != "user_opt_out" {
+		t.Errorf("marketing_disabled_reason = %v, want user_opt_out", m["marketing_disabled_reason"])
+	}
+}
+
 // ---------------------------------------------------------------------------
 // MetadataBool multi-format Z test
 // ---------------------------------------------------------------------------

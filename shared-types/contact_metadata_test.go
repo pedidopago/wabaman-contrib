@@ -598,6 +598,34 @@ func TestContactMetadata_SkipWelcomeMarshal(t *testing.T) {
 	}
 }
 
+func TestContactMetadata_MarketingDisabledReason(t *testing.T) {
+	input := `{"marketing_disabled_reason": "user_opt_out"}`
+
+	var cm ContactMetadata
+	if err := json.Unmarshal([]byte(input), &cm); err != nil {
+		t.Fatal(err)
+	}
+
+	if cm.MarketingDisabledReason == nil || *cm.MarketingDisabledReason != "user_opt_out" {
+		t.Errorf("MarketingDisabledReason = %v, want user_opt_out", cm.MarketingDisabledReason)
+	}
+	if _, exists := cm.OtherFields["marketing_disabled_reason"]; exists {
+		t.Error("marketing_disabled_reason should be a known field, not in OtherFields")
+	}
+
+	data, err := json.Marshal(cm)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var m map[string]any
+	if err := json.Unmarshal(data, &m); err != nil {
+		t.Fatal(err)
+	}
+	if m["marketing_disabled_reason"] != "user_opt_out" {
+		t.Errorf("marketing_disabled_reason = %v, want user_opt_out", m["marketing_disabled_reason"])
+	}
+}
+
 func TestContactMetadata_InquiryStatusInterning(t *testing.T) {
 	input := `{"inquiry_status": "AVAILABLE"}`
 
