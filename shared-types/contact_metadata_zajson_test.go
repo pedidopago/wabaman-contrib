@@ -837,6 +837,45 @@ func TestZ_CrossPath_ZUnmarshalThenJSONMarshal(t *testing.T) {
 	}
 }
 
+func TestZ_ContactMetadata_SkipWelcome(t *testing.T) {
+	for _, tc := range []struct {
+		name string
+		json string
+		want MetadataBool
+	}{
+		{"bool true", `{"skip_welcome": true}`, MetadataBoolTrue},
+		{"bool false", `{"skip_welcome": false}`, MetadataBoolFalse},
+		{"string true", `{"skip_welcome": "true"}`, MetadataBoolTrue},
+		{"string false", `{"skip_welcome": "false"}`, MetadataBoolFalse},
+		{"null", `{"skip_welcome": null}`, nil},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			cm := zunmarshal[*ContactMetadata](t, []byte(tc.json))
+			if cm.SkipWelcome != tc.want {
+				t.Errorf("SkipWelcome = %v, want %v", cm.SkipWelcome, tc.want)
+			}
+			if _, exists := cm.OtherFields["skip_welcome"]; exists {
+				t.Error("skip_welcome should be a known field, not in OtherFields")
+			}
+		})
+	}
+}
+
+func TestZ_ContactMetadata_SkipWelcomeMarshal(t *testing.T) {
+	cm := ContactMetadata{SkipWelcome: MetadataBoolTrue}
+
+	data := zmarshal(t, &cm)
+
+	var m map[string]any
+	if err := json.Unmarshal(data, &m); err != nil {
+		t.Fatalf("Z output is not valid JSON: %v\nraw: %s", err, data)
+	}
+
+	if m["skip_welcome"] != true {
+		t.Errorf("skip_welcome = %v, want true", m["skip_welcome"])
+	}
+}
+
 // ---------------------------------------------------------------------------
 // MetadataBool multi-format Z test
 // ---------------------------------------------------------------------------

@@ -123,6 +123,10 @@ func (v *ContactMetadata) ZMarshalJSON(w *zajson.Writer) error {
 		w.WriteCommaFieldName(",\"chatbot_registration_date\":")
 		w.WriteRFC3339Nano((*v.ChatbotRegistrationDate))
 	}
+	if v.SkipWelcome != nil {
+		w.WriteCommaFieldName(",\"skip_welcome\":")
+		w.WriteBool((*v.SkipWelcome))
+	}
 	if v.InitialContactChannel != nil {
 		w.WriteCommaFieldName(",\"initial_contact_channel\":")
 		w.WriteQuotedString((*v.InitialContactChannel))
@@ -175,7 +179,7 @@ func (v *ContactMetadata) ZMarshalJSON(w *zajson.Writer) error {
 		slices.Sort(_rkeys)
 		for _, _rk := range _rkeys {
 			switch _rk {
-			case "inquiry_id", "inquiry_status", "inquiry_display_id", "inquiry_agent_id", "inquiry_agent_name", "inquiry_ai_evaluation", "inquiry_can_bind_display_id", "inquiry_created_at", "inquiry_expire_date", "inquiry_seller_agent_id", "inquiry_seller_agent_name", "inquiry_has_pendencies", "inquiry_sell_opportunity_collected", "inquiry_quotated_at", "inquiry_done_at", "inquiry_last_status_update", "inquiry_is_chat_open", "inquiry_is_marketplace", "inquiry_inclusor_agent_id", "inquiry_inclusor_agent_name", "inquiry_specialist_agent_id", "inquiry_specialist_agent_name", "account_id", "chatbot_disabled", "chatbot_initial_contact", "chatbot_is_pre_registration", "chatbot_last_state", "chatbot_registration_date", "initial_contact_channel", "initial_contact_date", "customer_name", "customer_document_country", "customer_document_type", "customer_document", "last_order_seq", "last_coupon_offered", "order", "prescription":
+			case "inquiry_id", "inquiry_status", "inquiry_display_id", "inquiry_agent_id", "inquiry_agent_name", "inquiry_ai_evaluation", "inquiry_can_bind_display_id", "inquiry_created_at", "inquiry_expire_date", "inquiry_seller_agent_id", "inquiry_seller_agent_name", "inquiry_has_pendencies", "inquiry_sell_opportunity_collected", "inquiry_quotated_at", "inquiry_done_at", "inquiry_last_status_update", "inquiry_is_chat_open", "inquiry_is_marketplace", "inquiry_inclusor_agent_id", "inquiry_inclusor_agent_name", "inquiry_specialist_agent_id", "inquiry_specialist_agent_name", "account_id", "chatbot_disabled", "chatbot_initial_contact", "chatbot_is_pre_registration", "chatbot_last_state", "chatbot_registration_date", "skip_welcome", "initial_contact_channel", "initial_contact_date", "customer_name", "customer_document_country", "customer_document_type", "customer_document", "last_order_seq", "last_coupon_offered", "order", "prescription":
 				// skip: known field wins on collision
 			default:
 				w.WriteDynamicFieldName(_rk)
@@ -622,6 +626,14 @@ func (v *ContactMetadata) ZUnmarshalJSON(r *zajson.Reader) error {
 					}
 					(*v.ChatbotRegistrationDate) = _t
 				}
+			}
+		case "skip_welcome":
+			{
+				_val, _err := ZReadMetadataBool(r)
+				if _err != nil {
+					return _err
+				}
+				v.SkipWelcome = _val
 			}
 		case "initial_contact_channel":
 			{

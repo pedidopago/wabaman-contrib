@@ -553,6 +553,51 @@ func TestContactMetadata_RealWorldPayload(t *testing.T) {
 	}
 }
 
+func TestContactMetadata_SkipWelcome(t *testing.T) {
+	for _, tc := range []struct {
+		name string
+		json string
+		want MetadataBool
+	}{
+		{"bool true", `{"skip_welcome": true}`, MetadataBoolTrue},
+		{"bool false", `{"skip_welcome": false}`, MetadataBoolFalse},
+		{"string true", `{"skip_welcome": "true"}`, MetadataBoolTrue},
+		{"string false", `{"skip_welcome": "false"}`, MetadataBoolFalse},
+		{"null", `{"skip_welcome": null}`, nil},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			var cm ContactMetadata
+			if err := json.Unmarshal([]byte(tc.json), &cm); err != nil {
+				t.Fatal(err)
+			}
+			if cm.SkipWelcome != tc.want {
+				t.Errorf("SkipWelcome = %v, want %v", cm.SkipWelcome, tc.want)
+			}
+			if _, exists := cm.OtherFields["skip_welcome"]; exists {
+				t.Error("skip_welcome should be a known field, not in OtherFields")
+			}
+		})
+	}
+}
+
+func TestContactMetadata_SkipWelcomeMarshal(t *testing.T) {
+	cm := ContactMetadata{SkipWelcome: MetadataBoolTrue}
+
+	data, err := json.Marshal(cm)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var m map[string]any
+	if err := json.Unmarshal(data, &m); err != nil {
+		t.Fatal(err)
+	}
+
+	if m["skip_welcome"] != true {
+		t.Errorf("skip_welcome = %v, want true", m["skip_welcome"])
+	}
+}
+
 func TestContactMetadata_InquiryStatusInterning(t *testing.T) {
 	input := `{"inquiry_status": "AVAILABLE"}`
 
