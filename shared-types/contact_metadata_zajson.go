@@ -129,7 +129,9 @@ func (v *ContactMetadata) ZMarshalJSON(w *zajson.Writer) error {
 	}
 	if v.MarketingDisabledReason != nil {
 		w.WriteCommaFieldName(",\"marketing_disabled_reason\":")
-		w.WriteQuotedString((*v.MarketingDisabledReason))
+		if err := (*v.MarketingDisabledReason).ZMarshalJSON(w); err != nil {
+			return err
+		}
 	}
 	if v.InitialContactChannel != nil {
 		w.WriteCommaFieldName(",\"initial_contact_channel\":")
@@ -646,14 +648,10 @@ func (v *ContactMetadata) ZUnmarshalJSON(r *zajson.Reader) error {
 				}
 				v.MarketingDisabledReason = nil
 			} else {
-				_ptr := new(string)
+				_ptr := new(ContactMetadataMarketingDisabledReason)
 				v.MarketingDisabledReason = _ptr
-				{
-					_val, _err := r.ReadString()
-					if _err != nil {
-						return _err
-					}
-					(*v.MarketingDisabledReason) = strings.Clone(_val)
+				if _err := (*v.MarketingDisabledReason).ZUnmarshalJSON(r); _err != nil {
+					return _err
 				}
 			}
 		case "initial_contact_channel":
@@ -802,6 +800,118 @@ func (v *ContactMetadata) ZUnmarshalJSON(r *zajson.Reader) error {
 				v.Prescription = _ptr
 				if _err := (*v.Prescription).ZUnmarshalJSON(r); _err != nil {
 					return _err
+				}
+			}
+		default:
+			if v.OtherFields == nil {
+				v.OtherFields = make(map[string]any)
+			}
+			_any, _err := r.ReadAny()
+			if _err != nil {
+				return _err
+			}
+			v.OtherFields[_key] = _any
+		}
+		r.PopPath()
+	}
+}
+
+func (v *ContactMetadataMarketingDisabledReason) ZMarshalJSON(w *zajson.Writer) error {
+	w.BeginObject()
+	if v.Error != nil {
+		w.WriteCommaFieldName(",\"error\":")
+		w.WriteInt64(int64((*v.Error)))
+	}
+	if v.MetaReason != nil {
+		w.WriteCommaFieldName(",\"meta_reason\":")
+		w.WriteQuotedString((*v.MetaReason))
+	}
+	if v.Date != nil {
+		w.WriteCommaFieldName(",\"date\":")
+		w.WriteQuotedString((*v.Date))
+	}
+	if v.OtherFields != nil {
+		_rkeys := make([]string, 0, len(v.OtherFields))
+		for _rk := range v.OtherFields {
+			_rkeys = append(_rkeys, _rk)
+		}
+		slices.Sort(_rkeys)
+		for _, _rk := range _rkeys {
+			switch _rk {
+			case "error", "meta_reason", "date":
+				// skip: known field wins on collision
+			default:
+				w.WriteDynamicFieldName(_rk)
+				w.WriteAny(v.OtherFields[_rk])
+			}
+		}
+	}
+	w.EndObject()
+	return w.Err()
+}
+
+func (v *ContactMetadataMarketingDisabledReason) ZUnmarshalJSON(r *zajson.Reader) error {
+	if _err := r.ReadObjectStart(); _err != nil {
+		return _err
+	}
+	for {
+		_key, _ok, _err := r.NextField()
+		if _err != nil {
+			return _err
+		}
+		if !_ok {
+			return nil
+		}
+		switch _key {
+		case "error":
+			if r.PeekNull() {
+				if _err := r.ReadNull(); _err != nil {
+					return _err
+				}
+				v.Error = nil
+			} else {
+				_ptr := new(int)
+				v.Error = _ptr
+				{
+					_val, _err := r.ReadInt64()
+					if _err != nil {
+						return _err
+					}
+					(*v.Error) = int(_val)
+				}
+			}
+		case "meta_reason":
+			if r.PeekNull() {
+				if _err := r.ReadNull(); _err != nil {
+					return _err
+				}
+				v.MetaReason = nil
+			} else {
+				_ptr := new(string)
+				v.MetaReason = _ptr
+				{
+					_val, _err := r.ReadString()
+					if _err != nil {
+						return _err
+					}
+					(*v.MetaReason) = strings.Clone(_val)
+				}
+			}
+		case "date":
+			if r.PeekNull() {
+				if _err := r.ReadNull(); _err != nil {
+					return _err
+				}
+				v.Date = nil
+			} else {
+				_ptr := new(string)
+				v.Date = _ptr
+				{
+					_val, _err := r.ReadString()
+					if _err != nil {
+						return _err
+					}
+					(*v.Date) = strings.Clone(_val)
 				}
 			}
 		default:

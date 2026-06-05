@@ -877,24 +877,42 @@ func TestZ_ContactMetadata_SkipWelcomeMarshal(t *testing.T) {
 }
 
 func TestZ_ContactMetadata_MarketingDisabledReason(t *testing.T) {
-	input := []byte(`{"marketing_disabled_reason": "user_opt_out"}`)
+	input := []byte(`{"marketing_disabled_reason": {"error": 131, "meta_reason": "user_opt_out", "date": "2026-06-05", "extra": "keep"}}`)
 
 	cm := zunmarshal[*ContactMetadata](t, input)
 
-	if cm.MarketingDisabledReason == nil || *cm.MarketingDisabledReason != "user_opt_out" {
-		t.Errorf("MarketingDisabledReason = %v, want user_opt_out", cm.MarketingDisabledReason)
+	if cm.MarketingDisabledReason == nil {
+		t.Fatal("MarketingDisabledReason is nil")
+	}
+	if cm.MarketingDisabledReason.Error == nil || *cm.MarketingDisabledReason.Error != 131 {
+		t.Errorf("MarketingDisabledReason.Error = %v, want 131", cm.MarketingDisabledReason.Error)
+	}
+	if cm.MarketingDisabledReason.MetaReason == nil || *cm.MarketingDisabledReason.MetaReason != "user_opt_out" {
+		t.Errorf("MarketingDisabledReason.MetaReason = %v, want user_opt_out", cm.MarketingDisabledReason.MetaReason)
+	}
+	if cm.MarketingDisabledReason.Date == nil || *cm.MarketingDisabledReason.Date != "2026-06-05" {
+		t.Errorf("MarketingDisabledReason.Date = %v, want 2026-06-05", cm.MarketingDisabledReason.Date)
+	}
+	if cm.MarketingDisabledReason.OtherFields["extra"] != "keep" {
+		t.Errorf("MarketingDisabledReason.OtherFields[extra] = %v, want keep", cm.MarketingDisabledReason.OtherFields["extra"])
 	}
 	if _, exists := cm.OtherFields["marketing_disabled_reason"]; exists {
 		t.Error("marketing_disabled_reason should be a known field, not in OtherFields")
 	}
 
-	data := zmarshal(t, cm)
-	var m map[string]any
-	if err := json.Unmarshal(data, &m); err != nil {
-		t.Fatalf("Z output is not valid JSON: %v\nraw: %s", err, data)
+	// Z round-trip
+	zBytes := zmarshal(t, cm)
+	var roundTripped, original map[string]any
+	if err := json.Unmarshal(zBytes, &roundTripped); err != nil {
+		t.Fatalf("Z output is not valid JSON: %v\nraw: %s", err, zBytes)
 	}
-	if m["marketing_disabled_reason"] != "user_opt_out" {
-		t.Errorf("marketing_disabled_reason = %v, want user_opt_out", m["marketing_disabled_reason"])
+	if err := json.Unmarshal(input, &original); err != nil {
+		t.Fatal(err)
+	}
+	wantJSON, _ := json.Marshal(original["marketing_disabled_reason"])
+	gotJSON, _ := json.Marshal(roundTripped["marketing_disabled_reason"])
+	if string(wantJSON) != string(gotJSON) {
+		t.Errorf("round-trip marketing_disabled_reason: got %s, want %s", gotJSON, wantJSON)
 	}
 }
 

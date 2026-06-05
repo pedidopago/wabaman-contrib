@@ -5,50 +5,50 @@ import (
 	"time"
 )
 
-//go:generate zajson -heap -types ContactMetadata,ContactMetadataOrder,OrderPrescription,ContactMetadataPrescription,PrescriptionCustomer,PrescriptionCustomerAddress
+//go:generate zajson -heap -types ContactMetadata,ContactMetadataMarketingDisabledReason,ContactMetadataOrder,OrderPrescription,ContactMetadataPrescription,PrescriptionCustomer,PrescriptionCustomerAddress
 
 type ContactMetadata struct {
-	InquiryID                       *string                      `json:"inquiry_id,omitzero"`
-	InquiryStatus                   InquiryStatus                `json:"inquiry_status,omitzero"`
-	InquiryDisplayID                *string                      `json:"inquiry_display_id,omitzero"`
-	InquiryAgentID                  *string                      `json:"inquiry_agent_id,omitzero"`
-	InquiryAgentName                *string                      `json:"inquiry_agent_name,omitzero"`
-	InquiryAIEvaluation             *string                      `json:"inquiry_ai_evaluation,omitzero"`
-	InquiryCanBindDisplayID         MetadataBool                 `json:"inquiry_can_bind_display_id,omitzero"`
-	InquiryCreatedAt                *time.Time                   `json:"inquiry_created_at,omitzero"`
-	InquiryExpireDate               *time.Time                   `json:"inquiry_expire_date,omitzero"`
-	InquirySellerAgentID            *string                      `json:"inquiry_seller_agent_id,omitzero"`
-	InquirySellerAgentName          *string                      `json:"inquiry_seller_agent_name,omitzero"`
-	InquiryHasPendencies            MetadataBool                 `json:"inquiry_has_pendencies,omitzero"`
-	InquirySellOpportunityCollected MetadataBool                 `json:"inquiry_sell_opportunity_collected,omitzero"`
-	InquiryQuotatedAt               *time.Time                   `json:"inquiry_quotated_at,omitzero"`
-	InquiryDoneAt                   *time.Time                   `json:"inquiry_done_at,omitzero"`
-	InquiryLastStatusUpdate         *time.Time                   `json:"inquiry_last_status_update,omitzero"`
-	InquiryIsChatOpen               MetadataBool                 `json:"inquiry_is_chat_open,omitzero"`
-	InquiryIsMarketplace            MetadataBool                 `json:"inquiry_is_marketplace,omitzero"`
-	InquiryInclusorAgentID          *string                      `json:"inquiry_inclusor_agent_id,omitzero"`
-	InquiryInclusorAgentName        *string                      `json:"inquiry_inclusor_agent_name,omitzero"`
-	InquirySpecialistAgentID        *string                      `json:"inquiry_specialist_agent_id,omitzero"`
-	InquirySpecialistAgentName      *string                      `json:"inquiry_specialist_agent_name,omitzero"`
-	AccountID                       *string                      `json:"account_id,omitzero"`
-	ChatbotDisabled                 MetadataBool                 `json:"chatbot_disabled,omitzero"`
-	ChatbotInitialContact           *time.Time                   `json:"chatbot_initial_contact,omitzero"`
-	ChatbotIsPreRegistration        MetadataBool                 `json:"chatbot_is_pre_registration,omitzero"`
-	ChatbotLastState                ChatbotLastState             `json:"chatbot_last_state,omitzero"`
-	ChatbotRegistrationDate         *time.Time                   `json:"chatbot_registration_date,omitzero"`
-	SkipWelcome                     MetadataBool                 `json:"skip_welcome,omitzero"`
-	MarketingDisabledReason         *string                      `json:"marketing_disabled_reason,omitzero"`
-	InitialContactChannel           InitialContactChannel        `json:"initial_contact_channel,omitzero"`
-	InitialContactDate              *time.Time                   `json:"initial_contact_date,omitzero"`
-	CustomerName                    *string                      `json:"customer_name,omitzero"`
-	CustomerDocumentCountry         CustomerDocumentCountry      `json:"customer_document_country,omitzero"`
-	CustomerDocumentType            *string                      `json:"customer_document_type,omitzero"`
-	CustomerDocument                *string                      `json:"customer_document,omitzero"`
-	LastOrderSeq                    *int                         `json:"last_order_seq,omitzero"`
-	LastCouponOffered               *string                      `json:"last_coupon_offered,omitzero"`
-	Order                           *ContactMetadataOrder        `json:"order,omitzero"`
-	Prescription                    *ContactMetadataPrescription `json:"prescription,omitzero"`
-	OtherFields                     map[string]any               `json:"-" zajson:"-,remain"`
+	InquiryID                       *string                                 `json:"inquiry_id,omitzero"`
+	InquiryStatus                   InquiryStatus                           `json:"inquiry_status,omitzero"`
+	InquiryDisplayID                *string                                 `json:"inquiry_display_id,omitzero"`
+	InquiryAgentID                  *string                                 `json:"inquiry_agent_id,omitzero"`
+	InquiryAgentName                *string                                 `json:"inquiry_agent_name,omitzero"`
+	InquiryAIEvaluation             *string                                 `json:"inquiry_ai_evaluation,omitzero"`
+	InquiryCanBindDisplayID         MetadataBool                            `json:"inquiry_can_bind_display_id,omitzero"`
+	InquiryCreatedAt                *time.Time                              `json:"inquiry_created_at,omitzero"`
+	InquiryExpireDate               *time.Time                              `json:"inquiry_expire_date,omitzero"`
+	InquirySellerAgentID            *string                                 `json:"inquiry_seller_agent_id,omitzero"`
+	InquirySellerAgentName          *string                                 `json:"inquiry_seller_agent_name,omitzero"`
+	InquiryHasPendencies            MetadataBool                            `json:"inquiry_has_pendencies,omitzero"`
+	InquirySellOpportunityCollected MetadataBool                            `json:"inquiry_sell_opportunity_collected,omitzero"`
+	InquiryQuotatedAt               *time.Time                              `json:"inquiry_quotated_at,omitzero"`
+	InquiryDoneAt                   *time.Time                              `json:"inquiry_done_at,omitzero"`
+	InquiryLastStatusUpdate         *time.Time                              `json:"inquiry_last_status_update,omitzero"`
+	InquiryIsChatOpen               MetadataBool                            `json:"inquiry_is_chat_open,omitzero"`
+	InquiryIsMarketplace            MetadataBool                            `json:"inquiry_is_marketplace,omitzero"`
+	InquiryInclusorAgentID          *string                                 `json:"inquiry_inclusor_agent_id,omitzero"`
+	InquiryInclusorAgentName        *string                                 `json:"inquiry_inclusor_agent_name,omitzero"`
+	InquirySpecialistAgentID        *string                                 `json:"inquiry_specialist_agent_id,omitzero"`
+	InquirySpecialistAgentName      *string                                 `json:"inquiry_specialist_agent_name,omitzero"`
+	AccountID                       *string                                 `json:"account_id,omitzero"`
+	ChatbotDisabled                 MetadataBool                            `json:"chatbot_disabled,omitzero"`
+	ChatbotInitialContact           *time.Time                              `json:"chatbot_initial_contact,omitzero"`
+	ChatbotIsPreRegistration        MetadataBool                            `json:"chatbot_is_pre_registration,omitzero"`
+	ChatbotLastState                ChatbotLastState                        `json:"chatbot_last_state,omitzero"`
+	ChatbotRegistrationDate         *time.Time                              `json:"chatbot_registration_date,omitzero"`
+	SkipWelcome                     MetadataBool                            `json:"skip_welcome,omitzero"`
+	MarketingDisabledReason         *ContactMetadataMarketingDisabledReason `json:"marketing_disabled_reason,omitzero"`
+	InitialContactChannel           InitialContactChannel                   `json:"initial_contact_channel,omitzero"`
+	InitialContactDate              *time.Time                              `json:"initial_contact_date,omitzero"`
+	CustomerName                    *string                                 `json:"customer_name,omitzero"`
+	CustomerDocumentCountry         CustomerDocumentCountry                 `json:"customer_document_country,omitzero"`
+	CustomerDocumentType            *string                                 `json:"customer_document_type,omitzero"`
+	CustomerDocument                *string                                 `json:"customer_document,omitzero"`
+	LastOrderSeq                    *int                                    `json:"last_order_seq,omitzero"`
+	LastCouponOffered               *string                                 `json:"last_coupon_offered,omitzero"`
+	Order                           *ContactMetadataOrder                   `json:"order,omitzero"`
+	Prescription                    *ContactMetadataPrescription            `json:"prescription,omitzero"`
+	OtherFields                     map[string]any                          `json:"-" zajson:"-,remain"`
 }
 
 var contactMetadataKnownKeys = map[string]struct{}{

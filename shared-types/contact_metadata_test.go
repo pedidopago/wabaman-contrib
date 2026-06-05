@@ -599,15 +599,27 @@ func TestContactMetadata_SkipWelcomeMarshal(t *testing.T) {
 }
 
 func TestContactMetadata_MarketingDisabledReason(t *testing.T) {
-	input := `{"marketing_disabled_reason": "user_opt_out"}`
+	input := `{"marketing_disabled_reason": {"error": 131, "meta_reason": "user_opt_out", "date": "2026-06-05", "extra": "keep"}}`
 
 	var cm ContactMetadata
 	if err := json.Unmarshal([]byte(input), &cm); err != nil {
 		t.Fatal(err)
 	}
 
-	if cm.MarketingDisabledReason == nil || *cm.MarketingDisabledReason != "user_opt_out" {
-		t.Errorf("MarketingDisabledReason = %v, want user_opt_out", cm.MarketingDisabledReason)
+	if cm.MarketingDisabledReason == nil {
+		t.Fatal("MarketingDisabledReason is nil")
+	}
+	if cm.MarketingDisabledReason.Error == nil || *cm.MarketingDisabledReason.Error != 131 {
+		t.Errorf("MarketingDisabledReason.Error = %v, want 131", cm.MarketingDisabledReason.Error)
+	}
+	if cm.MarketingDisabledReason.MetaReason == nil || *cm.MarketingDisabledReason.MetaReason != "user_opt_out" {
+		t.Errorf("MarketingDisabledReason.MetaReason = %v, want user_opt_out", cm.MarketingDisabledReason.MetaReason)
+	}
+	if cm.MarketingDisabledReason.Date == nil || *cm.MarketingDisabledReason.Date != "2026-06-05" {
+		t.Errorf("MarketingDisabledReason.Date = %v, want 2026-06-05", cm.MarketingDisabledReason.Date)
+	}
+	if cm.MarketingDisabledReason.OtherFields["extra"] != "keep" {
+		t.Errorf("MarketingDisabledReason.OtherFields[extra] = %v, want keep", cm.MarketingDisabledReason.OtherFields["extra"])
 	}
 	if _, exists := cm.OtherFields["marketing_disabled_reason"]; exists {
 		t.Error("marketing_disabled_reason should be a known field, not in OtherFields")
@@ -621,8 +633,18 @@ func TestContactMetadata_MarketingDisabledReason(t *testing.T) {
 	if err := json.Unmarshal(data, &m); err != nil {
 		t.Fatal(err)
 	}
-	if m["marketing_disabled_reason"] != "user_opt_out" {
-		t.Errorf("marketing_disabled_reason = %v, want user_opt_out", m["marketing_disabled_reason"])
+	mdr, ok := m["marketing_disabled_reason"].(map[string]any)
+	if !ok {
+		t.Fatalf("marketing_disabled_reason = %T, want object", m["marketing_disabled_reason"])
+	}
+	if mdr["error"] != float64(131) {
+		t.Errorf("error = %v, want 131", mdr["error"])
+	}
+	if mdr["meta_reason"] != "user_opt_out" {
+		t.Errorf("meta_reason = %v, want user_opt_out", mdr["meta_reason"])
+	}
+	if mdr["extra"] != "keep" {
+		t.Errorf("extra = %v, want keep", mdr["extra"])
 	}
 }
 
