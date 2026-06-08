@@ -299,7 +299,7 @@ func (c *Client) GetMessagingLimitingTier(ctx context.Context, whatsappID string
 		apiVersion = c.GraphAPIVersion
 	}
 
-	url := fmt.Sprintf("https://graph.facebook.com/%s/%s?fields=messaging_limit_tier", apiVersion, whatsappID)
+	url := fmt.Sprintf("https://graph.facebook.com/%s/%s?fields=messaging_limit_tier,whatsapp_business_manager_messaging_limit", apiVersion, whatsappID)
 
 	req, err := NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
@@ -319,13 +319,17 @@ func (c *Client) GetMessagingLimitingTier(ctx context.Context, whatsappID string
 	}
 
 	result := struct {
-		MessagingLimitTier MessageLimitingTier `json:"messaging_limit_tier"`
+		MessagingLimitTier     MessageLimitingTier `json:"messaging_limit_tier"` // this was deprecated by meta
+		PortfolioMessagingTier MessageLimitingTier `json:"whatsapp_business_manager_messaging_limit"`
 	}{}
 
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return "", fmt.Errorf("decode response: %w", err)
 	}
 
+	if result.PortfolioMessagingTier != "" {
+		return result.PortfolioMessagingTier, nil
+	}
 	return result.MessagingLimitTier, nil
 }
 
@@ -653,8 +657,8 @@ const (
 )
 
 type CallPermissionsResponse struct {
-	MessagingProduct string               `json:"messaging_product"`
-	Permission       CallPermissionInfo   `json:"permission"`
+	MessagingProduct string                 `json:"messaging_product"`
+	Permission       CallPermissionInfo     `json:"permission"`
 	Actions          []CallPermissionAction `json:"actions"`
 }
 
