@@ -176,10 +176,13 @@ type CallOnAnswerSDP struct {
 }
 
 // CallStartTimer is broadcast by the server to signal clients to start the call duration timer.
+// StartedAt, when non-zero, tells the client the call was answered at this unix
+// timestamp (useful for reconnect/takeover so the timer reflects elapsed time).
 type CallStartTimer struct {
-	CallID   string `json:"call_id"`
-	PhoneID  uint   `json:"phone_id"`
-	BranchID string `json:"branch_id"`
+	CallID    string `json:"call_id"`
+	PhoneID   uint   `json:"phone_id"`
+	BranchID  string `json:"branch_id"`
+	StartedAt int64  `json:"started_at,omitempty"`
 }
 
 // TerminateCallOrigin indicates which side initiated the call termination.
@@ -272,9 +275,12 @@ type CallInitiateFailed struct {
 // CallStatusUpdated is broadcast when an outbound call moves between lifecycle states.
 // Values: initiating | connecting | ringing | in_progress | completed | missed | rejected.
 type CallStatusUpdated struct {
-	CallID  string `json:"call_id"`
-	PhoneID uint   `json:"phone_id"`
-	Status  string `json:"status"`
+	CallID    string `json:"call_id"`
+	PhoneID   uint   `json:"phone_id"`
+	Status    string `json:"status"`
+	ContactID uint64 `json:"contact_id,omitempty"`
+	AgentID   string `json:"agent_id,omitempty"`
+	AgentName string `json:"agent_name,omitempty"`
 }
 
 // SendCallPermissionRequest is the agent's intent to send a call-permission request to a contact.
