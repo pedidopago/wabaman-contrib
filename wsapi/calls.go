@@ -308,3 +308,79 @@ type SendCallPermissionResponse struct {
 	// Set when Success is true: "interactive" (24h window) or "template" (fallback).
 	Branch string `json:"branch,omitempty"`
 }
+
+// CallInviteAgent is sent by an in-call agent to invite another agent to join.
+// Server fills InviterAgentID and InviterAgentName from JWT.
+type CallInviteAgent struct {
+	CallID              string `json:"call_id"`
+	PhoneID             uint   `json:"phone_id"`
+	BranchID            string `json:"branch_id"`
+	ContactID           uint64 `json:"contact_id"`
+	ContactName         string `json:"contact_name"`
+	ContactPhoneNumber  string `json:"contact_phone_number"`
+	TargetAgentID       string `json:"target_agent_id"`
+	InviterAgentID      string `json:"inviter_agent_id"`
+	InviterAgentName    string `json:"inviter_agent_name"`
+}
+
+// CallInviteAck is sent by the target agent to confirm receipt of the invite (delivery confirmation).
+// AgentID is filled by the server from JWT.
+type CallInviteAck struct {
+	CallID         string `json:"call_id"`
+	AgentID        string `json:"agent_id"`         // server fills from JWT
+	InviterAgentID string `json:"inviter_agent_id"` // client sets from the invite payload
+}
+
+// CallInviteAccepted is sent by the target agent to accept the invite; the agent will start WebRTC join.
+// AgentID and AgentName are filled by the server from JWT.
+type CallInviteAccepted struct {
+	CallID         string `json:"call_id"`
+	AgentID        string `json:"agent_id"`         // server fills from JWT
+	AgentName      string `json:"agent_name"`       // server fills from JWT
+	InviterAgentID string `json:"inviter_agent_id"` // client sets from the invite payload
+}
+
+// CallInviteRejected is sent by the target agent to decline the invite.
+// AgentID and AgentName are filled by the server from JWT.
+type CallInviteRejected struct {
+	CallID         string `json:"call_id"`
+	AgentID        string `json:"agent_id"`         // server fills from JWT
+	AgentName      string `json:"agent_name"`       // server fills from JWT
+	InviterAgentID string `json:"inviter_agent_id"` // client sets from the invite payload
+}
+
+// LeaveCall is sent by an agent to leave a multi-agent call without terminating it.
+type LeaveCall struct {
+	CallID string `json:"call_id"`
+}
+
+// CallAgentJoined is broadcast to all agents in a call when a new agent's WebRTC is live.
+type CallAgentJoined struct {
+	CallID           string `json:"call_id"`
+	PhoneID          uint   `json:"phone_id"`
+	BranchID         string `json:"branch_id"`
+	ContactID        uint64 `json:"contact_id"`
+	AgentID          string `json:"agent_id"`
+	AgentName        string `json:"agent_name"`
+	ParticipantCount int    `json:"participant_count"`
+}
+
+// CallAgentLeft is broadcast to all agents in a call when an agent disconnects.
+type CallAgentLeft struct {
+	CallID           string `json:"call_id"`
+	PhoneID          uint   `json:"phone_id"`
+	BranchID         string `json:"branch_id"`
+	ContactID        uint64 `json:"contact_id"`
+	AgentID          string `json:"agent_id"`
+	AgentName        string `json:"agent_name"`
+	ParticipantCount int    `json:"participant_count"`
+}
+
+// CallInviteFailed is sent by the server to the inviter to explain why the invite was rejected.
+// Reason values: CALL_NOT_FOUND, NOT_IN_CALL, ALREADY_IN_CALL, CALL_FULL, AGENT_NOT_FOUND.
+type CallInviteFailed struct {
+	CallID          string `json:"call_id"`
+	TargetAgentID   string `json:"target_agent_id"`
+	TargetAgentName string `json:"target_agent_name"`
+	Reason          string `json:"reason"`
+}

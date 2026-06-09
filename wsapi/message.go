@@ -59,7 +59,16 @@ const (
 	MessageTypeCallPermissionState        MessageType = 51 // server sends this to the clients
 	MessageTypeSendCallPermissionResponse MessageType = 52 // server sends this to the clients
 
+	// Multi-agent call support (PPS-8164). Numbers continue the call block.
+	MessageTypeCallInviteAgent    MessageType = 53 // client → server → target agent
+	MessageTypeCallInviteAck      MessageType = 54 // target → server → inviter
+	MessageTypeCallInviteAccepted MessageType = 55 // target → server → inviter
+	MessageTypeCallInviteRejected MessageType = 56 // target → server → inviter
+	MessageTypeLeaveCall          MessageType = 57 // client → server
+	MessageTypeCallAgentJoined    MessageType = 58 // server → all agents in call
+	MessageTypeCallAgentLeft      MessageType = 59 // server → all agents in call
 	MessageTypeUnreadCountChanged MessageType = 60 // server sends this to the clients
+	MessageTypeCallInviteFailed   MessageType = 61 // server → inviter
 
 	MessageTypeMockClientMessages MessageType = 230
 	MessageTypeGenericError       MessageType = 235
@@ -116,6 +125,14 @@ type Message struct {
 	SendCallPermissionRequest  *SendCallPermissionRequest  `json:"send_call_permission_request,omitempty"`
 	SendCallPermissionResponse *SendCallPermissionResponse `json:"send_call_permission_response,omitempty"`
 	CallPermissionState        *CallPermissionState        `json:"call_permission_state,omitempty"`
+	CallInviteAgent            *CallInviteAgent            `json:"call_invite_agent,omitempty"`
+	CallInviteAck              *CallInviteAck              `json:"call_invite_ack,omitempty"`
+	CallInviteAccepted         *CallInviteAccepted         `json:"call_invite_accepted,omitempty"`
+	CallInviteRejected         *CallInviteRejected         `json:"call_invite_rejected,omitempty"`
+	LeaveCall                  *LeaveCall                  `json:"leave_call,omitempty"`
+	CallAgentJoined            *CallAgentJoined            `json:"call_agent_joined,omitempty"`
+	CallAgentLeft              *CallAgentLeft              `json:"call_agent_left,omitempty"`
+	CallInviteFailed           *CallInviteFailed           `json:"call_invite_failed,omitempty"`
 	UnreadCountChanged         *UnreadCountChanged         `json:"unread_count_changed,omitempty"`
 }
 
