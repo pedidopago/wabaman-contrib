@@ -83,7 +83,7 @@ func (s CallHoursStatus) IsValid() bool {
 type CallHoursObject struct {
 	Status               CallHoursStatus             `json:"status"`
 	TimezoneID           string                      `json:"timezone_id"`
-	WeeklyOperatingHours []WeeklyOperatingHourObject `json:"weekly_operating_hours"`
+	WeeklyOperatingHours []WeeklyOperatingHourObject `json:"weekly_operating_hours,omitempty"`
 	HolidaySchedule      []HolidayScheduleObject     `json:"holiday_schedule,omitempty"`
 }
 
