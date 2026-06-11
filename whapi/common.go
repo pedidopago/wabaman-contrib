@@ -11,6 +11,20 @@ import (
 // represented as strings.
 type Timestamp string
 
+func (t *Timestamp) UnmarshalJSON(data []byte) error {
+	var s string
+	if err := json.Unmarshal(data, &s); err == nil {
+		*t = Timestamp(s)
+		return nil
+	}
+	var n json.Number
+	if err := json.Unmarshal(data, &n); err != nil {
+		return fmt.Errorf("Timestamp: cannot unmarshal %s", string(data))
+	}
+	*t = Timestamp(n.String())
+	return nil
+}
+
 func (t Timestamp) IsEmpty() bool {
 	return t == ""
 }
