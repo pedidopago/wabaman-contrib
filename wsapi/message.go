@@ -59,6 +59,17 @@ const (
 	MessageTypeCallPermissionState        MessageType = 51 // server sends this to the clients
 	MessageTypeSendCallPermissionResponse MessageType = 52 // server sends this to the clients
 
+	// Multi-agent call support (PPS-8164). Numbers continue the call block.
+	MessageTypeCallInviteAgent    MessageType = 53 // client → server → target agent
+	MessageTypeCallInviteAck      MessageType = 54 // target → server → inviter
+	MessageTypeCallInviteAccepted MessageType = 55 // target → server → inviter
+	MessageTypeCallInviteRejected MessageType = 56 // target → server → inviter
+	MessageTypeLeaveCall          MessageType = 57 // client → server
+	MessageTypeCallAgentJoined    MessageType = 58 // server → all agents in call
+	MessageTypeCallAgentLeft      MessageType = 59 // server → all agents in call
+	MessageTypeUnreadCountChanged MessageType = 60 // server sends this to the clients
+	MessageTypeCallInviteFailed   MessageType = 61 // server → inviter
+
 	MessageTypeMockClientMessages MessageType = 230
 	MessageTypeGenericError       MessageType = 235
 	MessageTypeCloseError         MessageType = 240
@@ -114,6 +125,15 @@ type Message struct {
 	SendCallPermissionRequest  *SendCallPermissionRequest  `json:"send_call_permission_request,omitempty"`
 	SendCallPermissionResponse *SendCallPermissionResponse `json:"send_call_permission_response,omitempty"`
 	CallPermissionState        *CallPermissionState        `json:"call_permission_state,omitempty"`
+	CallInviteAgent            *CallInviteAgent            `json:"call_invite_agent,omitempty"`
+	CallInviteAck              *CallInviteAck              `json:"call_invite_ack,omitempty"`
+	CallInviteAccepted         *CallInviteAccepted         `json:"call_invite_accepted,omitempty"`
+	CallInviteRejected         *CallInviteRejected         `json:"call_invite_rejected,omitempty"`
+	LeaveCall                  *LeaveCall                  `json:"leave_call,omitempty"`
+	CallAgentJoined            *CallAgentJoined            `json:"call_agent_joined,omitempty"`
+	CallAgentLeft              *CallAgentLeft              `json:"call_agent_left,omitempty"`
+	CallInviteFailed           *CallInviteFailed           `json:"call_invite_failed,omitempty"`
+	UnreadCountChanged         *UnreadCountChanged         `json:"unread_count_changed,omitempty"`
 }
 
 // ToJSON marshals the Message to a JSON string.
@@ -192,20 +212,20 @@ type ClientReceipt struct {
 
 // ContactUpdate is broadcast to connected clients when a contact's information changes.
 type ContactUpdate struct {
-	ContactID          uint64         `json:"contact_id"`
-	HostPhoneID        uint           `json:"host_phone_id"`
-	WABAContactID      string         `json:"waba_contact_id"`
-	UserID             string         `json:"user_id,omitempty"` // Business-scoped user ID (BSUID)
-	WABAProfileName    string         `json:"waba_profile_name"`
-	ContactPhoneNumber string         `json:"contact_phone_number,omitempty"`
-	CustomerID         string         `json:"customer_id"`
-	CustomerName       string         `json:"customer_name"`
-	Name               string         `json:"name"`
-	Metadata           map[string]any `json:"metadata"`
-	ColorTags          []ColorTag     `json:"color_tags,omitempty"`
-	UpdatedFields      []string       `json:"updated_fields"`
-	FieldsBefore       map[string]any `json:"fields_before,omitempty"`
-	FieldsAfter        map[string]any `json:"fields_after,omitempty"`
+	ContactID          uint64                `json:"contact_id"`
+	HostPhoneID        uint                  `json:"host_phone_id"`
+	WABAContactID      string                `json:"waba_contact_id"`
+	UserID             string                `json:"user_id,omitempty"` // Business-scoped user ID (BSUID)
+	WABAProfileName    string                `json:"waba_profile_name"`
+	ContactPhoneNumber string                `json:"contact_phone_number,omitempty"`
+	CustomerID         string                `json:"customer_id"`
+	CustomerName       string                `json:"customer_name"`
+	Name               string                `json:"name"`
+	Metadata           *ContactMetadataField `json:"metadata,omitzero"`
+	ColorTags          []ColorTag            `json:"color_tags,omitempty"`
+	UpdatedFields      []string              `json:"updated_fields"`
+	FieldsBefore       map[string]any        `json:"fields_before,omitempty"`
+	FieldsAfter        map[string]any        `json:"fields_after,omitempty"`
 }
 
 // ContactUpdateToSend is the wire-format variant of [ContactUpdate] with json.RawMessage
@@ -230,14 +250,14 @@ type ContactUpdateToSend struct {
 // NewContact is broadcast to connected clients when a new contact is created
 // (e.g. when a previously unknown user sends their first message).
 type NewContact struct {
-	ContactID          uint64         `json:"contact_id"`
-	HostPhoneID        uint           `json:"host_phone_id"`
-	WABAContactID      string         `json:"waba_contact_id"`
-	UserID             string         `json:"user_id,omitempty"` // Business-scoped user ID (BSUID)
-	WABAProfileName    string         `json:"waba_profile_name"`
-	ContactPhoneNumber string         `json:"contact_phone_number,omitempty"`
-	CustomerID         string         `json:"customer_id"`
-	Metadata           map[string]any `json:"metadata"`
+	ContactID          uint64                `json:"contact_id"`
+	HostPhoneID        uint                  `json:"host_phone_id"`
+	WABAContactID      string                `json:"waba_contact_id"`
+	UserID             string                `json:"user_id,omitempty"` // Business-scoped user ID (BSUID)
+	WABAProfileName    string                `json:"waba_profile_name"`
+	ContactPhoneNumber string                `json:"contact_phone_number,omitempty"`
+	CustomerID         string                `json:"customer_id"`
+	Metadata           *ContactMetadataField `json:"metadata,omitzero"`
 }
 
 // NewContactToSend is the wire-format variant of [NewContact] with json.RawMessage
@@ -432,6 +452,15 @@ type ScheduledMessageStub struct {
 		At         string `json:"at,omitempty"`
 		Persistent bool   `json:"persistent,omitempty"`
 	} `json:"scheduled"`
+}
+
+// UnreadCountChanged is broadcast when a contact's unread message count changes.
+type UnreadCountChanged struct {
+	PhoneID       uint   `json:"phone_id"`
+	BranchID      string `json:"branch_id,omitzero"`
+	ContactID     uint64 `json:"contact_id"`
+	WABAContactID string `json:"waba_contact_id,omitzero"`
+	Count         int    `json:"count"`
 }
 
 // CancelledScheduledMessages is broadcast when one or more scheduled messages are cancelled.

@@ -476,7 +476,7 @@ type CallPermissionReply struct {
 	IsPermanent bool `json:"is_permanent"`
 	// Unix timestamp (as string per Meta convention) when a temporary permission expires.
 	// Absent for permanent permissions and for reject responses.
-	ExpirationTimestamp string `json:"expiration_timestamp,omitempty"`
+	ExpirationTimestamp Timestamp `json:"expiration_timestamp,omitempty"`
 	// user_action or automatic
 	ResponseSource string `json:"response_source"`
 }
