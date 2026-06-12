@@ -367,7 +367,7 @@ type JoinCall struct {
 
 // JoinCallAnswer is sent by the server back to the joining agent with the SDP answer.
 // On failure AnswerSDP is empty and Reason is set to one of:
-// CALL_NOT_FOUND, CALL_FULL, ALREADY_IN_CALL, JOIN_FAILED.
+// CALL_NOT_FOUND, CALL_FULL, ALREADY_IN_CALL, NOT_READY, JOIN_FAILED.
 type JoinCallAnswer struct {
 	CallID    string `json:"call_id"`
 	AnswerSDP string `json:"answer_sdp"`
