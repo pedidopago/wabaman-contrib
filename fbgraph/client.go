@@ -84,7 +84,7 @@ func (c *Client) SendMessage(phoneID string, msg *MessageObject) (*MessageObject
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return nil, c.errorFromResponse(resp)
 	}
@@ -127,7 +127,7 @@ func (c *Client) SendMarketingMessage(phoneID string, msg *MessageObject) (*Mess
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return nil, c.errorFromResponse(resp)
 	}
@@ -178,8 +178,8 @@ func (c *Client) UploadMedia(phoneID string, mimeType string, r io.Reader, fsize
 	allok := false
 	defer func() {
 		if !allok {
-			mw.Close()
-			pw.Close()
+			_ = mw.Close()
+			_ = pw.Close()
 		}
 	}()
 
@@ -206,7 +206,7 @@ func (c *Client) UploadMedia(phoneID string, mimeType string, r io.Reader, fsize
 	if err := <-done; err != nil {
 		return "", fmt.Errorf("request: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return "", c.errorFromResponse(resp)
 	}
@@ -236,7 +236,7 @@ func (c *Client) GetMedia(mediaID string) (*GetMediaResult, error) {
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return nil, c.errorFromResponse(resp)
 	}
@@ -259,7 +259,7 @@ func (c *Client) DownloadMedia(mr *GetMediaResult, out io.Writer) (nwritten int6
 		return 0, fmt.Errorf("request failed: %w", err)
 	}
 	log.Debug().Interface("media", mr).Int("http_status_code", resp.StatusCode).Interface("response_headers", resp.Header).Msg("downloading media")
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
 		nwritten, err := io.Copy(out, resp.Body)
 		if err != nil {
@@ -340,7 +340,7 @@ func (c *Client) NewUploadSession(fbAppID string, params NewUploadSessionParams)
 	if err != nil {
 		return "", fmt.Errorf("request failed: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		gerr := c.errorFromResponse(resp)
 
@@ -383,7 +383,7 @@ func (c *Client) UploadHeaderHandle(uploadSessionID string, r io.Reader) (h stri
 	if err != nil {
 		return "", fmt.Errorf("request failed: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		gerr := c.errorFromResponse(resp)
 
@@ -417,7 +417,7 @@ func (c *Client) errorFromResponse(resp *http.Response) error {
 		Error GraphError `json:"error"`
 	}{}
 	jbdbuff := new(bytes.Buffer)
-	io.Copy(jbdbuff, resp.Body)
+	_, _ = io.Copy(jbdbuff, resp.Body)
 
 	c.lastErrorRawBody = jbdbuff.String()
 

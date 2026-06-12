@@ -52,7 +52,7 @@ func (c *Client) PostSMBAppData(ctx context.Context, whatsappID string, syncType
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
 
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, c.errorFromResponse(resp)

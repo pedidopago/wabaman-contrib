@@ -71,7 +71,7 @@ type ContactObject struct {
 	Birthday  string           `json:"birthday,omitempty"`
 	Emails    []ContactEmail   `json:"emails,omitempty"`
 	Name      ContactName      `json:"name"`
-	Org       ContactOrg       `json:"org,omitempty"`
+	Org       ContactOrg       `json:"org"`
 	Phones    []ContactPhone   `json:"phones,omitempty"`
 	URLs      []ContactURL     `json:"urls,omitempty"`
 }
@@ -193,7 +193,7 @@ type GraphError struct {
 	IsTransient    bool      `json:"is_transient"`     // present in v17+
 	ErrorUserTitle string    `json:"error_user_title"` // present in v17+
 	ErrorUserMsg   string    `json:"error_user_msg"`   // present in v17+
-	ErrorData      ErrorData `json:"error_data,omitempty"`
+	ErrorData      ErrorData `json:"error_data"`
 	FBTraceID      string    `json:"fbtrace_id"`
 	HTTPStatusCode int       `json:"http_status_code"` // this is not originally in the response
 }

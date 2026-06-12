@@ -69,6 +69,8 @@ const (
 	MessageTypeCallAgentLeft      MessageType = 59 // server → all agents in call
 	MessageTypeUnreadCountChanged MessageType = 60 // server sends this to the clients
 	MessageTypeCallInviteFailed   MessageType = 61 // server → inviter
+	MessageTypeJoinCall           MessageType = 62 // CLIENT -> SERVER
+	MessageTypeJoinCallAnswer     MessageType = 63 // SERVER -> CLIENT
 
 	MessageTypeMockClientMessages MessageType = 230
 	MessageTypeGenericError       MessageType = 235
@@ -133,6 +135,8 @@ type Message struct {
 	CallAgentJoined            *CallAgentJoined            `json:"call_agent_joined,omitempty"`
 	CallAgentLeft              *CallAgentLeft              `json:"call_agent_left,omitempty"`
 	CallInviteFailed           *CallInviteFailed           `json:"call_invite_failed,omitempty"`
+	JoinCall                   *JoinCall                   `json:"join_call,omitempty"`
+	JoinCallAnswer             *JoinCallAnswer             `json:"join_call_answer,omitempty"`
 	UnreadCountChanged         *UnreadCountChanged         `json:"unread_count_changed,omitempty"`
 }
 
@@ -353,8 +357,8 @@ type HostNoteButton struct {
 	SelectedBy struct {
 		AgentID   string `json:"agent_id,omitempty"`
 		AgentName string `json:"agent_name,omitempty"`
-	} `json:"selected_by,omitempty"`
-	SelectedAt time.Time `json:"selected_at,omitempty"`
+	} `json:"selected_by"`
+	SelectedAt time.Time `json:"selected_at"`
 }
 
 // HostNoteUpdated is broadcast to connected clients when a host note is modified
@@ -399,7 +403,7 @@ type ReactionEventData struct {
 	Emoji         string    `json:"emoji"`
 	AgentID       string    `json:"agent_id,omitempty"`
 	AgentName     string    `json:"agent_name,omitempty"`
-	CreatedAt     time.Time `json:"created_at,omitempty"`
+	CreatedAt     time.Time `json:"created_at"`
 }
 
 // MessageContext contains information about the original message that a reply or forward refers to.
@@ -415,7 +419,7 @@ type MessageReaction struct {
 	ID            string    `json:"id,omitempty"`
 	WABAContactID string    `json:"waba_contact_id"`
 	Emoji         string    `json:"emoji"`
-	CreatedAt     time.Time `json:"created_at,omitempty"`
+	CreatedAt     time.Time `json:"created_at"`
 	AgentID       string    `json:"agent_id,omitempty"`
 	AgentName     string    `json:"agent_name,omitempty"`
 	Status        string    `json:"status,omitempty"`

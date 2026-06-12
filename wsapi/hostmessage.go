@@ -17,7 +17,7 @@ type HostMessage struct {
 	PhoneID         uint   `json:"phone_id"`
 	HostPhoneNumber string `json:"host_phone_number"`
 	// The id (phone number) of the recipient (client).
-	WABARecipientID         string                            `json:"waba_recipient_id"`
+	WABARecipientID string `json:"waba_recipient_id"`
 	// The business-scoped user ID (BSUID) of the recipient.
 	UserID                  string                            `json:"user_id,omitempty"`
 	WABATimestamp           time.Time                         `json:"waba_timestamp"`
@@ -39,7 +39,7 @@ type HostMessage struct {
 	FailedReason            *SentMessageFailedReason          `json:"failed_reason,omitempty"`
 	Preview                 string                            `json:"preview,omitempty"`
 	Origin                  string                            `json:"origin,omitempty"`
-	CreatedAt               time.Time                         `json:"created_at,omitempty"`
+	CreatedAt               time.Time                         `json:"created_at"`
 	CreatedAtNano           int64                             `json:"created_at_nano,omitempty"`
 	Context                 *MessageContext                   `json:"context,omitempty"`
 	Reactions               []MessageReaction                 `json:"reactions,omitempty"`
