@@ -141,6 +141,7 @@ type SendBrowserCandidate struct {
 	PhoneID   uint            `json:"phone_id"`
 	CallID    string          `json:"call_id"`
 	Candidate json.RawMessage `json:"candidate"`
+	AgentID   string          `json:"agent_id,omitempty"` // set for multi-agent calls to route to the correct agent's peer connection
 }
 
 // CallStarted is broadcast by the server when a call has been successfully established.
@@ -352,6 +353,22 @@ type CallInviteRejected struct {
 // LeaveCall is sent by an agent to leave a multi-agent call without terminating it.
 type LeaveCall struct {
 	CallID string `json:"call_id"`
+}
+
+// JoinCall is sent by a secondary agent to join an active multi-agent call.
+// AgentID and AgentName are filled by the server from JWT.
+type JoinCall struct {
+	CallID    string `json:"call_id"`
+	PhoneID   uint   `json:"phone_id"`
+	OfferSDP  string `json:"offer_sdp"`
+	AgentID   string `json:"agent_id"`   // server fills from JWT
+	AgentName string `json:"agent_name"` // server fills from JWT
+}
+
+// JoinCallAnswer is sent by the server back to the joining agent with the SDP answer.
+type JoinCallAnswer struct {
+	CallID    string `json:"call_id"`
+	AnswerSDP string `json:"answer_sdp"`
 }
 
 // CallAgentJoined is broadcast to all agents in a call when a new agent's WebRTC is live.

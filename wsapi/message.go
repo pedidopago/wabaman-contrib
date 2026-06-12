@@ -69,6 +69,8 @@ const (
 	MessageTypeCallAgentLeft      MessageType = 59 // server → all agents in call
 	MessageTypeUnreadCountChanged MessageType = 60 // server sends this to the clients
 	MessageTypeCallInviteFailed   MessageType = 61 // server → inviter
+	MessageTypeJoinCall           MessageType = 62 // CLIENT -> SERVER
+	MessageTypeJoinCallAnswer     MessageType = 63 // SERVER -> CLIENT
 
 	MessageTypeMockClientMessages MessageType = 230
 	MessageTypeGenericError       MessageType = 235
@@ -133,6 +135,8 @@ type Message struct {
 	CallAgentJoined            *CallAgentJoined            `json:"call_agent_joined,omitempty"`
 	CallAgentLeft              *CallAgentLeft              `json:"call_agent_left,omitempty"`
 	CallInviteFailed           *CallInviteFailed           `json:"call_invite_failed,omitempty"`
+	JoinCall                   *JoinCall                   `json:"join_call,omitempty"`
+	JoinCallAnswer             *JoinCallAnswer             `json:"join_call_answer,omitempty"`
 	UnreadCountChanged         *UnreadCountChanged         `json:"unread_count_changed,omitempty"`
 }
 
