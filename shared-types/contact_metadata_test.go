@@ -6,8 +6,6 @@ import (
 	"time"
 )
 
-func ptr[T any](v T) *T { return &v }
-
 func TestContactMetadata_UnmarshalOnlyKnownFields(t *testing.T) {
 	input := `{
 		"inquiry_id": "inq-123",
@@ -148,7 +146,7 @@ func TestContactMetadata_UnmarshalEmpty(t *testing.T) {
 
 func TestContactMetadata_MarshalOnlyKnownFields(t *testing.T) {
 	cm := ContactMetadata{
-		InquiryID:       ptr("inq-1"),
+		InquiryID:       new("inq-1"),
 		InquiryStatus:   InquiryStatusPending,
 		ChatbotDisabled: MetadataBoolTrue,
 	}
@@ -205,8 +203,8 @@ func TestContactMetadata_MarshalOnlyOtherFields(t *testing.T) {
 
 func TestContactMetadata_MarshalMixed(t *testing.T) {
 	cm := ContactMetadata{
-		InquiryID: ptr("inq-1"),
-		AccountID: ptr("acc-2"),
+		InquiryID: new("inq-1"),
+		AccountID: new("acc-2"),
 		OtherFields: map[string]any{
 			"custom_tag": "vip",
 		},
@@ -235,7 +233,7 @@ func TestContactMetadata_MarshalMixed(t *testing.T) {
 
 func TestContactMetadata_MarshalStructFieldWinsOverOtherFields(t *testing.T) {
 	cm := ContactMetadata{
-		InquiryID: ptr("correct"),
+		InquiryID: new("correct"),
 		OtherFields: map[string]any{
 			"inquiry_id": "wrong",
 		},

@@ -2,14 +2,16 @@ name: PR CIs
 
 on:
   push:
-    branches: ["*"]
+    branches: [main]
+  pull_request:
+    branches: [main]
 jobs:
   ci:
     name: CI
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v5
       - name: Retrieve Git Tokens
         env:
           USER: ${{ secrets.GIT_USER }}
@@ -18,19 +20,17 @@ jobs:
           git config --global url."https://${USER}:${TOKEN}@github.com/pedidopago".insteadOf "git+ssh://git@github.com/pedidopago" --replace-all
           git config --global url."https://${USER}:${TOKEN}@github.com/pedidopago".insteadOf "https://github.com/pedidopago" --add
       - name: Install Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
-          go-version: ">=1.23.0"
-      - uses: actions/checkout@v1
-        with:
-          fetch-depth: 1
+          go-version: 1.26.4
       - name: Run Tests
-        env:
-          DATABASE_URL: ""
         run: |
           go test ./...
-      - name: Run static analysis
+      - name: Run linters
+        uses: golangci/golangci-lint-action@v7
+        with:
+          version: v2.12.2
+      - name: Run vulnerability check
         run: |
-          go vet ./...
-          go install honnef.co/go/tools/cmd/staticcheck@latest
-          staticcheck -go 1.26 ./...
+          go install golang.org/x/vuln/cmd/govulncheck@latest
+          govulncheck ./...

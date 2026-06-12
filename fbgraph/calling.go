@@ -211,7 +211,7 @@ func (c *Client) GetWhatsappSettings(ctx context.Context, whatsappID string) (*W
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return nil, c.errorFromResponse(resp)
 	}
@@ -271,12 +271,12 @@ func (c *Client) UpdateWhatsappSettings(ctx context.Context, whatsappID string, 
 		return fmt.Errorf("request failed: %w", err)
 	}
 
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return c.errorFromResponse(resp)
 	}
 
-	io.Copy(io.Discard, resp.Body)
+	_, _ = io.Copy(io.Discard, resp.Body)
 
 	return nil
 }
@@ -313,7 +313,7 @@ func (c *Client) GetMessagingLimitingTier(ctx context.Context, whatsappID string
 	if err != nil {
 		return "", fmt.Errorf("request failed: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return "", c.errorFromResponse(resp)
 	}
@@ -380,7 +380,7 @@ func (c *Client) GetAppSubscribedWebhooks(ctx context.Context, appID, appSecret 
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, c.errorFromResponse(resp)
@@ -455,12 +455,12 @@ func (c *Client) PreAcceptCall(ctx context.Context, whatsappID string, r *Accept
 		return fmt.Errorf("request failed: %w", err)
 	}
 
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return c.errorFromResponse(resp)
 	}
 
-	io.Copy(io.Discard, resp.Body)
+	_, _ = io.Copy(io.Discard, resp.Body)
 
 	return nil
 }
@@ -507,12 +507,12 @@ func (c *Client) AcceptCall(ctx context.Context, whatsappID string, r *AcceptCal
 		return fmt.Errorf("request failed: %w", err)
 	}
 
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return c.errorFromResponse(resp)
 	}
 
-	io.Copy(io.Discard, resp.Body)
+	_, _ = io.Copy(io.Discard, resp.Body)
 
 	return nil
 }
@@ -559,12 +559,12 @@ func (c *Client) TerminateCall(ctx context.Context, whatsappID string, callID st
 		return fmt.Errorf("request failed: %w", err)
 	}
 
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return c.errorFromResponse(resp)
 	}
 
-	io.Copy(io.Discard, resp.Body)
+	_, _ = io.Copy(io.Discard, resp.Body)
 
 	return nil
 }
@@ -625,7 +625,7 @@ func (c *Client) InitiateCall(ctx context.Context, phoneNumberID string, r Initi
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
 
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return nil, c.errorFromResponse(resp)
 	}
@@ -700,7 +700,7 @@ func (c *Client) GetCallPermissions(ctx context.Context, phoneNumberID, userWAID
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return nil, c.errorFromResponse(resp)
 	}

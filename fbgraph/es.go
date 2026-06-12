@@ -34,7 +34,7 @@ func (c *Client) PostSubscribedApps(ctx context.Context, wabaID string) error {
 		return fmt.Errorf("request failed: %w", err)
 	}
 
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		gerr := c.errorFromResponse(resp)
 		if ge, ok := AsGraphError(gerr); ok {
@@ -45,6 +45,6 @@ func (c *Client) PostSubscribedApps(ctx context.Context, wabaID string) error {
 		return gerr
 	}
 
-	io.Copy(io.Discard, resp.Body)
+	_, _ = io.Copy(io.Discard, resp.Body)
 	return nil
 }

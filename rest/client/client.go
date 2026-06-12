@@ -188,7 +188,7 @@ func (c *Client) GetMessageByID(ctx context.Context, id string) (rest.AnyMessage
 	outputbuf := new(bytes.Buffer)
 	ofn := &getMessageByIDBogusOutput{
 		fn: func(src io.Reader) {
-			io.Copy(outputbuf, src)
+			_, _ = io.Copy(outputbuf, src)
 		},
 	}
 
@@ -455,7 +455,7 @@ func (c *Client) doRequest(ctx context.Context, method, suffix string, input, ou
 	if err != nil {
 		return fmt.Errorf("request failed: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return c.errorFromResponse(ctx, resp)
 	}
@@ -466,7 +466,7 @@ func (c *Client) doRequest(ctx context.Context, method, suffix string, input, ou
 			return nil
 		}
 
-		io.Copy(io.Discard, resp.Body)
+		_, _ = io.Copy(io.Discard, resp.Body)
 		return nil
 	}
 	if err := json.NewDecoder(resp.Body).Decode(output); err != nil {

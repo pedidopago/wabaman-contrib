@@ -40,28 +40,6 @@ func zunmarshal[T interface {
 	return v
 }
 
-// zRoundTrip marshals v via Z, unmarshals into a new instance via Z, then
-// JSON-marshals both and compares. It returns the Z-unmarshaled copy.
-func zRoundTrip[T interface {
-	*E
-	ZMarshalJSON(w *zajson.Writer) error
-	ZUnmarshalJSON(r *zajson.Reader) error
-}, E any](t *testing.T, v *E) *E {
-	t.Helper()
-	data := zmarshal(t, T(v))
-	got := zunmarshal[T](t, data)
-	return got
-}
-
-func assertJSONEqual(t *testing.T, label string, a, b any) {
-	t.Helper()
-	ja, _ := json.Marshal(a)
-	jb, _ := json.Marshal(b)
-	if string(ja) != string(jb) {
-		t.Errorf("%s: got %s, want %s", label, ja, jb)
-	}
-}
-
 // ---------------------------------------------------------------------------
 // ContactMetadata Z round-trip tests
 // ---------------------------------------------------------------------------
@@ -168,7 +146,7 @@ func TestZ_ContactMetadata_UnmarshalEmpty(t *testing.T) {
 
 func TestZ_ContactMetadata_MarshalKnownFields(t *testing.T) {
 	cm := ContactMetadata{
-		InquiryID:       ptr("inq-1"),
+		InquiryID:       new("inq-1"),
 		InquiryStatus:   InquiryStatusPending,
 		ChatbotDisabled: MetadataBoolTrue,
 	}
@@ -922,9 +900,9 @@ func TestZ_ContactMetadata_MarketingDisabledReason(t *testing.T) {
 
 func TestZ_MetadataBool_Formats(t *testing.T) {
 	for _, tc := range []struct {
-		name     string
-		json     string
-		want     MetadataBool
+		name string
+		json string
+		want MetadataBool
 	}{
 		{"bool true", `{"chatbot_disabled": true}`, MetadataBoolTrue},
 		{"bool false", `{"chatbot_disabled": false}`, MetadataBoolFalse},

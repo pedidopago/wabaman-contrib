@@ -180,7 +180,7 @@ func (c *Client) GetMessageTemplate(ctx context.Context, id string) (*MessageTem
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return nil, c.errorFromResponse(resp)
 	}
@@ -224,7 +224,7 @@ func (c *Client) GetMessageTemplates(ctx context.Context, params GetMessageTempl
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return nil, c.errorFromResponse(resp)
 	}
@@ -261,7 +261,7 @@ func (c *Client) CreateMessageTemplate(ctx context.Context, wabaID string, templ
 	if err != nil {
 		return "", fmt.Errorf("request failed: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		gerr := c.errorFromResponse(resp)
 
@@ -317,7 +317,7 @@ func (c *Client) UpdateMessageTemplateCategory(ctx context.Context, templateID s
 		return fmt.Errorf("request failed: %w", err)
 	}
 
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		gerr := c.errorFromResponse(resp)
@@ -373,7 +373,7 @@ func (c *Client) UpdateMessageTemplate(ctx context.Context, templateID string, c
 	if err != nil {
 		return fmt.Errorf("request failed: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		gerr := c.errorFromResponse(resp)
 
@@ -420,7 +420,7 @@ func (c *Client) DeleteMessageTemplate(ctx context.Context, whatsappBusinessAcco
 	if err != nil {
 		return fmt.Errorf("request failed: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		gerr := c.errorFromResponse(resp)
 

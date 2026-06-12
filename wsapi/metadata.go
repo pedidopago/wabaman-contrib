@@ -156,14 +156,14 @@ type ContactMetadataToSend struct {
 	ContactPhoneNumber           string           `json:"contact_phone_number,omitempty"`
 	IsNewContact                 bool             `json:"is_new_contact,omitempty"`
 	Metadata                     json.RawMessage  `json:"metadata,omitempty"`
-	LastActivity                 mariadb.NullTime `json:"last_activity,omitempty"`
+	LastActivity                 mariadb.NullTime `json:"last_activity"`
 	LastMessagePreview           string           `json:"last_message_preview,omitempty"`
 	LastMessagePreviewOrigin     string           `json:"last_message_preview_origin,omitempty"`
 	LastMessagePreviewStatus     string           `json:"last_message_preview_status,omitempty"`
-	LastMessageTimestamp         mariadb.NullTime `json:"last_message_timestamp,omitempty"`
-	LastMessageReceivedTimestamp mariadb.NullTime `json:"last_message_received_timestamp,omitempty"`
+	LastMessageTimestamp         mariadb.NullTime `json:"last_message_timestamp"`
+	LastMessageReceivedTimestamp mariadb.NullTime `json:"last_message_received_timestamp"`
 	UnreadMessages               *int             `json:"unread_messages,omitempty"`
-	ERPLastSync                  mariadb.NullTime `json:"erp_last_sync,omitempty"`
+	ERPLastSync                  mariadb.NullTime `json:"erp_last_sync"`
 	ColorTags                    []ColorTag       `json:"color_tags,omitempty"`
 	Last24HWindow                string           `json:"last_24h_window,omitempty"`
 	Last24HWindowUnix            int64            `json:"last_24h_window_unix,omitempty"`

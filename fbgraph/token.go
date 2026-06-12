@@ -53,7 +53,7 @@ func (c *Client) DebugToken(ctx context.Context, inputToken string) (TokenInfo, 
 	if err != nil {
 		return emptyd, fmt.Errorf("request failed: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return emptyd, c.errorFromResponse(resp)
 	}
@@ -80,7 +80,7 @@ func (c *Client) NewPermanentAccessToken(ctx context.Context, appID, appSecret, 
 	if err != nil {
 		return "", fmt.Errorf("request failed: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return "", c.errorFromResponse(resp)
 	}

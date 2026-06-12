@@ -432,7 +432,7 @@ type Contact struct {
 	// The whatsapp id (phone number) of the contact.
 	WABAContactID string `json:"waba_contact_id"`
 	// The business-scoped user ID (BSUID) assigned by Meta.
-	UserID mariadb.NullString `json:"user_id,omitempty"`
+	UserID mariadb.NullString `json:"user_id"`
 	// The profile name of the contact.
 	WABAProfileName mariadb.NullString `json:"waba_profile_name"`
 	// The timestamp of the last time the contact was 'seen' online.
@@ -450,7 +450,7 @@ type Contact struct {
 	// The mariadb enum if the message was sent from the contact to the host or viceversa (host|client)
 	LastMessagePreviewOrigin     mariadb.NullString `json:"last_message_preview_origin"`
 	LastMessagePreviewStatus     string             `json:"last_message_preview_status"`
-	LastMessagePreviewWhatsAppID mariadb.NullString `json:"last_message_preview_whatsapp_id,omitempty"`
+	LastMessagePreviewWhatsAppID mariadb.NullString `json:"last_message_preview_whatsapp_id"`
 	// Contact Metadata
 	Metadata map[string]any `json:"metadata"`
 	// The customer_id of ms_customer
@@ -476,7 +476,7 @@ type ContactV2 struct {
 	HostPhoneNumber string    `json:"host_phone_number"`
 	Tags            []string  `json:"tags"`
 	AgentTags       []string  `json:"agent_tags"`
-	LastMessage     time.Time `json:"last_message_timestamp,omitempty"`
+	LastMessage     time.Time `json:"last_message_timestamp"`
 	UnreadMessages  int       `json:"unread_messages"`
 }
 
@@ -843,10 +843,10 @@ type RegisterDriverMessageRequest struct {
 	Buttons                    []Button       `json:"buttons,omitempty"`
 	Header                     *Header        `json:"header,omitempty"`
 	Footer                     string         `json:"footer,omitempty"`
-	CreatedAt                  time.Time      `json:"created_at,omitempty" description:"Message creation date"`
-	SentAt                     time.Time      `json:"sent_at,omitempty" description:"Message sent date"`
-	DeliveredAt                time.Time      `json:"delivered_at,omitempty" description:"Message delivered date"`
-	ReadAt                     time.Time      `json:"read_at,omitempty" description:"Message read date"`
+	CreatedAt                  time.Time      `json:"created_at" description:"Message creation date"`
+	SentAt                     time.Time      `json:"sent_at" description:"Message sent date"`
+	DeliveredAt                time.Time      `json:"delivered_at" description:"Message delivered date"`
+	ReadAt                     time.Time      `json:"read_at" description:"Message read date"`
 	ReplyContact               *ReplyContact  `json:"reply_contact,omitempty"`
 	ReplyMessageID             string         `json:"reply_message_id,omitempty"`
 	ReplyButtonID              string         `json:"reply_button_id,omitempty"`

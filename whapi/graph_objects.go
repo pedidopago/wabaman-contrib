@@ -54,13 +54,13 @@ type EntryObject struct {
 type ChangeObjectField string
 
 const (
-	ChangeObjectFieldMessages         ChangeObjectField = "messages"
-	ChangeObjectFieldContacts         ChangeObjectField = "contacts"
-	ChangeObjectFieldErrors           ChangeObjectField = "errors"
-	ChangeObjectFieldStatuses         ChangeObjectField = "statuses"
-	ChangeObjectFieldHistory          ChangeObjectField = "history"
-	ChangeObjectFieldSMBMessageEchoes ChangeObjectField = "smb_message_echoes"
-	ChangeObjectFieldSMBAppStateSync  ChangeObjectField = "smb_app_state_sync"
+	ChangeObjectFieldMessages                     ChangeObjectField = "messages"
+	ChangeObjectFieldContacts                     ChangeObjectField = "contacts"
+	ChangeObjectFieldErrors                       ChangeObjectField = "errors"
+	ChangeObjectFieldStatuses                     ChangeObjectField = "statuses"
+	ChangeObjectFieldHistory                      ChangeObjectField = "history"
+	ChangeObjectFieldSMBMessageEchoes             ChangeObjectField = "smb_message_echoes"
+	ChangeObjectFieldSMBAppStateSync              ChangeObjectField = "smb_app_state_sync"
 	ChangeObjectFieldCalls                        ChangeObjectField = "calls"
 	ChangeObjectFieldMessageTemplateQualityUpdate ChangeObjectField = "message_template_quality_update"
 )
@@ -96,7 +96,7 @@ type ValueObject struct {
 	// Calls https://developers.facebook.com/docs/whatsapp/cloud-api/calling/user-initiated-calls
 	Calls []CallObject `json:"calls,omitempty"`
 	// Metadata for the business that is subscribed to the webhook.
-	Metadata ValueObjectMetadata `json:"metadata,omitempty"`
+	Metadata ValueObjectMetadata `json:"metadata"`
 
 	// template specific fields:
 
@@ -112,17 +112,17 @@ type ValueObject struct {
 	// only included if template disabled
 	DisableInfo struct {
 		DisableDate string `json:"disable_date,omitempty"`
-	} `json:"disable_info,omitempty"`
+	} `json:"disable_info"`
 	// only included if template locked or unlocked
 	OtherInfo struct {
 		Title       string `json:"title,omitempty"`
 		Description string `json:"description,omitempty"`
-	} `json:"other_info,omitempty"`
+	} `json:"other_info"`
 	// only included if template rejected with INVALID_FORMAT reason
 	RejectionInfo struct {
 		Reason         string `json:"reason,omitempty"`
 		Recommendation string `json:"recommendation,omitempty"`
-	} `json:"rejection_info,omitempty"`
+	} `json:"rejection_info"`
 }
 
 // GetContactProfileName returns the contact profile name for the given waid or userID.
@@ -646,7 +646,7 @@ type HistoryThreadObject struct {
 		UserID       string `json:"user_id,omitempty"`        // BSUID
 		ParentUserID string `json:"parent_user_id,omitempty"` // Only included if parent BSUIDs enabled before sync request
 		Username     string `json:"username,omitempty"`       // Only included if user has enabled usernames feature before sync request
-	} `json:"context,omitempty"`
+	} `json:"context"`
 	Messages []MessageEHObject `json:"messages"`
 }
 
@@ -672,7 +672,7 @@ type MessageEHObject struct {
 	Context          *fbgraph.MessageContext `json:"context,omitempty"`
 	HistoryContext   struct {
 		Status string `json:"status"` // MESSAGE_STATUS - DELIVERED ERROR PENDING PLAYED READ SENT
-	} `json:"history_context,omitempty"`
+	} `json:"history_context"`
 }
 
 func (m MessageEHObject) GetType() string {
@@ -907,7 +907,7 @@ type ErrorObject struct {
 	Message   string    `json:"message,omitempty"`
 	ErrorData struct {
 		Details string `json:"details,omitempty"`
-	} `json:"error_data,omitempty"`
+	} `json:"error_data"`
 }
 
 type ErrorCode int
