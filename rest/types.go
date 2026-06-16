@@ -106,6 +106,10 @@ type NewMessageRequest struct {
 	Context                 *NewMessageContext `json:"context,omitempty"`
 	OriginalFailedMessageID string             `json:"original_failed_message_id,omitempty"`
 	FailedMessageRetryChain uint               `json:"failed_message_retry_chain,omitempty"`
+	// ForceMetaUpload, when true, makes the WABA driver upload any by-link media to
+	// Meta and send by media ID instead of by link (see ms-wabaman ADR-0002). Set on
+	// the 502 "weblink failed" retry; survives the Redis send queue.
+	ForceMetaUpload         bool               `json:"force_meta_upload,omitempty"`
 	ContactDisplayName      string             `json:"contact_display_name,omitempty"`
 	MessageMetadata         map[string]any     `json:"message_metadata,omitempty"`
 	OverridePhoneByDriver   string             `json:"override_phone_by_driver,omitempty" description:"If set, Wabaman might override the branch_id (and subsequently the phone_id) used if the contact is found in a branch that has this driver."`

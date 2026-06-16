@@ -151,11 +151,15 @@ type TemplateComponentParameter struct {
 
 // ImageParameters is present when type = "image"
 type ImageParameters struct {
+	// ID is an uploaded media ID. Either ID or Link is used; ID takes precedence.
+	ID   string `json:"id,omitempty"`
 	Link string `json:"link,omitempty"`
 }
 
 // VideoParameters is present when type = "video"
 type VideoParameters struct {
+	// ID is an uploaded media ID. Either ID or Link is used; ID takes precedence.
+	ID   string `json:"id,omitempty"`
 	Link string `json:"link,omitempty"`
 }
 
