@@ -313,15 +313,15 @@ type SendCallPermissionResponse struct {
 // CallInviteAgent is sent by an in-call agent to invite another agent to join.
 // Server fills InviterAgentID and InviterAgentName from JWT.
 type CallInviteAgent struct {
-	CallID              string `json:"call_id"`
-	PhoneID             uint   `json:"phone_id"`
-	BranchID            string `json:"branch_id"`
-	ContactID           uint64 `json:"contact_id"`
-	ContactName         string `json:"contact_name"`
-	ContactPhoneNumber  string `json:"contact_phone_number"`
-	TargetAgentID       string `json:"target_agent_id"`
-	InviterAgentID      string `json:"inviter_agent_id"`
-	InviterAgentName    string `json:"inviter_agent_name"`
+	CallID             string `json:"call_id"`
+	PhoneID            uint   `json:"phone_id"`
+	BranchID           string `json:"branch_id"`
+	ContactID          uint64 `json:"contact_id"`
+	ContactName        string `json:"contact_name"`
+	ContactPhoneNumber string `json:"contact_phone_number"`
+	TargetAgentID      string `json:"target_agent_id"`
+	InviterAgentID     string `json:"inviter_agent_id"`
+	InviterAgentName   string `json:"inviter_agent_name"`
 }
 
 // CallInviteAck is sent by the target agent to confirm receipt of the invite (delivery confirmation).
@@ -394,6 +394,46 @@ type CallAgentLeft struct {
 	AgentID          string `json:"agent_id"`
 	AgentName        string `json:"agent_name"`
 	ParticipantCount int    `json:"participant_count"`
+}
+
+// CallParticipantRoster is the authoritative slot -> participant map for a
+// multi-agent call, broadcast to every agent on every membership change.
+//
+// Audio uses a fixed, pre-negotiated transceiver pool so joins/leaves never
+// renegotiate (see ADR-0002 in ms-wabaman-webrtc). Each agent's SDP offer MUST
+// declare its audio m-lines in this exact order:
+//
+//	m-line 0: sendonly  — the agent's own microphone
+//	m-line 1: recvonly  — slot 0  (the client / WhatsApp caller)
+//	m-line 2: recvonly  — slot 1  (agent by call-participant index)
+//	...
+//	m-line 6: recvonly  — slot 5
+//
+// So inbound slot s is carried on m-line s+1; the frontend correlates each
+// received track to a slot by the order it added the recvonly transceivers (it
+// never parses SDP). An agent never fills its own slot (no self-echo); that
+// slot stays silent on its connection. The gateway re-broadcasts the full
+// snapshot on every change, and the frontend treats each snapshot as the source
+// of truth, re-labelling slots (slots are reused as agents leave and join).
+type CallParticipantRoster struct {
+	CallID       string                  `json:"call_id"`
+	PhoneID      uint                    `json:"phone_id"`
+	BranchID     string                  `json:"branch_id,omitempty"`
+	ContactID    uint64                  `json:"contact_id,omitempty"`
+	Participants []CallRosterParticipant `json:"participants"`
+}
+
+// CallRosterParticipant is one entry in a [CallParticipantRoster]: which slot a
+// participant occupies and who they are. Slot 0 is always the client (Kind
+// "client"); slots 1..5 are agents (Kind "agent").
+type CallRosterParticipant struct {
+	Slot      int    `json:"slot"` // 0 = client, 1..5 = agent
+	Kind      string `json:"kind"` // "client" | "agent"
+	AgentID   string `json:"agent_id,omitempty"`
+	AgentName string `json:"agent_name,omitempty"`
+	// Client (slot 0) display identity, filled by ms-wabaman from call history.
+	ContactName        string `json:"contact_name,omitempty"`
+	ContactPhoneNumber string `json:"contact_phone_number,omitempty"`
 }
 
 // CallInviteFailed is sent by the server to the inviter to explain why the invite was rejected.

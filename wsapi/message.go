@@ -72,6 +72,14 @@ const (
 	MessageTypeJoinCall           MessageType = 62 // CLIENT -> SERVER
 	MessageTypeJoinCallAnswer     MessageType = 63 // SERVER -> CLIENT
 
+	// Per-track multi-agent audio (SFU). Each agent receives the client and
+	// every other agent as a separate inbound track, one per pre-negotiated
+	// slot. The roster maps slot -> participant identity so the frontend can
+	// label tracks and attribute voice activity. See ADR-0002 in
+	// ms-wabaman-webrtc. The gateway authors the snapshot; ms-wabaman relays it
+	// to every agent on the call.
+	MessageTypeCallParticipantRoster MessageType = 64 // server -> all agents in call
+
 	MessageTypeMockClientMessages MessageType = 230
 	MessageTypeGenericError       MessageType = 235
 	MessageTypeCloseError         MessageType = 240
@@ -138,6 +146,7 @@ type Message struct {
 	JoinCall                   *JoinCall                   `json:"join_call,omitempty"`
 	JoinCallAnswer             *JoinCallAnswer             `json:"join_call_answer,omitempty"`
 	UnreadCountChanged         *UnreadCountChanged         `json:"unread_count_changed,omitempty"`
+	CallParticipantRoster      *CallParticipantRoster      `json:"call_participant_roster,omitempty"`
 }
 
 // ToJSON marshals the Message to a JSON string.
