@@ -109,13 +109,13 @@ type NewMessageRequest struct {
 	// ForceMetaUpload, when true, makes the WABA driver upload any by-link media to
 	// Meta and send by media ID instead of by link (see ms-wabaman ADR-0002). Set on
 	// the 502 "weblink failed" retry; survives the Redis send queue.
-	ForceMetaUpload         bool               `json:"force_meta_upload,omitempty"`
-	ContactDisplayName      string             `json:"contact_display_name,omitempty"`
-	MessageMetadata         map[string]any     `json:"message_metadata,omitempty"`
-	OverridePhoneByDriver   string             `json:"override_phone_by_driver,omitempty" description:"If set, Wabaman might override the branch_id (and subsequently the phone_id) used if the contact is found in a branch that has this driver."`
-	SkipPhoneValidation     bool               `json:"skip_phone_validation,omitempty" description:"If set, Wabaman will not validate the phone number before sending the message."`
-	Schedule                MessageSchedule    `json:"schedule,omitzero" description:"Schedule this message to be sent at a specific time"`
-	ContactTags             *ContactTagsMod    `json:"contact_tags,omitempty"`
+	ForceMetaUpload       bool            `json:"force_meta_upload,omitempty"`
+	ContactDisplayName    string          `json:"contact_display_name,omitempty"`
+	MessageMetadata       map[string]any  `json:"message_metadata,omitempty"`
+	OverridePhoneByDriver string          `json:"override_phone_by_driver,omitempty" description:"If set, Wabaman might override the branch_id (and subsequently the phone_id) used if the contact is found in a branch that has this driver."`
+	SkipPhoneValidation   bool            `json:"skip_phone_validation,omitempty" description:"If set, Wabaman will not validate the phone number before sending the message."`
+	Schedule              MessageSchedule `json:"schedule,omitzero" description:"Schedule this message to be sent at a specific time"`
+	ContactTags           *ContactTagsMod `json:"contact_tags,omitempty"`
 }
 
 type ContactTagsMod struct {
@@ -262,6 +262,7 @@ type GetContactsRequest struct {
 	PhoneID         uint     `query:"phone_id"`
 	CustomerIDs     []string `query:"customer_id"`
 	WABAContactIDs  []string `query:"waba_contact_id"`
+	Username        string   `query:"username"`
 	HostPhoneNumber string   `query:"host_phone_number"`
 	MaxResults      uint64   `query:"max_results"`
 	Page            uint     `query:"page"`
@@ -290,6 +291,9 @@ func (req GetContactsRequest) BuildQuery() url.Values {
 		for _, id := range req.WABAContactIDs {
 			q.Add("waba_contact_id", id)
 		}
+	}
+	if iszero, _ := util.IsZero(req.Username); !iszero {
+		q.Set("username", req.Username)
 	}
 	if iszero, _ := util.IsZero(req.HostPhoneNumber); !iszero {
 		q.Set("host_phone_number", req.HostPhoneNumber)
@@ -320,16 +324,18 @@ type GetContactsResponse struct {
 }
 
 type GetContactsV2Request struct {
-	BusinessID               uint     `url:"business_id,omitempty"`
-	StoreID                  string   `url:"store_id,omitempty"`
-	BranchID                 string   `url:"branch_id,omitempty"`
-	PhoneID                  uint     `url:"phone_id,omitempty"`
-	ContactIDs               []uint64 `url:"contact_id,omitempty"`
-	CustomerIDs              []string `url:"customer_id,omitempty"`
-	WABAContactIDs           []string `url:"waba_contact_id,omitempty"`
-	ExactWABAContactIDs      bool     `url:"exact_waba_contact_ids,omitempty"`
-	ExactNames               []string `url:"exact_name,omitempty"`
-	Name                     string   `url:"name,omitempty"`
+	BusinessID          uint     `url:"business_id,omitempty"`
+	StoreID             string   `url:"store_id,omitempty"`
+	BranchID            string   `url:"branch_id,omitempty"`
+	PhoneID             uint     `url:"phone_id,omitempty"`
+	ContactIDs          []uint64 `url:"contact_id,omitempty"`
+	CustomerIDs         []string `url:"customer_id,omitempty"`
+	WABAContactIDs      []string `url:"waba_contact_id,omitempty"`
+	ExactWABAContactIDs bool     `url:"exact_waba_contact_ids,omitempty"`
+	ExactNames          []string `url:"exact_name,omitempty"`
+	Name                string   `url:"name,omitempty"`
+	// Username searches contacts by WhatsApp @handle (partial, @-stripped, case-insensitive).
+	Username                 string   `url:"username,omitempty"`
 	HostPhoneNumber          string   `url:"host_phone_number,omitempty"`
 	Tags                     []string `url:"tag,omitempty"`
 	LastMessagePreviewStatus string   `url:"last_message_preview_status,omitempty"`
@@ -437,6 +443,9 @@ type Contact struct {
 	WABAContactID string `json:"waba_contact_id"`
 	// The business-scoped user ID (BSUID) assigned by Meta.
 	UserID mariadb.NullString `json:"user_id"`
+	// The contact's WhatsApp username (@handle), without the leading '@'. Mutable;
+	// for human-facing search/display only, never an identity key.
+	Username mariadb.NullString `json:"username,omitempty"`
 	// The profile name of the contact.
 	WABAProfileName mariadb.NullString `json:"waba_profile_name"`
 	// The timestamp of the last time the contact was 'seen' online.
@@ -768,26 +777,32 @@ type TemplateExistsRequest struct {
 }
 
 type BusinessContactBroadcastRequest struct {
-	BusinessID         uint            `json:"-"`
-	StoreID            string          `json:"-"`
-	BranchID           string          `json:"branch_id,omitempty"`
-	ClientID           uint64          `json:"client_id,omitempty"`
-	ContactCustomerID  string          `json:"contact_customer_id,omitempty"`
-	ContactPhoneNumber string          `json:"contact_phone_number,omitempty"`
-	Data               json.RawMessage `json:"data,omitempty"`
-	Type               string          `json:"type"`
+	BusinessID         uint   `json:"-"`
+	StoreID            string `json:"-"`
+	BranchID           string `json:"branch_id,omitempty"`
+	ClientID           uint64 `json:"client_id,omitempty"`
+	ContactCustomerID  string `json:"contact_customer_id,omitempty"`
+	ContactPhoneNumber string `json:"contact_phone_number,omitempty"`
+	// ContactUserID targets a contact by its business-scoped user ID (BSUID),
+	// for username-only contacts that have no phone number.
+	ContactUserID string          `json:"contact_user_id,omitempty"`
+	Data          json.RawMessage `json:"data,omitempty"`
+	Type          string          `json:"type"`
 }
 
 type BusinessContactBroadcastResponse struct{}
 
 type PhoneContactBroadcastRequest struct {
-	PhoneID            uint            `json:"-"`
-	BranchID           string          `json:"-"`
-	ClientID           uint64          `json:"client_id,omitempty"`
-	ContactCustomerID  string          `json:"contact_customer_id,omitempty"`
-	ContactPhoneNumber string          `json:"contact_phone_number,omitempty"`
-	Data               json.RawMessage `json:"data,omitempty"`
-	Type               string          `json:"type"`
+	PhoneID            uint   `json:"-"`
+	BranchID           string `json:"-"`
+	ClientID           uint64 `json:"client_id,omitempty"`
+	ContactCustomerID  string `json:"contact_customer_id,omitempty"`
+	ContactPhoneNumber string `json:"contact_phone_number,omitempty"`
+	// ContactUserID targets a contact by its business-scoped user ID (BSUID),
+	// for username-only contacts that have no phone number.
+	ContactUserID string          `json:"contact_user_id,omitempty"`
+	Data          json.RawMessage `json:"data,omitempty"`
+	Type          string          `json:"type"`
 }
 
 type PhoneContactBroadcastResponse struct{}
