@@ -240,6 +240,9 @@ type ContactObject struct {
 	// identifier scoped per business. When a user adopts a WhatsApp username, this field
 	// will be populated even when wa_id no longer contains the phone number.
 	UserID string `json:"user_id,omitempty"`
+	// The customer's business-scoped parent user ID, shared across business
+	// portfolios enrolled in the same parent BSUID account.
+	ParentUserID string `json:"parent_user_id,omitempty"`
 }
 
 type MessageObjectType string
@@ -556,10 +559,11 @@ type StatusObject struct {
 	// this ID. This ID may not match the customer's phone number, which is
 	// returned by the API as input when sending a message to the customer.
 	RecipientID string `json:"recipient_id"`
-	// Business-scoped user ID (BSUID) of the recipient.
-	ToUserID string `json:"to_user_id,omitempty"`
+	// Business-scoped user ID (BSUID) of the recipient. Meta names this field
+	// recipient_user_id on status webhooks (only present for delivered/read).
+	RecipientUserID string `json:"recipient_user_id,omitempty"`
 	// Business-scoped parent user ID of the recipient.
-	ToParentUserID string                      `json:"to_parent_user_id,omitempty"`
+	RecipientParentUserID string                `json:"recipient_parent_user_id,omitempty"`
 	Status         MessageStatus               `json:"status"`
 	Timestamp      string                      `json:"timestamp,omitempty"`
 	Errors         []wsapi.FBStatusObjectError `json:"errors,omitempty"`
@@ -847,7 +851,11 @@ type CallObject struct {
 	// Business-scoped parent user ID of the callee.
 	ToParentUserID string `json:"to_parent_user_id,omitempty"`
 	From           string `json:"from"`
-	Event          string `json:"event"`
+	// Business-scoped user ID (BSUID) of the caller (present on user-initiated calls).
+	FromUserID string `json:"from_user_id,omitempty"`
+	// Business-scoped parent user ID of the caller.
+	FromParentUserID string `json:"from_parent_user_id,omitempty"`
+	Event            string `json:"event"`
 	// O registro de data e hora UNIX do evento de webhook
 	Timestamp Timestamp          `json:"timestamp"`
 	Session   *CallSessionObject `json:"session,omitempty"`
