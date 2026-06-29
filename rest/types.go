@@ -242,14 +242,18 @@ type NewContactResponse struct {
 }
 
 type UpdateContactRequest struct {
-	CustomerID      string         `json:"customer_id,omitempty"`
-	CustomerName    string         `json:"customer_name,omitempty"`
-	WABAProfileName string         `json:"waba_profile_name,omitempty"`
-	Metadata        map[string]any `json:"metadata,omitempty"`
-	OneShotMetadata map[string]any `json:"one_shot_metadata,omitempty"`
-	Origin          string         `json:"origin,omitempty"`
-	Silent          bool           `json:"silent,omitempty" title:"Silent" description:"Silent update"`
-	Async           bool           `json:"async,omitempty" title:"Async" description:"Non blocking update (synchronous update will block until elasticsearch updates)"`
+	CustomerID      string `json:"customer_id,omitempty"`
+	CustomerName    string `json:"customer_name,omitempty"`
+	WABAProfileName string `json:"waba_profile_name,omitempty"`
+	// ContactPhoneNumber sets the contact's real phone number. Primarily for
+	// BSUID contacts, whose waba_contact_id is an opaque identifier rather than a
+	// phone, so the phone must be supplied/updated explicitly.
+	ContactPhoneNumber string         `json:"contact_phone_number,omitempty"`
+	Metadata           map[string]any `json:"metadata,omitempty"`
+	OneShotMetadata    map[string]any `json:"one_shot_metadata,omitempty"`
+	Origin             string         `json:"origin,omitempty"`
+	Silent             bool           `json:"silent,omitempty" title:"Silent" description:"Silent update"`
+	Async              bool           `json:"async,omitempty" title:"Async" description:"Non blocking update (synchronous update will block until elasticsearch updates)"`
 }
 
 type UpdateContactResponse struct {
