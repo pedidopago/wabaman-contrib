@@ -289,7 +289,9 @@ func (c *Client) CreateMessageTemplate(ctx context.Context, wabaID string, templ
 	return result.ID, nil
 }
 
-func (c *Client) UpdateMessageTemplateCategory(ctx context.Context, templateID string, newCategory MessageTemplateCategory) error {
+const MessageTemplateStatusArchived = "ARCHIVED"
+
+func (c *Client) postToTemplate(ctx context.Context, templateID string, body any) error {
 	c.lastGraphError = nil
 	c.lastErrorRawBody = ""
 
@@ -297,137 +299,19 @@ func (c *Client) UpdateMessageTemplateCategory(ctx context.Context, templateID s
 	if c.GraphAPIVersion != "" {
 		apiVersion = c.GraphAPIVersion
 	}
-
-	url := fmt.Sprintf("https://graph.facebook.com/%s/%s", apiVersion, templateID)
-
-	cpstruct := struct {
-		Category MessageTemplateCategory `json:"category"`
-	}{Category: newCategory}
-
-	buf := new(bytes.Buffer)
-	if err := json.NewEncoder(buf).Encode(cpstruct); err != nil {
-		return fmt.Errorf("encode template update: %w", err)
-	}
-
-	req, err := NewRequest(http.MethodPost, url, buf)
-	if err != nil {
-		return fmt.Errorf("new request: %w", err)
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken))
-	resp, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return fmt.Errorf("request failed: %w", err)
-	}
-
-	defer func() { _ = resp.Body.Close() }()
-
-	if resp.StatusCode != http.StatusOK {
-		gerr := c.errorFromResponse(resp)
-
-		if ge, ok := AsGraphError(gerr); ok {
-			if ge.Code == 4 {
-				return ErrApplicationRateLimitReached
-			}
-		}
-
-		return gerr
-	}
-
-	result := struct {
-		Success bool `json:"success"`
-	}{}
-
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return fmt.Errorf("decode response: %w", err)
-	}
-
-	return nil
-}
-
-func (c *Client) UpdateMessageTemplate(ctx context.Context, templateID string, components []MessageTemplateComponent) error {
-	c.lastGraphError = nil
-	c.lastErrorRawBody = ""
-
-	apiVersion := DefaultGraphAPIVersion
-	if c.GraphAPIVersion != "" {
-		apiVersion = c.GraphAPIVersion
-	}
-
-	url := fmt.Sprintf("https://graph.facebook.com/%s/%s", apiVersion, templateID)
-
-	cpstruct := struct {
-		Components []MessageTemplateComponent `json:"components"`
-	}{Components: components}
-
-	buf := new(bytes.Buffer)
-	if err := json.NewEncoder(buf).Encode(cpstruct); err != nil {
-		return fmt.Errorf("encode template update: %w", err)
-	}
-
-	req, err := NewRequest(http.MethodPost, url, buf)
-	if err != nil {
-		return fmt.Errorf("new request: %w", err)
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken))
-	resp, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return fmt.Errorf("request failed: %w", err)
-	}
-	defer func() { _ = resp.Body.Close() }()
-	if resp.StatusCode != http.StatusOK {
-		gerr := c.errorFromResponse(resp)
-
-		if ge, ok := AsGraphError(gerr); ok {
-			if ge.Code == 4 {
-				return ErrApplicationRateLimitReached
-			}
-		}
-
-		return gerr
-	}
-
-	result := struct {
-		Success bool `json:"success"`
-	}{}
-
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return fmt.Errorf("decode response: %w", err)
-	}
-
-	return nil
-}
-
-func (c *Client) UnarchiveMessageTemplate(ctx context.Context, templateID string) error {
-	c.lastGraphError = nil
-	c.lastErrorRawBody = ""
-
-	apiVersion := DefaultGraphAPIVersion
-	if c.GraphAPIVersion != "" {
-		apiVersion = c.GraphAPIVersion
-	}
-
-	url := fmt.Sprintf("https://graph.facebook.com/%s/%s", apiVersion, templateID)
-
-	body := struct {
-		Unarchive bool `json:"unarchive"`
-	}{Unarchive: true}
 
 	buf := new(bytes.Buffer)
 	if err := json.NewEncoder(buf).Encode(body); err != nil {
-		return fmt.Errorf("encode unarchive request: %w", err)
+		return fmt.Errorf("encode: %w", err)
 	}
 
-	req, err := NewRequest(http.MethodPost, url, buf)
+	req, err := NewRequest(http.MethodPost, fmt.Sprintf("https://graph.facebook.com/%s/%s", apiVersion, templateID), buf)
 	if err != nil {
 		return fmt.Errorf("new request: %w", err)
 	}
 	req = req.WithContext(ctx)
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken))
+	req.Header.Set("Authorization", "Bearer "+c.AccessToken)
 
 	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
@@ -437,21 +321,33 @@ func (c *Client) UnarchiveMessageTemplate(ctx context.Context, templateID string
 
 	if resp.StatusCode != http.StatusOK {
 		gerr := c.errorFromResponse(resp)
-		if ge, ok := AsGraphError(gerr); ok {
-			if ge.Code == 4 {
-				return ErrApplicationRateLimitReached
-			}
+		if ge, ok := AsGraphError(gerr); ok && ge.Code == 4 {
+			return ErrApplicationRateLimitReached
 		}
 		return gerr
 	}
 
-	result := struct {
+	return json.NewDecoder(resp.Body).Decode(&struct {
 		Success bool `json:"success"`
-	}{}
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return fmt.Errorf("decode response: %w", err)
-	}
-	return nil
+	}{})
+}
+
+func (c *Client) UpdateMessageTemplateCategory(ctx context.Context, templateID string, newCategory MessageTemplateCategory) error {
+	return c.postToTemplate(ctx, templateID, struct {
+		Category MessageTemplateCategory `json:"category"`
+	}{newCategory})
+}
+
+func (c *Client) UpdateMessageTemplate(ctx context.Context, templateID string, components []MessageTemplateComponent) error {
+	return c.postToTemplate(ctx, templateID, struct {
+		Components []MessageTemplateComponent `json:"components"`
+	}{components})
+}
+
+func (c *Client) UnarchiveMessageTemplate(ctx context.Context, templateID string) error {
+	return c.postToTemplate(ctx, templateID, struct {
+		Unarchive bool `json:"unarchive"`
+	}{true})
 }
 
 func (c *Client) DeleteMessageTemplate(ctx context.Context, whatsappBusinessAccountID, templateName string) error {
