@@ -291,21 +291,16 @@ func (c *Client) CreateMessageTemplate(ctx context.Context, wabaID string, templ
 
 const MessageTemplateStatusArchived = "ARCHIVED"
 
-func (c *Client) postToTemplate(ctx context.Context, templateID string, body any) error {
+func (c *Client) post(ctx context.Context, url string, body any) error {
 	c.lastGraphError = nil
 	c.lastErrorRawBody = ""
-
-	apiVersion := DefaultGraphAPIVersion
-	if c.GraphAPIVersion != "" {
-		apiVersion = c.GraphAPIVersion
-	}
 
 	buf := new(bytes.Buffer)
 	if err := json.NewEncoder(buf).Encode(body); err != nil {
 		return fmt.Errorf("encode: %w", err)
 	}
 
-	req, err := NewRequest(http.MethodPost, fmt.Sprintf("https://graph.facebook.com/%s/%s", apiVersion, templateID), buf)
+	req, err := NewRequest(http.MethodPost, url, buf)
 	if err != nil {
 		return fmt.Errorf("new request: %w", err)
 	}
@@ -327,9 +322,17 @@ func (c *Client) postToTemplate(ctx context.Context, templateID string, body any
 		return gerr
 	}
 
-	return json.NewDecoder(resp.Body).Decode(&struct {
-		Success bool `json:"success"`
-	}{})
+	// HTTP 200 is the success signal; drain body and return nil
+	_ = json.NewDecoder(resp.Body).Decode(&struct{ Success bool `json:"success"` }{})
+	return nil
+}
+
+func (c *Client) postToTemplate(ctx context.Context, templateID string, body any) error {
+	apiVersion := DefaultGraphAPIVersion
+	if c.GraphAPIVersion != "" {
+		apiVersion = c.GraphAPIVersion
+	}
+	return c.post(ctx, fmt.Sprintf("https://graph.facebook.com/%s/%s", apiVersion, templateID), body)
 }
 
 func (c *Client) UpdateMessageTemplateCategory(ctx context.Context, templateID string, newCategory MessageTemplateCategory) error {
@@ -344,25 +347,22 @@ func (c *Client) UpdateMessageTemplate(ctx context.Context, templateID string, c
 	}{components})
 }
 
-func (c *Client) UnarchiveMessageTemplates(ctx context.Context, wabaID string, templateIDs []string) error {
+// UnarchiveMessageTemplates unarchives a batch of templates for a WABA.
+// Uses api.facebook.com (no version prefix) — the versioned graph.facebook.com endpoint returns 2500.
+func (c *Client) UnarchiveMessageTemplates(ctx context.Context, wabaID string, templateIDs []string) (unarchived []string, failed map[string]string, err error) {
 	c.lastGraphError = nil
 	c.lastErrorRawBody = ""
-
-	apiVersion := DefaultGraphAPIVersion
-	if c.GraphAPIVersion != "" {
-		apiVersion = c.GraphAPIVersion
-	}
 
 	buf := new(bytes.Buffer)
 	if err := json.NewEncoder(buf).Encode(struct {
 		HSMIDs []string `json:"hsm_ids"`
 	}{templateIDs}); err != nil {
-		return fmt.Errorf("encode: %w", err)
+		return nil, nil, fmt.Errorf("encode: %w", err)
 	}
 
-	req, err := NewRequest(http.MethodPost, fmt.Sprintf("https://graph.facebook.com/%s/%s/message_templates/unarchive", apiVersion, wabaID), buf)
+	req, err := NewRequest(http.MethodPost, "https://api.facebook.com/"+wabaID+"/message_templates/unarchive", buf)
 	if err != nil {
-		return fmt.Errorf("new request: %w", err)
+		return nil, nil, fmt.Errorf("new request: %w", err)
 	}
 	req = req.WithContext(ctx)
 	req.Header.Set("Content-Type", "application/json")
@@ -370,21 +370,26 @@ func (c *Client) UnarchiveMessageTemplates(ctx context.Context, wabaID string, t
 
 	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("request failed: %w", err)
+		return nil, nil, fmt.Errorf("request failed: %w", err)
 	}
 	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		gerr := c.errorFromResponse(resp)
 		if ge, ok := AsGraphError(gerr); ok && ge.Code == 4 {
-			return ErrApplicationRateLimitReached
+			return nil, nil, ErrApplicationRateLimitReached
 		}
-		return gerr
+		return nil, nil, gerr
 	}
 
-	return json.NewDecoder(resp.Body).Decode(&struct {
-		Success bool `json:"success"`
-	}{})
+	var result struct {
+		Unarchived []string          `json:"unarchived_templates"`
+		Failed     map[string]string `json:"failed_templates"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, nil, fmt.Errorf("decode: %w", err)
+	}
+	return result.Unarchived, result.Failed, nil
 }
 
 func (c *Client) DeleteMessageTemplate(ctx context.Context, whatsappBusinessAccountID, templateName string) error {
