@@ -62,6 +62,7 @@ type GetMessageTemplatesParameters struct {
 	Fields                    []string
 	Limit                     int
 	After                     string
+	Status                    string // e.g. "ARCHIVED"
 }
 
 type GetMessageTemplatesResponse struct {
@@ -208,6 +209,9 @@ func (c *Client) GetMessageTemplates(ctx context.Context, params GetMessageTempl
 	}
 	if params.Limit != 0 {
 		encfields.Set("limit", fmt.Sprintf("%d", params.Limit))
+	}
+	if params.Status != "" {
+		encfields.Set("status", params.Status)
 	}
 
 	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/message_templates?%s", apiversion, params.WhatsAppBusinessAccountID, encfields.Encode())
@@ -394,6 +398,59 @@ func (c *Client) UpdateMessageTemplate(ctx context.Context, templateID string, c
 		return fmt.Errorf("decode response: %w", err)
 	}
 
+	return nil
+}
+
+func (c *Client) UnarchiveMessageTemplate(ctx context.Context, templateID string) error {
+	c.lastGraphError = nil
+	c.lastErrorRawBody = ""
+
+	apiVersion := DefaultGraphAPIVersion
+	if c.GraphAPIVersion != "" {
+		apiVersion = c.GraphAPIVersion
+	}
+
+	url := fmt.Sprintf("https://graph.facebook.com/%s/%s", apiVersion, templateID)
+
+	body := struct {
+		Unarchive bool `json:"unarchive"`
+	}{Unarchive: true}
+
+	buf := new(bytes.Buffer)
+	if err := json.NewEncoder(buf).Encode(body); err != nil {
+		return fmt.Errorf("encode unarchive request: %w", err)
+	}
+
+	req, err := NewRequest(http.MethodPost, url, buf)
+	if err != nil {
+		return fmt.Errorf("new request: %w", err)
+	}
+	req = req.WithContext(ctx)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken))
+
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("request failed: %w", err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+
+	if resp.StatusCode != http.StatusOK {
+		gerr := c.errorFromResponse(resp)
+		if ge, ok := AsGraphError(gerr); ok {
+			if ge.Code == 4 {
+				return ErrApplicationRateLimitReached
+			}
+		}
+		return gerr
+	}
+
+	result := struct {
+		Success bool `json:"success"`
+	}{}
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return fmt.Errorf("decode response: %w", err)
+	}
 	return nil
 }
 
