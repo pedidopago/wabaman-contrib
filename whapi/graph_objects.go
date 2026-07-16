@@ -63,6 +63,7 @@ const (
 	ChangeObjectFieldSMBAppStateSync              ChangeObjectField = "smb_app_state_sync"
 	ChangeObjectFieldCalls                        ChangeObjectField = "calls"
 	ChangeObjectFieldMessageTemplateQualityUpdate ChangeObjectField = "message_template_quality_update"
+	ChangeObjectFieldUserIDUpdate                 ChangeObjectField = "user_id_update"
 )
 
 type ChangeObject struct {
@@ -95,6 +96,9 @@ type ValueObject struct {
 	UserPreferences []UserPreferencesObject `json:"user_preferences,omitempty"`
 	// Calls https://developers.facebook.com/docs/whatsapp/cloud-api/calling/user-initiated-calls
 	Calls []CallObject `json:"calls,omitempty"`
+	// UserIDUpdate notifies that a user's business-scoped user ID (BSUID) changed,
+	// e.g. after a phone number change.
+	UserIDUpdate []UserIDUpdateObject `json:"user_id_update,omitempty"`
 	// Metadata for the business that is subscribed to the webhook.
 	Metadata ValueObjectMetadata `json:"metadata"`
 
@@ -506,6 +510,12 @@ type MessageObjectSystem struct {
 	WaId string `json:"wa_id"`
 	// The WhatsApp ID for the customer prior to the update
 	Customer string `json:"customer"`
+	// New business-scoped user ID (BSUID) for the customer when their phone
+	// number is updated (type user_changed_user_id).
+	UserID string `json:"user_id,omitempty"`
+	// New business-scoped parent user ID for the customer when their phone
+	// number is updated (type user_changed_user_id).
+	ParentUserID string `json:"parent_user_id,omitempty"`
 }
 
 type MessageObjectLocation struct {
@@ -522,7 +532,30 @@ const (
 	SysMsgTypeCustomerChangedNumber SystemMessageType = "customer_changed_number"
 	// A customer changed their profile information
 	SysMsgTypeCustomerIdentityChanged SystemMessageType = "customer_identity_changed"
+	// A customer's business-scoped user ID (BSUID) changed, e.g. after a phone number change
+	SysMsgTypeUserChangedUserID SystemMessageType = "user_changed_user_id"
 )
+
+// UserIDUpdateObject describes a change to a user's business-scoped user ID
+// (BSUID), delivered via the user_id_update webhook field.
+type UserIDUpdateObject struct {
+	// The customer's WhatsApp ID, if available.
+	WAID string `json:"wa_id,omitempty"`
+	// Describes the reason for the update, e.g. "User changed phone number".
+	Detail string `json:"detail,omitempty"`
+	// The previous and current business-scoped user IDs.
+	UserID UserIDUpdateChange `json:"user_id"`
+	// The previous and current business-scoped parent user IDs, if available.
+	ParentUserID *UserIDUpdateChange `json:"parent_user_id,omitempty"`
+	// Unix timestamp of the update.
+	Timestamp Timestamp `json:"timestamp,omitempty"`
+}
+
+// UserIDUpdateChange holds the previous and current values of an updated ID.
+type UserIDUpdateChange struct {
+	Previous string `json:"previous"`
+	Current  string `json:"current"`
+}
 
 type MessageObjectText struct {
 	// The text of the message.
