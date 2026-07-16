@@ -62,8 +62,9 @@ type ContactData struct {
 	CustomerID         string `json:"customer_id,omitzero"`
 	CustomerName       string `json:"customer_name,omitzero"`
 	WABAContactID      string `json:"waba_contact_id,omitzero"`
-	UserID             string `json:"user_id,omitzero"`  // Business-scoped user ID (BSUID)
-	Username           string `json:"username,omitzero"` // WhatsApp @handle, without the leading '@'
+	UserID             string `json:"user_id,omitzero"`        // Business-scoped user ID (BSUID)
+	ParentUserID       string `json:"parent_user_id,omitzero"` // Parent BSUID (managed multi-portfolio businesses)
+	Username           string `json:"username,omitzero"`       // WhatsApp @handle, without the leading '@'
 	WABAProfileName    string `json:"waba_profile_name,omitzero"`
 	Name               string `json:"name,omitzero"`
 	ContactPhoneNumber string `json:"contact_phone_number,omitzero"`
@@ -153,8 +154,9 @@ type ContactMetadataToSend struct {
 	CustomerID                   string           `json:"customer_id,omitempty"`
 	CustomerName                 string           `json:"customer_name,omitempty"`
 	WABAContactID                string           `json:"waba_contact_id,omitempty"`
-	UserID                       string           `json:"user_id,omitempty"`  // Business-scoped user ID (BSUID)
-	Username                     string           `json:"username,omitempty"` // WhatsApp @handle, without the leading '@'
+	UserID                       string           `json:"user_id,omitempty"`        // Business-scoped user ID (BSUID)
+	ParentUserID                 string           `json:"parent_user_id,omitempty"` // Parent BSUID (managed multi-portfolio businesses)
+	Username                     string           `json:"username,omitempty"`       // WhatsApp @handle, without the leading '@'
 	WABAProfileName              string           `json:"waba_profile_name,omitempty"`
 	Name                         string           `json:"name,omitempty"`
 	ContactPhoneNumber           string           `json:"contact_phone_number,omitempty"`

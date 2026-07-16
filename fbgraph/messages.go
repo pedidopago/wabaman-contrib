@@ -97,6 +97,13 @@ type ContactObject struct {
 	Org       ContactOrg       `json:"org"`
 	Phones    []ContactPhone   `json:"phones,omitempty"`
 	URLs      []ContactURL     `json:"urls,omitempty"`
+	// Origin is set on INBOUND contacts webhooks (REQUEST_CONTACT_INFO / shared
+	// contact). "contact_request" = the user shared their own number by tapping a
+	// REQUEST_CONTACT_INFO button; "other" = a contact shared directly in chat.
+	Origin string `json:"origin,omitempty"`
+	// Vcard is the shared contact's vCard, present on INBOUND webhooks when
+	// origin is "other". Omitted for "contact_request".
+	Vcard string `json:"vcard,omitempty"`
 }
 
 type ContactName struct {
