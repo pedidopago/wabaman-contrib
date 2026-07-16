@@ -3,6 +3,8 @@ package fbgraph
 import (
 	"strconv"
 	"strings"
+
+	"github.com/pedidopago/wabaman-contrib/util"
 )
 
 // valid types:
@@ -16,24 +18,45 @@ import (
 //      hsm (interactive)
 
 type MessageObject struct {
-	MessagingProduct string                    `json:"messaging_product"`
-	To               string                    `json:"to"`
-	Type             string                    `json:"type"`
-	RecipientType    string                    `json:"recipient_type"` // default: individual
-	Text             *TextObject               `json:"text,omitempty"`
-	Template         *TemplateObject           `json:"template,omitempty"`
-	Interactive      *InteractiveMessageObject `json:"interactive,omitempty"`
-	Image            *MediaObject              `json:"image,omitempty"`
-	Audio            *MediaObject              `json:"audio,omitempty"`
-	Document         *MediaObject              `json:"document,omitempty"`
-	Video            *MediaObject              `json:"video,omitempty"`
-	Sticker          *MediaObject              `json:"sticker,omitempty"`
-	Contacts         []ContactObject           `json:"contacts,omitempty"`
-	Context          *MessageContext           `json:"context,omitempty"`
+	MessagingProduct string `json:"messaging_product"`
+	// To carries the recipient's phone number. Leave empty when addressing a
+	// BSUID recipient — use Recipient instead (see routeBSUIDRecipient).
+	To string `json:"to,omitempty"`
+	// Recipient carries a business-scoped user ID (BSUID) or parent BSUID when
+	// the recipient has no available phone number (username adopter). Meta
+	// rejects a BSUID placed in `to`, so it must go here.
+	Recipient     string                    `json:"recipient,omitempty"`
+	Type          string                    `json:"type"`
+	RecipientType string                    `json:"recipient_type"` // default: individual
+	Text          *TextObject               `json:"text,omitempty"`
+	Template      *TemplateObject           `json:"template,omitempty"`
+	Interactive   *InteractiveMessageObject `json:"interactive,omitempty"`
+	Image         *MediaObject              `json:"image,omitempty"`
+	Audio         *MediaObject              `json:"audio,omitempty"`
+	Document      *MediaObject              `json:"document,omitempty"`
+	Video         *MediaObject              `json:"video,omitempty"`
+	Sticker       *MediaObject              `json:"sticker,omitempty"`
+	Contacts      []ContactObject           `json:"contacts,omitempty"`
+	Context       *MessageContext           `json:"context,omitempty"`
 
 	Reaction *ReactionObject `json:"reaction,omitempty"`
 	// TODO: add more objects at:
 	// https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages#text-object
+}
+
+// routeBSUIDRecipient moves a BSUID identifier out of the `to` field into the
+// dedicated `recipient` field, per Meta's send contract: a BSUID in `to` is
+// rejected, and username adopters have no phone number to place in `to`. It is
+// a no-op when `to` holds a phone number or when Recipient is already set.
+// Called by the client just before a message is sent.
+func (m *MessageObject) routeBSUIDRecipient() {
+	if m == nil {
+		return
+	}
+	if m.Recipient == "" && util.IsBSUID(m.To) {
+		m.Recipient = m.To
+		m.To = ""
+	}
 }
 
 type ReactionObject struct {

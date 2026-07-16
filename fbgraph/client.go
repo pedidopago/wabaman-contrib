@@ -60,6 +60,7 @@ func (c *Client) SendMessage(phoneID string, msg *MessageObject) (*MessageObject
 	if msg == nil {
 		return nil, fmt.Errorf("message is nil")
 	}
+	msg.routeBSUIDRecipient()
 
 	apiVersion := DefaultGraphAPIVersion
 	if c.GraphAPIVersion != "" {
@@ -103,6 +104,7 @@ func (c *Client) SendMarketingMessage(phoneID string, msg *MessageObject) (*Mess
 	if msg == nil {
 		return nil, fmt.Errorf("message is nil")
 	}
+	msg.routeBSUIDRecipient()
 
 	apiVersion := DefaultGraphAPIVersion
 	if c.GraphAPIVersion != "" {
