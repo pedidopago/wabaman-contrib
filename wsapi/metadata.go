@@ -58,14 +58,17 @@ type ContactMetadata = ContactData
 
 // ContactData describes a WhatsApp contact (end-user) and their conversation state.
 type ContactData struct {
-	ID                           uint64                `json:"id,omitzero"`
-	CustomerID                   string                `json:"customer_id,omitzero"`
-	CustomerName                 string                `json:"customer_name,omitzero"`
-	WABAContactID                string                `json:"waba_contact_id,omitzero"`
-	UserID                       string                `json:"user_id,omitzero"` // Business-scoped user ID (BSUID)
-	WABAProfileName              string                `json:"waba_profile_name,omitzero"`
-	Name                         string                `json:"name,omitzero"`
-	ContactPhoneNumber           string                `json:"contact_phone_number,omitzero"`
+	ID                 uint64 `json:"id,omitzero"`
+	CustomerID         string `json:"customer_id,omitzero"`
+	CustomerName       string `json:"customer_name,omitzero"`
+	WABAContactID      string `json:"waba_contact_id,omitzero"`
+	UserID             string `json:"user_id,omitzero"`  // Business-scoped user ID (BSUID)
+	Username           string `json:"username,omitzero"` // WhatsApp @handle, without the leading '@'
+	WABAProfileName    string `json:"waba_profile_name,omitzero"`
+	Name               string `json:"name,omitzero"`
+	ContactPhoneNumber string `json:"contact_phone_number,omitzero"`
+	// ContactPhoneIsWhatsApp is true when contact_phone_number is confirmed reachable on WhatsApp.
+	ContactPhoneIsWhatsApp       bool                  `json:"contact_phone_is_whatsapp,omitzero"`
 	IsNewContact                 bool                  `json:"is_new_contact,omitzero"`
 	Metadata                     *ContactMetadataField `json:"metadata,omitzero"`
 	LastActivity                 mariadb.NullTime      `json:"last_activity,omitzero"`
@@ -150,10 +153,12 @@ type ContactMetadataToSend struct {
 	CustomerID                   string           `json:"customer_id,omitempty"`
 	CustomerName                 string           `json:"customer_name,omitempty"`
 	WABAContactID                string           `json:"waba_contact_id,omitempty"`
-	UserID                       string           `json:"user_id,omitempty"` // Business-scoped user ID (BSUID)
+	UserID                       string           `json:"user_id,omitempty"`  // Business-scoped user ID (BSUID)
+	Username                     string           `json:"username,omitempty"` // WhatsApp @handle, without the leading '@'
 	WABAProfileName              string           `json:"waba_profile_name,omitempty"`
 	Name                         string           `json:"name,omitempty"`
 	ContactPhoneNumber           string           `json:"contact_phone_number,omitempty"`
+	ContactPhoneIsWhatsApp       bool             `json:"contact_phone_is_whatsapp,omitempty"`
 	IsNewContact                 bool             `json:"is_new_contact,omitempty"`
 	Metadata                     json.RawMessage  `json:"metadata,omitempty"`
 	LastActivity                 mariadb.NullTime `json:"last_activity"`
