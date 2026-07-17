@@ -32,6 +32,7 @@ type ClientMessage struct {
 	Interactive *Interactive            `json:"interactive,omitempty"`
 	Contacts    []fbgraph.ContactObject `json:"contacts,omitempty"`
 	Button      *Button                 `json:"button,omitempty"`
+	Location    *Location               `json:"location,omitempty"`
 	Preview     string                  `json:"preview,omitempty"`
 
 	Context   *MessageContext   `json:"context,omitempty"`
@@ -114,4 +115,12 @@ type Interactive struct {
 type Button struct {
 	Payload string `json:"payload"`
 	Text    string `json:"text"`
+}
+
+// Location is present in a message if type=location
+type Location struct {
+	Address   string  `json:"address"`
+	Latitude  float64 `json:"latitude"`
+	Longitude float64 `json:"longitude"`
+	Name      string  `json:"name"`
 }

@@ -265,6 +265,7 @@ const (
 	MOTypeUnknown     MessageObjectType = "unknown"
 	MOTypeVideo       MessageObjectType = "video"
 	MOTypeReaction    MessageObjectType = "reaction"
+	MOTypeLocation    MessageObjectType = "location"
 	MOTypeUnsupported MessageObjectType = "unsupported"
 )
 
@@ -274,7 +275,7 @@ func (m MessageObjectType) String() string {
 
 func (m MessageObjectType) IsValid() bool {
 	switch m {
-	case MOTypeAudio, MOTypeButton, MOTypeDocument, MOTypeText, MOTypeImage, MOTypeInteractive, MOTypeSticker, MOTypeSystem, MOTypeUnknown, MOTypeVideo, MOTypeReaction, MOTypeContacts:
+	case MOTypeAudio, MOTypeButton, MOTypeDocument, MOTypeText, MOTypeImage, MOTypeInteractive, MOTypeSticker, MOTypeSystem, MOTypeUnknown, MOTypeVideo, MOTypeReaction, MOTypeContacts, MOTypeLocation:
 		return true
 	}
 	return false

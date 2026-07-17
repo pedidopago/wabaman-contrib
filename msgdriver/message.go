@@ -12,4 +12,5 @@ const (
 	MessageDocument    MessageType = "document"
 	MessageSticker     MessageType = "sticker"
 	MessageContacts    MessageType = "contacts"
+	MessageLocation    MessageType = "location"
 )
