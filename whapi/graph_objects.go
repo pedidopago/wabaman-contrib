@@ -707,6 +707,7 @@ type MessageEHObject struct {
 	Video            *fbgraph.MediaObject    `json:"video,omitempty"`
 	Sticker          *fbgraph.MediaObject    `json:"sticker,omitempty"`
 	Contacts         []fbgraph.ContactObject `json:"contacts,omitempty"`
+	Location         *MessageObjectLocation  `json:"location,omitempty"`
 	Context          *fbgraph.MessageContext `json:"context,omitempty"`
 	HistoryContext   struct {
 		Status string `json:"status"` // MESSAGE_STATUS - DELIVERED ERROR PENDING PLAYED READ SENT
