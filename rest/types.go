@@ -24,6 +24,7 @@ const (
 	MessageDocument    MessageType = "document"
 	MessageSticker     MessageType = "sticker"
 	MessageContacts    MessageType = "contacts"
+	MessageLocation    MessageType = "location"
 )
 
 type PreviewMessageOutcomeRequest struct {
@@ -87,6 +88,7 @@ type NewMessageRequest struct {
 	Video            *fbgraph.MediaObject              `json:"video,omitempty"`
 	Sticker          *fbgraph.MediaObject              `json:"sticker,omitempty"`
 	Contacts         []fbgraph.ContactObject           `json:"contacts,omitempty"`
+	Location         *fbgraph.LocationObject           `json:"location,omitempty"`
 	FallbackTemplate string                            `json:"fallback_template,omitempty"`
 	// This Skip Welcome field will save a contact metadata `"skip_welcome": true` ONLY if
 	// the contact is created by this message. If the contact already exists, this field will be ignored.

@@ -3,10 +3,10 @@ package fbgraph
 type InteractiveMessageType string
 
 const (
-	InteractiveMessageButton              InteractiveMessageType = "button"
-	InteractiveMessageList                InteractiveMessageType = "list"
-	InteractiveMessageProduct             InteractiveMessageType = "product"
-	InteractiveMessageProductList         InteractiveMessageType = "product_list"
+	InteractiveMessageButton                InteractiveMessageType = "button"
+	InteractiveMessageList                  InteractiveMessageType = "list"
+	InteractiveMessageProduct               InteractiveMessageType = "product"
+	InteractiveMessageProductList           InteractiveMessageType = "product_list"
 	InteractiveMessageCallPermissionRequest InteractiveMessageType = "call_permission_request"
 )
 

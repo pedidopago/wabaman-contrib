@@ -519,12 +519,7 @@ type MessageObjectSystem struct {
 	ParentUserID string `json:"parent_user_id,omitempty"`
 }
 
-type MessageObjectLocation struct {
-	Address   string  `json:"address"`
-	Latitude  float64 `json:"latitude"`
-	Longitude float64 `json:"longitude"`
-	Name      string  `json:"name"`
-}
+type MessageObjectLocation = fbgraph.LocationObject
 
 type SystemMessageType string
 
@@ -597,10 +592,10 @@ type StatusObject struct {
 	// recipient_user_id on status webhooks (only present for delivered/read).
 	RecipientUserID string `json:"recipient_user_id,omitempty"`
 	// Business-scoped parent user ID of the recipient.
-	RecipientParentUserID string                `json:"recipient_parent_user_id,omitempty"`
-	Status         MessageStatus               `json:"status"`
-	Timestamp      string                      `json:"timestamp,omitempty"`
-	Errors         []wsapi.FBStatusObjectError `json:"errors,omitempty"`
+	RecipientParentUserID string                      `json:"recipient_parent_user_id,omitempty"`
+	Status                MessageStatus               `json:"status"`
+	Timestamp             string                      `json:"timestamp,omitempty"`
+	Errors                []wsapi.FBStatusObjectError `json:"errors,omitempty"`
 	// Type is the kind of status entry. Currently empty (default) for message status webhooks,
 	// and "call" for the calls status webhook variant introduced for business-initiated calling.
 	Type string `json:"type,omitempty"`
