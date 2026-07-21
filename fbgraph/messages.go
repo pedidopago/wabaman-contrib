@@ -37,6 +37,7 @@ type MessageObject struct {
 	Video         *MediaObject              `json:"video,omitempty"`
 	Sticker       *MediaObject              `json:"sticker,omitempty"`
 	Contacts      []ContactObject           `json:"contacts,omitempty"`
+	Location      *LocationObject           `json:"location,omitempty"`
 	Context       *MessageContext           `json:"context,omitempty"`
 
 	Reaction *ReactionObject `json:"reaction,omitempty"`

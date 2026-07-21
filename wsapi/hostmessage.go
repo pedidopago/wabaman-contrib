@@ -33,6 +33,7 @@ type HostMessage struct {
 	Template                *HostTemplate                     `json:"template,omitempty"`
 	Interactive             *fbgraph.InteractiveMessageObject `json:"interactive,omitempty"`
 	Contacts                []fbgraph.ContactObject           `json:"contacts,omitempty"`
+	Location                *Location                         `json:"location,omitempty"`
 	ObjectType              string                            `json:"object_type,omitempty"`
 	AgentID                 string                            `json:"agent_id,omitempty"`
 	AgentName               string                            `json:"agent_name,omitempty"`
