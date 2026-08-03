@@ -22,6 +22,8 @@ type MessageObjectReferral struct {
 	VideoUrl string `json:"video_url"`
 	// URL for the thumbnail, when media_type is a video
 	ThumbnailUrl string `json:"thumbnail_url"`
+	// Click ID for the ad, present when the conversation originated from a Click-to-WhatsApp ad
+	CtwaClid string `json:"ctwa_clid,omitempty"`
 }
 
 func (r MessageObjectReferral) JSONString() string {
