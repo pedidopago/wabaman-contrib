@@ -19,14 +19,25 @@ type ConversionUserData struct {
 	WhatsAppBusinessAccountID string `json:"whatsapp_business_account_id"`
 }
 
+// ConversionCustomData carries the value-based-optimization signal. Value is a
+// plain amount (not hashed); Currency is ISO-4217 (e.g. "BRL"). Never put
+// product/line-item detail here for health-adjacent verticals — it can be
+// sensitive personal data.
+type ConversionCustomData struct {
+	Value    float64 `json:"value"`
+	Currency string  `json:"currency"`
+}
+
 // ConversionEvent is a single CAPI event. ActionSource is "business_messaging"
-// and MessagingChannel is "whatsapp" for CTWA conversions.
+// and MessagingChannel is "whatsapp" for CTWA conversions. CustomData is optional
+// and omitted entirely when no monetary value is reported (e.g. a bare lead).
 type ConversionEvent struct {
-	EventName        string             `json:"event_name"`
-	EventTime        int64              `json:"event_time"`
-	ActionSource     string             `json:"action_source"`
-	MessagingChannel string             `json:"messaging_channel"`
-	UserData         ConversionUserData `json:"user_data"`
+	EventName        string                `json:"event_name"`
+	EventTime        int64                 `json:"event_time"`
+	ActionSource     string                `json:"action_source"`
+	MessagingChannel string                `json:"messaging_channel"`
+	UserData         ConversionUserData    `json:"user_data"`
+	CustomData       *ConversionCustomData `json:"custom_data,omitempty"`
 }
 
 func (c *Client) graphVersion() string {
