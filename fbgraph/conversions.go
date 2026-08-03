@@ -47,6 +47,19 @@ func (c *Client) graphVersion() string {
 	return DefaultGraphAPIVersion
 }
 
+// httpError turns a non-2xx response into a classifiable error. errorFromResponse
+// only returns a *GraphError when the body carries error.code; for responses that
+// don't (a bare 5xx, a gateway/HTML error page, or code:0) it returns a plain
+// error, losing the status. Wrapping preserves HTTPStatusCode so callers can tell
+// "Meta responded with an error" (retryable/permanent) from "no response at all".
+func (c *Client) httpError(resp *http.Response) error {
+	err := c.errorFromResponse(resp)
+	if _, ok := AsGraphError(err); ok {
+		return err
+	}
+	return &GraphError{HTTPStatusCode: resp.StatusCode, Message: err.Error()}
+}
+
 // CreateDataset provisions a Conversions API dataset on a WhatsApp Business
 // Account and returns its id. POST /{WABA_ID}/dataset.
 func (c *Client) CreateDataset(ctx context.Context, wabaID string) (datasetID string, err error) {
@@ -69,7 +82,7 @@ func (c *Client) CreateDataset(ctx context.Context, wabaID string) (datasetID st
 	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
-		return "", c.errorFromResponse(resp)
+		return "", c.httpError(resp)
 	}
 
 	result := struct {
@@ -105,7 +118,7 @@ func (c *Client) GetDatasetID(ctx context.Context, wabaID string) (datasetID str
 	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
-		return "", c.errorFromResponse(resp)
+		return "", c.httpError(resp)
 	}
 
 	// The edge returns a paged list; the WABA has at most one CTWA dataset today.
@@ -158,7 +171,7 @@ func (c *Client) SendConversionEvents(ctx context.Context, datasetID string, eve
 	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
-		return 0, c.errorFromResponse(resp)
+		return 0, c.httpError(resp)
 	}
 
 	result := struct {
