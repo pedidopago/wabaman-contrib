@@ -825,9 +825,46 @@ type StatusConversationObject struct {
 type StatusPricingObject struct {
 	// Indicates the conversation category:
 	Category PricingCategory `json:"category"`
-	// Type of pricing model used by the business. Current supported value is CBP
+	// Type of pricing model used by the business. "PMP" (per-message pricing)
+	// since 2025-07-01; "CBP" (conversation-based pricing) before that.
 	PricingModel string `json:"pricing_model"`
+	// Whether Meta charged for this message. Nil when Meta omitted the field.
+	//
+	// Do not infer this from Category: a utility template delivered inside an
+	// open customer service window is free, and reports Billable false with
+	// Type PricingTypeFreeCustomerService.
+	Billable *bool `json:"billable,omitempty"`
+	// Why the message was (or was not) charged. Empty when Meta omitted it.
+	Type PricingType `json:"type,omitempty"`
 }
+
+// IsBillable reports whether Meta charged for the message. It is false when
+// Meta reported no pricing information at all, so callers that must
+// distinguish "free" from "unknown" should check Billable and Type directly.
+func (p *StatusPricingObject) IsBillable() bool {
+	if p == nil {
+		return false
+	}
+	if p.Billable != nil {
+		return *p.Billable
+	}
+	// Older payloads carry no `billable`; fall back to `type` when present.
+	return p.Type == PricingTypeRegular
+}
+
+// PricingType indicates why a message was charged or exempted.
+type PricingType string
+
+const (
+	// The message was charged at the rate for its PricingCategory.
+	PricingTypeRegular PricingType = "regular"
+	// The message was sent inside an open customer service window and was not
+	// charged. Note that as of 2026-10-01 Meta charges for utility templates
+	// sent in this window.
+	PricingTypeFreeCustomerService PricingType = "free_customer_service"
+	// The message rode a free entry point conversation and was not charged.
+	PricingTypeFreeEntryPoint PricingType = "free_entry_point"
+)
 
 type PricingCategory string
 
