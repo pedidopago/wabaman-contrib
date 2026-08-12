@@ -184,7 +184,13 @@ type WABAPhoneNumber struct {
 }
 
 type getWABAPhoneNumbersResponse struct {
-	Data []WABAPhoneNumber `json:"data"`
+	Data   []WABAPhoneNumber `json:"data"`
+	Paging struct {
+		Cursors struct {
+			After string `json:"after"`
+		} `json:"cursors"`
+		Next string `json:"next"`
+	} `json:"paging"`
 }
 
 // GetWABAPhoneNumbers lists the phone numbers currently attached to a WABA.
@@ -195,36 +201,61 @@ type getWABAPhoneNumbersResponse struct {
 // silently breaks both sending and webhook resolution.
 //
 // GET /{WABA_ID}/phone_numbers
+// It pages to the end rather than reading the first page only: a truncated list
+// is indistinguishable from "these numbers did not migrate", which is a
+// conclusion callers act on.
 func (c *Client) GetWABAPhoneNumbers(ctx context.Context, wabaID string) ([]WABAPhoneNumber, error) {
-	q := make(url.Values)
-	q.Set("fields", "id,display_phone_number,verified_name,quality_rating,code_verification_status,platform_type")
-	q.Set("limit", "200")
+	all := make([]WABAPhoneNumber, 0, 16)
+	after := ""
 
-	u := fmt.Sprintf("https://graph.facebook.com/%s/%s/phone_numbers?%s",
-		c.graphVersion(), url.PathEscape(wabaID), q.Encode())
+	// Bounded so a rotating cursor cannot spin forever; 200 per page covers a
+	// WABA far larger than Meta's own phone-number ceiling.
+	for page := 0; page < 50; page++ {
+		q := make(url.Values)
+		q.Set("fields", "id,display_phone_number,verified_name,quality_rating,code_verification_status,platform_type")
+		q.Set("limit", "200")
+		if after != "" {
+			q.Set("after", after)
+		}
 
-	req, err := NewRequestWithContext(ctx, http.MethodGet, u, nil)
-	if err != nil {
-		return nil, fmt.Errorf("new request: %w", err)
+		u := fmt.Sprintf("https://graph.facebook.com/%s/%s/phone_numbers?%s",
+			c.graphVersion(), url.PathEscape(wabaID), q.Encode())
+
+		req, err := NewRequestWithContext(ctx, http.MethodGet, u, nil)
+		if err != nil {
+			return nil, fmt.Errorf("new request: %w", err)
+		}
+		req.Header.Set("Authorization", "Bearer "+c.AccessToken)
+
+		resp, err := c.HTTPClient.Do(req)
+		if err != nil {
+			return nil, fmt.Errorf("request failed: %w", err)
+		}
+
+		if resp.StatusCode != http.StatusOK {
+			err := c.httpError(resp)
+			_ = resp.Body.Close()
+			return nil, err
+		}
+
+		out := &getWABAPhoneNumbersResponse{}
+		derr := json.NewDecoder(resp.Body).Decode(out)
+		_ = resp.Body.Close()
+		if derr != nil {
+			return nil, fmt.Errorf("decode response: %w", derr)
+		}
+
+		all = append(all, out.Data...)
+
+		// Graph returns a cursor on the last page too; `next` is what actually
+		// signals there is more.
+		if out.Paging.Next == "" || out.Paging.Cursors.After == "" || out.Paging.Cursors.After == after {
+			break
+		}
+		after = out.Paging.Cursors.After
 	}
-	req.Header.Set("Authorization", "Bearer "+c.AccessToken)
 
-	resp, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("request failed: %w", err)
-	}
-	defer func() { _ = resp.Body.Close() }()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, c.httpError(resp)
-	}
-
-	out := &getWABAPhoneNumbersResponse{}
-	if err := json.NewDecoder(resp.Body).Decode(out); err != nil {
-		return nil, fmt.Errorf("decode response: %w", err)
-	}
-
-	return out.Data, nil
+	return all, nil
 }
 
 // WABAInfo is the subset of a WhatsApp Business Account we read back from Meta.

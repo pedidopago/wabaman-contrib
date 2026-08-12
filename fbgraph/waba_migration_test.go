@@ -259,3 +259,46 @@ func TestMigrationServerErrorPreservesStatus(t *testing.T) {
 		t.Errorf("HTTPStatusCode = %d, want 502", ge.HTTPStatusCode)
 	}
 }
+
+// A truncated phone-number list is indistinguishable from "these numbers did
+// not migrate" -- a conclusion the caller acts on -- so paging must complete.
+func TestGetWABAPhoneNumbersPaginates(t *testing.T) {
+	page := 0
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		page++
+		if r.URL.Query().Get("after") == "" {
+			_, _ = io.WriteString(w, `{"data":[{"id":"1","display_phone_number":"+55 11 1111-1111"}],
+				"paging":{"cursors":{"after":"CUR1"},"next":"https://graph.facebook.com/next"}}`)
+			return
+		}
+		// Last page still carries a cursor but no `next`.
+		_, _ = io.WriteString(w, `{"data":[{"id":"2","display_phone_number":"+55 11 2222-2222"}],
+			"paging":{"cursors":{"after":"CUR2"}}}`)
+	}))
+	defer srv.Close()
+
+	u, err := url.Parse(srv.URL)
+	if err != nil {
+		t.Fatalf("parse: %v", err)
+	}
+	cl := &Client{
+		HTTPClient:      &http.Client{Transport: &rewriteTransport{target: u}},
+		AccessToken:     "t",
+		GraphAPIVersion: "v23.0",
+	}
+
+	out, err := cl.GetWABAPhoneNumbers(context.Background(), "waba")
+	if err != nil {
+		t.Fatalf("phone numbers: %v", err)
+	}
+	if len(out) != 2 {
+		t.Fatalf("len = %d, want 2 (both pages)", len(out))
+	}
+	if out[0].ID != "1" || out[1].ID != "2" {
+		t.Errorf("ids = %q,%q", out[0].ID, out[1].ID)
+	}
+	if page != 2 {
+		t.Errorf("requested %d pages, want exactly 2 -- a cursor on the last page must not cause another round trip", page)
+	}
+}
