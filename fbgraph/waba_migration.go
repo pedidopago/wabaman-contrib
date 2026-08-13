@@ -258,7 +258,6 @@ func (c *Client) GetWABAPhoneNumbers(ctx context.Context, wabaID string) ([]WABA
 	return all, nil
 }
 
-// WABAInfo is the subset of a WhatsApp Business Account we read back from Meta.
 // OwnerBusiness is the business portfolio (Business Manager) that owns a WABA.
 //
 // It matters for money: Meta accumulates the utility and authentication volume
@@ -273,6 +272,7 @@ type OwnerBusiness struct {
 	Name string `json:"name"`
 }
 
+// WABAInfo is the subset of a WhatsApp Business Account we read back from Meta.
 type WABAInfo struct {
 	ID string `json:"id"`
 	// OwnerBusinessInfo is absent when the token cannot see the owning
@@ -291,9 +291,37 @@ type WABAInfo struct {
 // GetWABAInfo reads a WABA's billing currency and timezone.
 //
 // GET /{WABA_ID}?fields=id,currency,name,timezone_id
+// wabaInfoFields is what we ask for. owner_business_info is the only one that
+// needs a permission beyond reading the WABA itself, which is why
+// GetWABAInfo falls back without it.
+const (
+	wabaInfoFields    = "id,currency,name,timezone_id,owner_business_info"
+	wabaInfoFieldsMin = "id,currency,name,timezone_id"
+)
+
+// GetWABAInfo reads a WABA, retrying without owner_business_info if the first
+// attempt fails.
+//
+// Graph rejects the whole request when a token cannot see a requested field, so
+// asking for the portfolio on a token that lacks business_management would lose
+// the CURRENCY too -- and the currency is what phone registration and
+// InitiateWABAMigration actually depend on. The portfolio is a nice-to-have
+// riding along; it must never cost us the field that is not.
 func (c *Client) GetWABAInfo(ctx context.Context, wabaID string) (*WABAInfo, error) {
+	info, err := c.getWABAInfo(ctx, wabaID, wabaInfoFields)
+	if err == nil {
+		return info, nil
+	}
+	if info, err2 := c.getWABAInfo(ctx, wabaID, wabaInfoFieldsMin); err2 == nil {
+		return info, nil
+	}
+	// Report the first error: it is the one describing the request we wanted.
+	return nil, err
+}
+
+func (c *Client) getWABAInfo(ctx context.Context, wabaID, fields string) (*WABAInfo, error) {
 	q := make(url.Values)
-	q.Set("fields", "id,currency,name,timezone_id,owner_business_info")
+	q.Set("fields", fields)
 
 	u := fmt.Sprintf("https://graph.facebook.com/%s/%s?%s",
 		c.graphVersion(), url.PathEscape(wabaID), q.Encode())
