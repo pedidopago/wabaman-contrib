@@ -259,8 +259,25 @@ func (c *Client) GetWABAPhoneNumbers(ctx context.Context, wabaID string) ([]WABA
 }
 
 // WABAInfo is the subset of a WhatsApp Business Account we read back from Meta.
+// OwnerBusiness is the business portfolio (Business Manager) that owns a WABA.
+//
+// It matters for money: Meta accumulates the utility and authentication volume
+// discount PER PORTFOLIO, across every WABA in it, not per WABA. Without this,
+// a fleet is a list of unrelated WABA ids and the discount tier cannot be
+// computed -- nor can anyone tell whether consolidating WABAs would reach a
+// cheaper tier.
+type OwnerBusiness struct {
+	ID string `json:"id"`
+	// Name is a label and can be renamed in Business Manager at any time. Group
+	// by ID; show Name.
+	Name string `json:"name"`
+}
+
 type WABAInfo struct {
 	ID string `json:"id"`
+	// OwnerBusinessInfo is absent when the token cannot see the owning
+	// portfolio, which is not the same as the WABA having none.
+	OwnerBusinessInfo *OwnerBusiness `json:"owner_business_info,omitempty"`
 	// Currency is the WABA's billing currency, fixed at creation. Meta is the
 	// only source of truth for it: our stored copy is a cache that drifts when a
 	// WABA is created or migrated outside our flow.
@@ -276,7 +293,7 @@ type WABAInfo struct {
 // GET /{WABA_ID}?fields=id,currency,name,timezone_id
 func (c *Client) GetWABAInfo(ctx context.Context, wabaID string) (*WABAInfo, error) {
 	q := make(url.Values)
-	q.Set("fields", "id,currency,name,timezone_id")
+	q.Set("fields", "id,currency,name,timezone_id,owner_business_info")
 
 	u := fmt.Sprintf("https://graph.facebook.com/%s/%s?%s",
 		c.graphVersion(), url.PathEscape(wabaID), q.Encode())
