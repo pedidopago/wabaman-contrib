@@ -38,6 +38,28 @@ type MigrationIntentResponse struct {
 	MigrationStatus string `json:"migration_status"`
 }
 
+// UnmarshalJSON accepts migration_id as either a JSON string or a bare JSON
+// number. Graph ids are documented as strings and every other Meta endpoint we
+// call emits them quoted, but this one answers with a number -- which decoded
+// into a string field is a hard error, and it lands in the worst possible
+// place: Meta has already accepted the intent and created the clone by the
+// time the body is parsed, so a decode failure here strands a live migration
+// with no local record and invisible to the in-flight guard.
+//
+// Normalized to the string form the type stores, so callers are unaffected.
+func (r *MigrationIntentResponse) UnmarshalJSON(data []byte) error {
+	var shadow struct {
+		MigrationID     json.RawMessage `json:"migration_id"`
+		MigrationStatus string          `json:"migration_status"`
+	}
+	if err := json.Unmarshal(data, &shadow); err != nil {
+		return err
+	}
+	r.MigrationID = jsonScalarToString(shadow.MigrationID)
+	r.MigrationStatus = shadow.MigrationStatus
+	return nil
+}
+
 // MigrationDestinationWABA describes the cloned WABA. It only appears once Meta
 // has actually created it, so it is absent early in the migration.
 type MigrationDestinationWABA struct {
@@ -48,12 +70,52 @@ type MigrationDestinationWABA struct {
 	MessageTemplateNamespace string `json:"message_template_namespace"`
 }
 
+// UnmarshalJSON tolerates a numeric id for the same reason
+// MigrationIntentResponse does -- this is the destination WABA id every later
+// step is keyed on, and it arrives from the same API family.
+func (w *MigrationDestinationWABA) UnmarshalJSON(data []byte) error {
+	var shadow struct {
+		ID                       json.RawMessage `json:"id"`
+		Name                     string          `json:"name"`
+		Currency                 string          `json:"currency"`
+		TimezoneID               string          `json:"timezone_id"`
+		MessageTemplateNamespace string          `json:"message_template_namespace"`
+	}
+	if err := json.Unmarshal(data, &shadow); err != nil {
+		return err
+	}
+	w.ID = jsonScalarToString(shadow.ID)
+	w.Name = shadow.Name
+	w.Currency = shadow.Currency
+	w.TimezoneID = shadow.TimezoneID
+	w.MessageTemplateNamespace = shadow.MessageTemplateNamespace
+	return nil
+}
+
 // MigrationStatusResponse is the state of a migration, as reported by Meta.
 type MigrationStatusResponse struct {
 	ID     string `json:"id"`
 	Status string `json:"status"`
 	// DestinationWABA is nil until Meta has created the clone.
 	DestinationWABA *MigrationDestinationWABA `json:"destination_waba,omitempty"`
+}
+
+// UnmarshalJSON tolerates a numeric id here too: this is the polling path for a
+// migration already under way, so refusing the body would leave a real
+// migration unpollable and uncompletable.
+func (r *MigrationStatusResponse) UnmarshalJSON(data []byte) error {
+	var shadow struct {
+		ID              json.RawMessage           `json:"id"`
+		Status          string                    `json:"status"`
+		DestinationWABA *MigrationDestinationWABA `json:"destination_waba"`
+	}
+	if err := json.Unmarshal(data, &shadow); err != nil {
+		return err
+	}
+	r.ID = jsonScalarToString(shadow.ID)
+	r.Status = shadow.Status
+	r.DestinationWABA = shadow.DestinationWABA
+	return nil
 }
 
 // SetPaymentMethodMigrationIntent starts a WABA currency migration: Meta
