@@ -272,7 +272,7 @@ func (c *Client) GetWABAPhoneNumbers(ctx context.Context, wabaID string) ([]WABA
 
 	// Bounded so a rotating cursor cannot spin forever; 200 per page covers a
 	// WABA far larger than Meta's own phone-number ceiling.
-	for page := 0; page < 50; page++ {
+	for range 50 {
 		q := make(url.Values)
 		q.Set("fields", "id,display_phone_number,verified_name,quality_rating,code_verification_status,platform_type")
 		q.Set("limit", "200")
