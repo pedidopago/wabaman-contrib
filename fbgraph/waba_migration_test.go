@@ -212,8 +212,11 @@ func TestGetWABAInfo(t *testing.T) {
 	if got, want := rt.gotReq.URL.Path, "/v23.0/629535923565046"; got != want {
 		t.Errorf("path = %q, want %q", got, want)
 	}
-	if got := rt.gotReq.URL.Query().Get("fields"); got != "id,currency,name,timezone_id" {
-		t.Errorf("fields = %q", got)
+	// Asserted against the constant rather than a second copy of the list: the
+	// hardcoded duplicate went stale the moment owner_business_info was added,
+	// which is what left this test failing on main.
+	if got := rt.gotReq.URL.Query().Get("fields"); got != wabaInfoFields {
+		t.Errorf("fields = %q, want %q", got, wabaInfoFields)
 	}
 	if out.Currency != "USD" {
 		t.Errorf("currency = %q", out.Currency)

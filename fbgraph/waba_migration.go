@@ -352,7 +352,7 @@ type WABAInfo struct {
 
 // GetWABAInfo reads a WABA's billing currency and timezone.
 //
-// GET /{WABA_ID}?fields=id,currency,name,timezone_id
+// GET /{WABA_ID}?fields=<wabaInfoFields>
 // wabaInfoFields is what we ask for. owner_business_info is the only one that
 // needs a permission beyond reading the WABA itself, which is why
 // GetWABAInfo falls back without it.
