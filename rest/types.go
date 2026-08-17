@@ -451,7 +451,7 @@ type Contact struct {
 	UserID mariadb.NullString `json:"user_id"`
 	// The contact's WhatsApp username (@handle), without the leading '@'. Mutable;
 	// for human-facing search/display only, never an identity key.
-	Username mariadb.NullString `json:"username,omitempty"`
+	Username mariadb.NullString `json:"username"`
 	// The profile name of the contact.
 	WABAProfileName mariadb.NullString `json:"waba_profile_name"`
 	// The timestamp of the last time the contact was 'seen' online.

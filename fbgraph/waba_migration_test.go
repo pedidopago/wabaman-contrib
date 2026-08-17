@@ -212,8 +212,11 @@ func TestGetWABAInfo(t *testing.T) {
 	if got, want := rt.gotReq.URL.Path, "/v23.0/629535923565046"; got != want {
 		t.Errorf("path = %q, want %q", got, want)
 	}
-	if got := rt.gotReq.URL.Query().Get("fields"); got != "id,currency,name,timezone_id" {
-		t.Errorf("fields = %q", got)
+	// Asserted against the constant rather than a second copy of the list: the
+	// hardcoded duplicate went stale the moment owner_business_info was added,
+	// which is what left this test failing on main.
+	if got := rt.gotReq.URL.Query().Get("fields"); got != wabaInfoFields {
+		t.Errorf("fields = %q, want %q", got, wabaInfoFields)
 	}
 	if out.Currency != "USD" {
 		t.Errorf("currency = %q", out.Currency)
@@ -300,5 +303,55 @@ func TestGetWABAPhoneNumbersPaginates(t *testing.T) {
 	}
 	if page != 2 {
 		t.Errorf("requested %d pages, want exactly 2 -- a cursor on the last page must not cause another round trip", page)
+	}
+}
+
+// Meta answers this endpoint with a bare numeric migration_id in production,
+// even though Graph ids are documented as strings. Decoding that into a string
+// field used to fail outright — and it fails after Meta has already accepted
+// the intent and created the clone, stranding a live migration with no local
+// record. Both shapes must decode to the same string.
+func TestSetPaymentMethodMigrationIntentAcceptsNumericMigrationID(t *testing.T) {
+	cl, _ := newTestClient(t, http.StatusOK,
+		`{"migration_id":1234567890123456,"migration_status":"INITIATED"}`)
+
+	out, err := cl.SetPaymentMethodMigrationIntent(context.Background(), "431859353351325",
+		MigrationIntentRequest{Currency: "BRL"})
+	if err != nil {
+		t.Fatalf("intent: %v", err)
+	}
+	if got, want := out.MigrationID, "1234567890123456"; got != want {
+		t.Errorf("migration_id = %q, want %q", got, want)
+	}
+	if out.MigrationStatus != MigrationStatusInitiated {
+		t.Errorf("migration_status = %q", out.MigrationStatus)
+	}
+}
+
+// The polling path carries the same risk: a numeric id on a migration already
+// under way would leave it unpollable and therefore uncompletable.
+func TestGetMigrationStatusAcceptsNumericIDs(t *testing.T) {
+	cl, _ := newTestClient(t, http.StatusOK,
+		`{"id":1234567890123456,"status":"READY_TO_COMPLETE",`+
+			`"destination_waba":{"id":629535923565046,"name":"Loja","currency":"BRL"}}`)
+
+	out, err := cl.GetMigrationStatus(context.Background(), "1234567890123456")
+	if err != nil {
+		t.Fatalf("status: %v", err)
+	}
+	if got, want := out.ID, "1234567890123456"; got != want {
+		t.Errorf("id = %q, want %q", got, want)
+	}
+	if out.Status != MigrationStatusReadyToComplete {
+		t.Errorf("status = %q", out.Status)
+	}
+	if out.DestinationWABA == nil {
+		t.Fatal("destination_waba missing")
+	}
+	if got, want := out.DestinationWABA.ID, "629535923565046"; got != want {
+		t.Errorf("destination id = %q, want %q", got, want)
+	}
+	if out.DestinationWABA.Currency != "BRL" {
+		t.Errorf("destination currency = %q", out.DestinationWABA.Currency)
 	}
 }
