@@ -892,6 +892,15 @@ const (
 	// Indicates a free entry point conversation.
 	// https://developers.facebook.com/docs/whatsapp/pricing#free-entry-point-conversations
 	PricingCategoryReferralConversion PricingCategory = "referral_conversion"
+	// PricingCategoryMarketingLite indicates a marketing message delivered
+	// through the Marketing Messages Lite endpoint.
+	//
+	// Meta puts marketing_lite in BOTH conversation.origin.type and
+	// pricing.category, so a consumer that teaches only the origin switch about
+	// it still loses the price: the category falls through to "unknown" and the
+	// message is stored unpriced. Rates are the ordinary Cloud API marketing
+	// rates -- same money, different delivery route.
+	PricingCategoryMarketingLite PricingCategory = "marketing_lite"
 )
 
 // AccountUpdateEvent names the event carried by an account_update webhook, in

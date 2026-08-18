@@ -23,9 +23,10 @@ func TestGetMMLiteOnboardingStatus(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var gotFields string
+			var gotFields, gotPath string
 			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				gotFields = r.URL.Query().Get("fields")
+				gotPath = r.URL.Path
 				w.Header().Set("Content-Type", "application/json")
 				_, _ = w.Write([]byte(tt.body))
 			}))
@@ -43,9 +44,16 @@ func TestGetMMLiteOnboardingStatus(t *testing.T) {
 			if got != tt.want {
 				t.Fatalf("status = %q, want %q", got, tt.want)
 			}
-			if gotFields != mmLiteOnboardingStatusField {
-				t.Fatalf("fields = %q, want exactly %q (requesting more risks losing the whole call on a token that cannot see one of them)",
-					gotFields, mmLiteOnboardingStatusField)
+			// The literal, not the constant under test: asserting against
+			// mmLiteOnboardingStatusField would stay green if someone widened
+			// the constant to "marketing_messages_onboarding_status,currency",
+			// which is precisely the regression the field-alone rule prevents.
+			if gotFields != "marketing_messages_onboarding_status" {
+				t.Fatalf("fields = %q, want exactly marketing_messages_onboarding_status (requesting more risks losing the whole call on a token that cannot see one of them)",
+					gotFields)
+			}
+			if gotPath != "/"+DefaultGraphAPIVersion+"/123" {
+				t.Fatalf("path = %q, want the version and id in the path", gotPath)
 			}
 		})
 	}
