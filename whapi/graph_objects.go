@@ -913,8 +913,14 @@ const (
 	// The acceptance is an act of the PORTFOLIO and cascades to every eligible
 	// WABA it owns, so one of these may make several WABAs sendable.
 	AccountUpdateMMLiteTermsSigned AccountUpdateEvent = "MM_LITE_TERMS_SIGNED"
-	// AccountUpdateAdAccountLinked is the legacy name Meta sent before
-	// MM_LITE_TERMS_SIGNED existed. Still delivered to some accounts.
+	// AccountUpdateAdAccountLinked fires when a WABA has been onboarded to MM
+	// Lite through Embedded Signup or the Intent API, granting the partner
+	// access to its ad accounts.
+	//
+	// A DIFFERENT FACT from MM_LITE_TERMS_SIGNED, and a current event rather
+	// than a superseded alias: onboarding completing is not the same as the
+	// business having accepted the Terms of Service. Recording it as a
+	// signature stamps a legal act nobody observed.
 	AccountUpdateAdAccountLinked AccountUpdateEvent = "AD_ACCOUNT_LINKED"
 )
 
@@ -928,8 +934,6 @@ type WABAInfoObject struct {
 	// OwnerBusinessID is the Meta business portfolio (Business Manager) that
 	// owns the WABA. Same identifier as fbgraph.OwnerBusiness.ID.
 	OwnerBusinessID string `json:"owner_business_id,omitempty"`
-	// AdAccountID is populated only on the legacy AD_ACCOUNT_LINKED event.
-	AdAccountID string `json:"ad_account_id,omitempty"`
 }
 
 // Indicates conversation category. This can also be referred to as a conversation entry point
