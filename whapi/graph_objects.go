@@ -64,6 +64,11 @@ const (
 	ChangeObjectFieldCalls                        ChangeObjectField = "calls"
 	ChangeObjectFieldMessageTemplateQualityUpdate ChangeObjectField = "message_template_quality_update"
 	ChangeObjectFieldUserIDUpdate                 ChangeObjectField = "user_id_update"
+	// ChangeObjectFieldAccountUpdate carries WABA-level account events --
+	// notably the Marketing Messages Lite terms acceptance. Unlike the
+	// message fields it has NO phone number in its metadata, because it is
+	// about the account, not about any one number.
+	ChangeObjectFieldAccountUpdate ChangeObjectField = "account_update"
 )
 
 type ChangeObject struct {
@@ -127,6 +132,10 @@ type ValueObject struct {
 		Reason         string `json:"reason,omitempty"`
 		Recommendation string `json:"recommendation,omitempty"`
 	} `json:"rejection_info"`
+
+	// account_update specific fields. The event name itself arrives in Event,
+	// which template updates also use.
+	WABAInfo *WABAInfoObject `json:"waba_info,omitempty"`
 }
 
 // GetContactProfileName returns the contact profile name for the given waid or userID.
@@ -885,6 +894,35 @@ const (
 	PricingCategoryReferralConversion PricingCategory = "referral_conversion"
 )
 
+// AccountUpdateEvent names the event carried by an account_update webhook, in
+// ValueObject.Event.
+type AccountUpdateEvent string
+
+const (
+	// AccountUpdateMMLiteTermsSigned fires when someone with authority inside a
+	// business portfolio accepts the Marketing Messages Lite Terms of Service.
+	// The acceptance is an act of the PORTFOLIO and cascades to every eligible
+	// WABA it owns, so one of these may make several WABAs sendable.
+	AccountUpdateMMLiteTermsSigned AccountUpdateEvent = "MM_LITE_TERMS_SIGNED"
+	// AccountUpdateAdAccountLinked is the legacy name Meta sent before
+	// MM_LITE_TERMS_SIGNED existed. Still delivered to some accounts.
+	AccountUpdateAdAccountLinked AccountUpdateEvent = "AD_ACCOUNT_LINKED"
+)
+
+// WABAInfoObject identifies the account an account_update event is about.
+//
+// It carries the ids directly, so a consumer never has to infer the portfolio
+// from the entry id or from a phone number -- which matters because
+// account_update arrives with no phone number at all.
+type WABAInfoObject struct {
+	WABAID string `json:"waba_id,omitempty"`
+	// OwnerBusinessID is the Meta business portfolio (Business Manager) that
+	// owns the WABA. Same identifier as fbgraph.OwnerBusiness.ID.
+	OwnerBusinessID string `json:"owner_business_id,omitempty"`
+	// AdAccountID is populated only on the legacy AD_ACCOUNT_LINKED event.
+	AdAccountID string `json:"ad_account_id,omitempty"`
+}
+
 // Indicates conversation category. This can also be referred to as a conversation entry point
 type OriginType string
 
@@ -906,6 +944,11 @@ const (
 	OriginTypeService OriginType = "service"
 	// Indicates a free entry point conversation.
 	OriginTypeReferralConversion OriginType = "referral_conversion"
+	// OriginTypeMarketingLite indicates the conversation was opened by a
+	// MARKETING template sent through the Marketing Messages Lite endpoint.
+	// It is billed exactly as OriginTypeMarketing -- the difference is the
+	// delivery route, not the price or the category.
+	OriginTypeMarketingLite OriginType = "marketing_lite"
 )
 
 type CallObject struct {
