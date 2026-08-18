@@ -67,6 +67,12 @@ const mmLiteOnboardingStatusField = "marketing_messages_onboarding_status"
 // is "Meta will not tell us", never "NOT_STARTED": treating the absence as a
 // status would silently invent a fact about somebody's legal acceptance.
 func (c *Client) GetMMLiteOnboardingStatus(ctx context.Context, id string) (MMLiteOnboardingStatus, error) {
+	// Reset first, as every other method on Client does: without it a reused
+	// client that succeeds here still reports the previous call's error from
+	// LastGraphError().
+	c.lastGraphError = nil
+	c.lastErrorRawBody = ""
+
 	q := make(url.Values)
 	q.Set("fields", mmLiteOnboardingStatusField)
 
