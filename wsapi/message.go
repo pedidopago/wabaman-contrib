@@ -236,9 +236,15 @@ type ContactUpdate struct {
 	Name               string                `json:"name"`
 	Metadata           *ContactMetadataField `json:"metadata,omitzero"`
 	ColorTags          []ColorTag            `json:"color_tags,omitempty"`
-	UpdatedFields      []string              `json:"updated_fields"`
-	FieldsBefore       map[string]any        `json:"fields_before,omitempty"`
-	FieldsAfter        map[string]any        `json:"fields_after,omitempty"`
+	// LastFEPWindowClosesAt is the closing instant of the latest free entry point
+	// (72h, ad-originated) conversation this contact has ever had. Display-only:
+	// it labels the contact, it never gates sending — the free-form window stays
+	// 24h. Never cleared, so a reader decides "open" by comparing it to now; nil
+	// means the contact has never had one.
+	LastFEPWindowClosesAt *time.Time     `json:"last_fep_window_closes_at,omitempty"`
+	UpdatedFields         []string       `json:"updated_fields"`
+	FieldsBefore          map[string]any `json:"fields_before,omitempty"`
+	FieldsAfter           map[string]any `json:"fields_after,omitempty"`
 }
 
 // ContactUpdateToSend is the wire-format variant of [ContactUpdate] with json.RawMessage
@@ -255,9 +261,15 @@ type ContactUpdateToSend struct {
 	Name               string          `json:"name"`
 	Metadata           json.RawMessage `json:"metadata"`
 	ColorTags          []ColorTag      `json:"color_tags,omitempty"`
-	UpdatedFields      []string        `json:"updated_fields"`
-	FieldsBefore       map[string]any  `json:"fields_before,omitempty"`
-	FieldsAfter        map[string]any  `json:"fields_after,omitempty"`
+	// LastFEPWindowClosesAt is the closing instant of the latest free entry point
+	// (72h, ad-originated) conversation this contact has ever had. Display-only:
+	// it labels the contact, it never gates sending — the free-form window stays
+	// 24h. Never cleared, so a reader decides "open" by comparing it to now; nil
+	// means the contact has never had one.
+	LastFEPWindowClosesAt *time.Time     `json:"last_fep_window_closes_at,omitempty"`
+	UpdatedFields         []string       `json:"updated_fields"`
+	FieldsBefore          map[string]any `json:"fields_before,omitempty"`
+	FieldsAfter           map[string]any `json:"fields_after,omitempty"`
 }
 
 // NewContact is broadcast to connected clients when a new contact is created
