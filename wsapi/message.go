@@ -78,14 +78,14 @@ const (
 	// label tracks and attribute voice activity. See ADR-0002 in
 	// ms-wabaman-webrtc. The gateway authors the snapshot; ms-wabaman relays it
 	// to every agent on the call.
-	MessageTypeCallParticipantRoster MessageType = 64 // server -> all agents in call
+	MessageTypeCallParticipantRoster MessageType = 64 // server -> all agents of the business (receivers filter by call_id)
 
 	// Cosmetic mute indicator for multi-agent calls. Bidirectional: the client
 	// announces its own microphone state, the server stamps the sender identity
 	// and rebroadcasts the same payload to the business channel so peers can
 	// paint a mute icon. Nothing is persisted and the audio path is unaffected
 	// (a muted mic simply sends silence).
-	MessageTypeCallAgentMuteState MessageType = 65 // BIDIRECTIONAL - client -> server -> all agents in call
+	MessageTypeCallAgentMuteState MessageType = 65 // BIDIRECTIONAL - client -> server -> all agents of the business (receivers filter by call_id)
 
 	MessageTypeMockClientMessages MessageType = 230
 	MessageTypeGenericError       MessageType = 235
