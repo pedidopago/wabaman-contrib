@@ -65,8 +65,8 @@ const (
 	MessageTypeCallInviteAccepted MessageType = 55 // target → server → inviter
 	MessageTypeCallInviteRejected MessageType = 56 // target → server → inviter
 	MessageTypeLeaveCall          MessageType = 57 // client → server
-	MessageTypeCallAgentJoined    MessageType = 58 // server → all agents in call
-	MessageTypeCallAgentLeft      MessageType = 59 // server → all agents in call
+	MessageTypeCallAgentJoined    MessageType = 58 // server → all agents of the business (receivers filter by call_id)
+	MessageTypeCallAgentLeft      MessageType = 59 // server → all agents of the business (receivers filter by call_id)
 	MessageTypeUnreadCountChanged MessageType = 60 // server sends this to the clients
 	MessageTypeCallInviteFailed   MessageType = 61 // server → inviter
 	MessageTypeJoinCall           MessageType = 62 // CLIENT -> SERVER
@@ -77,7 +77,7 @@ const (
 	// slot. The roster maps slot -> participant identity so the frontend can
 	// label tracks and attribute voice activity. See ADR-0002 in
 	// ms-wabaman-webrtc. The gateway authors the snapshot; ms-wabaman relays it
-	// to every agent on the call.
+	// to every connected agent of the business, which filter by call_id.
 	MessageTypeCallParticipantRoster MessageType = 64 // server -> all agents of the business (receivers filter by call_id)
 
 	// Cosmetic mute indicator for multi-agent calls. Bidirectional: the client
