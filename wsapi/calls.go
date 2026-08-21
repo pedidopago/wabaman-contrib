@@ -436,6 +436,28 @@ type CallRosterParticipant struct {
 	ContactPhoneNumber string `json:"contact_phone_number,omitempty"`
 }
 
+// CallAgentMuteState announces that an agent muted or unmuted its microphone
+// during a multi-agent call. It is a cosmetic hint only: a muted agent still
+// keeps its audio track open and sends silence, so nothing about the call
+// changes for the backend or the gateway.
+//
+// The client sends only CallID and Muted; the server overwrites AgentID and
+// AgentName from the authenticated session and rebroadcasts the payload. No
+// mute state is stored anywhere, so a snapshot is never replayed: each front is
+// responsible for re-announcing its own state whenever it receives a
+// [CallParticipantRoster] (see docs/calls_mute_frontend.pt_BR.md in
+// ms-wabaman).
+//
+// Receivers key mute state by AgentID, never by roster slot: slots are reused
+// as agents leave and join, and this message travels on a different path than
+// the roster.
+type CallAgentMuteState struct {
+	CallID    string `json:"call_id"`
+	AgentID   string `json:"agent_id"`   // filled by the server, ignored on input
+	AgentName string `json:"agent_name"` // filled by the server, ignored on input
+	Muted     bool   `json:"muted"`
+}
+
 // CallInviteFailed is sent by the server to the inviter to explain why the invite was rejected.
 // Reason values: CALL_NOT_FOUND, NOT_IN_CALL, ALREADY_IN_CALL, CALL_FULL, AGENT_NOT_FOUND.
 type CallInviteFailed struct {

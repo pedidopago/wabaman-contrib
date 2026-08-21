@@ -80,6 +80,13 @@ const (
 	// to every agent on the call.
 	MessageTypeCallParticipantRoster MessageType = 64 // server -> all agents in call
 
+	// Cosmetic mute indicator for multi-agent calls. Bidirectional: the client
+	// announces its own microphone state, the server stamps the sender identity
+	// and rebroadcasts the same payload to the business channel so peers can
+	// paint a mute icon. Nothing is persisted and the audio path is unaffected
+	// (a muted mic simply sends silence).
+	MessageTypeCallAgentMuteState MessageType = 65 // BIDIRECTIONAL - client -> server -> all agents in call
+
 	MessageTypeMockClientMessages MessageType = 230
 	MessageTypeGenericError       MessageType = 235
 	MessageTypeCloseError         MessageType = 240
@@ -147,6 +154,7 @@ type Message struct {
 	JoinCallAnswer             *JoinCallAnswer             `json:"join_call_answer,omitempty"`
 	UnreadCountChanged         *UnreadCountChanged         `json:"unread_count_changed,omitempty"`
 	CallParticipantRoster      *CallParticipantRoster      `json:"call_participant_roster,omitempty"`
+	CallAgentMuteState         *CallAgentMuteState         `json:"call_agent_mute_state,omitempty"`
 }
 
 // ToJSON marshals the Message to a JSON string.
