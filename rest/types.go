@@ -54,7 +54,14 @@ const (
 	NewMessageStatusBlockedByDiscardWindowClosed NewMessageStatus = "blocked_by_discard_window_closed"
 	NewMessageStatusScheduled                    NewMessageStatus = "scheduled"
 	NewMessageStatusBlockedBySkipRule            NewMessageStatus = "blocked_by_skip_rule"
-	NewMessageStatusUnknown                      NewMessageStatus = "unknown"
+	// NewMessageStatusBlockedByTemplateNotWhitelisted is returned by the external
+	// driver path when the template is not in the driver's template_whitelist. It
+	// says nothing about the 24h window, which external drivers (email, telegram,
+	// maniback) do not have -- those sends used to come back as
+	// NewMessageStatusBlockedByDiscardWindowClosed, which sent every reader
+	// looking at conversation windows instead of at the whitelist.
+	NewMessageStatusBlockedByTemplateNotWhitelisted NewMessageStatus = "blocked_by_template_not_whitelisted"
+	NewMessageStatusUnknown                         NewMessageStatus = "unknown"
 )
 
 // Wabaman will use the components defined in here if the template
