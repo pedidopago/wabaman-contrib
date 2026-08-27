@@ -1,4 +1,4 @@
-module github.com/pedidopago/wabaman-contrib
+module github.com/pedidopago/wabaman-contrib/v2
 
 go 1.26.3
 

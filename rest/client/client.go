@@ -12,7 +12,7 @@ import (
 
 	"github.com/google/go-querystring/query"
 	"github.com/pedidopago/go-common/util"
-	"github.com/pedidopago/wabaman-contrib/rest"
+	"github.com/pedidopago/wabaman-contrib/v2/rest"
 )
 
 const (

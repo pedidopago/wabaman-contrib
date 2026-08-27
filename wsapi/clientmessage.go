@@ -3,8 +3,8 @@ package wsapi
 import (
 	"time"
 
-	"github.com/pedidopago/wabaman-contrib/fbgraph"
-	shared "github.com/pedidopago/wabaman-contrib/shared-types"
+	"github.com/pedidopago/wabaman-contrib/v2/fbgraph"
+	shared "github.com/pedidopago/wabaman-contrib/v2/shared-types"
 )
 
 // ClientMessage is a message that was sent from a client to a WhatsApp business.

@@ -89,5 +89,9 @@ func (r rewriteHost) RoundTrip(req *http.Request) (*http.Response, error) {
 		return nil, err
 	}
 	stub.Header = req.Header
+	// Forward the host the caller actually targeted: the stub swallows it
+	// otherwise, and a method sent to the wrong host would be untestable.
+	stub.Header.Set("X-Orig-Host", u.Host)
+
 	return r.next.RoundTrip(stub.WithContext(req.Context()))
 }

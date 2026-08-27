@@ -128,6 +128,9 @@ func (r *MigrationStatusResponse) UnmarshalJSON(data []byte) error {
 //
 // POST /{WABA_ID}/set_payment_method_migration_intent
 func (c *Client) SetPaymentMethodMigrationIntent(ctx context.Context, sourceWABAID string, params MigrationIntentRequest) (*MigrationIntentResponse, error) {
+	c.lastGraphError = nil
+	c.lastErrorRawBody = ""
+
 	body, err := json.Marshal(params)
 	if err != nil {
 		return nil, fmt.Errorf("marshal migration intent: %w", err)
@@ -167,6 +170,9 @@ func (c *Client) SetPaymentMethodMigrationIntent(ctx context.Context, sourceWABA
 //
 // GET /{MIGRATION_ID}
 func (c *Client) GetMigrationStatus(ctx context.Context, migrationID string) (*MigrationStatusResponse, error) {
+	c.lastGraphError = nil
+	c.lastErrorRawBody = ""
+
 	u := fmt.Sprintf("https://graph.facebook.com/%s/%s",
 		c.graphVersion(), url.PathEscape(migrationID))
 
@@ -203,6 +209,9 @@ func (c *Client) GetMigrationStatus(ctx context.Context, migrationID string) (*M
 //
 // POST /{MIGRATION_ID}/resume_migration
 func (c *Client) ResumeMigration(ctx context.Context, migrationID string) (*MigrationStatusResponse, error) {
+	c.lastGraphError = nil
+	c.lastErrorRawBody = ""
+
 	u := fmt.Sprintf("https://graph.facebook.com/%s/%s/resume_migration",
 		c.graphVersion(), url.PathEscape(migrationID))
 
@@ -267,6 +276,9 @@ type getWABAPhoneNumbersResponse struct {
 // is indistinguishable from "these numbers did not migrate", which is a
 // conclusion callers act on.
 func (c *Client) GetWABAPhoneNumbers(ctx context.Context, wabaID string) ([]WABAPhoneNumber, error) {
+	c.lastGraphError = nil
+	c.lastErrorRawBody = ""
+
 	all := make([]WABAPhoneNumber, 0, 16)
 	after := ""
 
@@ -370,6 +382,9 @@ const (
 // InitiateWABAMigration actually depend on. The portfolio is a nice-to-have
 // riding along; it must never cost us the field that is not.
 func (c *Client) GetWABAInfo(ctx context.Context, wabaID string) (*WABAInfo, error) {
+	c.lastGraphError = nil
+	c.lastErrorRawBody = ""
+
 	info, err := c.getWABAInfo(ctx, wabaID, wabaInfoFields)
 	if err == nil {
 		return info, nil

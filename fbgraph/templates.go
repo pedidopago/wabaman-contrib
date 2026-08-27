@@ -162,6 +162,9 @@ type MessageTemplatesCursors struct {
 }
 
 func (c *Client) GetMessageTemplate(ctx context.Context, id string) (*MessageTemplate, error) {
+	c.lastGraphError = nil
+	c.lastErrorRawBody = ""
+
 	apiversion := DefaultGraphAPIVersion
 	if c.GraphAPIVersion != "" {
 		apiversion = c.GraphAPIVersion
@@ -169,11 +172,10 @@ func (c *Client) GetMessageTemplate(ctx context.Context, id string) (*MessageTem
 
 	url := fmt.Sprintf("https://graph.facebook.com/%s/%s", apiversion, id)
 
-	req, err := NewRequest(http.MethodGet, url, nil)
+	req, err := NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, fmt.Errorf("new request: %w", err)
 	}
-	req = req.WithContext(ctx)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken))
 
@@ -193,6 +195,9 @@ func (c *Client) GetMessageTemplate(ctx context.Context, id string) (*MessageTem
 }
 
 func (c *Client) GetMessageTemplates(ctx context.Context, params GetMessageTemplatesParameters) (*GetMessageTemplatesResponse, error) {
+	c.lastGraphError = nil
+	c.lastErrorRawBody = ""
+
 	apiversion := DefaultGraphAPIVersion
 	if c.GraphAPIVersion != "" {
 		apiversion = c.GraphAPIVersion
@@ -216,11 +221,10 @@ func (c *Client) GetMessageTemplates(ctx context.Context, params GetMessageTempl
 
 	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/message_templates?%s", apiversion, params.WhatsAppBusinessAccountID, encfields.Encode())
 
-	req, err := NewRequest(http.MethodGet, url, nil)
+	req, err := NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, fmt.Errorf("new request: %w", err)
 	}
-	req = req.WithContext(ctx)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken))
 
@@ -255,7 +259,7 @@ func (c *Client) CreateMessageTemplate(ctx context.Context, wabaID string, templ
 		return "", fmt.Errorf("encode template: %w", err)
 	}
 
-	req, err := NewRequest(http.MethodPost, url, buf)
+	req, err := NewRequestWithContext(ctx, http.MethodPost, url, buf)
 	if err != nil {
 		return "", fmt.Errorf("new request: %w", err)
 	}
@@ -300,11 +304,10 @@ func (c *Client) post(ctx context.Context, url string, body any) error {
 		return fmt.Errorf("encode: %w", err)
 	}
 
-	req, err := NewRequest(http.MethodPost, url, buf)
+	req, err := NewRequestWithContext(ctx, http.MethodPost, url, buf)
 	if err != nil {
 		return fmt.Errorf("new request: %w", err)
 	}
-	req = req.WithContext(ctx)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+c.AccessToken)
 
@@ -323,7 +326,9 @@ func (c *Client) post(ctx context.Context, url string, body any) error {
 	}
 
 	// HTTP 200 is the success signal; drain body and return nil
-	_ = json.NewDecoder(resp.Body).Decode(&struct{ Success bool `json:"success"` }{})
+	_ = json.NewDecoder(resp.Body).Decode(&struct {
+		Success bool `json:"success"`
+	}{})
 	return nil
 }
 
@@ -360,11 +365,10 @@ func (c *Client) UnarchiveMessageTemplates(ctx context.Context, wabaID string, t
 		return nil, nil, fmt.Errorf("encode: %w", err)
 	}
 
-	req, err := NewRequest(http.MethodPost, "https://api.facebook.com/"+wabaID+"/message_templates/unarchive", buf)
+	req, err := NewRequestWithContext(ctx, http.MethodPost, "https://api.facebook.com/"+wabaID+"/message_templates/unarchive", buf)
 	if err != nil {
 		return nil, nil, fmt.Errorf("new request: %w", err)
 	}
-	req = req.WithContext(ctx)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+c.AccessToken)
 
@@ -405,7 +409,7 @@ func (c *Client) DeleteMessageTemplate(ctx context.Context, whatsappBusinessAcco
 	urlv.Set("name", templateName)
 	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/message_templates?%s", apiVersion, whatsappBusinessAccountID, urlv.Encode())
 
-	req, err := NewRequest(http.MethodDelete, url, nil)
+	req, err := NewRequestWithContext(ctx, http.MethodDelete, url, nil)
 	if err != nil {
 		return fmt.Errorf("new request: %w", err)
 	}

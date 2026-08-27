@@ -33,6 +33,8 @@ type TokenInfo struct {
 }
 
 func (c *Client) DebugToken(ctx context.Context, inputToken string) (TokenInfo, error) {
+	c.lastGraphError = nil
+	c.lastErrorRawBody = ""
 
 	emptyd := TokenInfo{}
 
@@ -43,11 +45,10 @@ func (c *Client) DebugToken(ctx context.Context, inputToken string) (TokenInfo, 
 
 	url := fmt.Sprintf("https://graph.facebook.com/%s/debug_token?input_token=%s&access_token=%s", apiVersion, inputToken, c.AccessToken)
 
-	req, err := NewRequest(http.MethodGet, url, nil)
+	req, err := NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return emptyd, fmt.Errorf("new request: %w", err)
 	}
-	req = req.WithContext(ctx)
 
 	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
@@ -67,14 +68,15 @@ func (c *Client) DebugToken(ctx context.Context, inputToken string) (TokenInfo, 
 }
 
 func (c *Client) NewPermanentAccessToken(ctx context.Context, appID, appSecret, tempToken string) (string, error) {
+	c.lastGraphError = nil
+	c.lastErrorRawBody = ""
 
 	url := fmt.Sprintf("https://graph.facebook.com/v13.0/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s", appID, appSecret, tempToken)
 
-	req, err := http.NewRequest(http.MethodGet, url, nil)
+	req, err := NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return "", fmt.Errorf("new request: %w", err)
 	}
-	req = req.WithContext(ctx)
 
 	resp, err := c.HTTPClient.Do(req)
 	if err != nil {

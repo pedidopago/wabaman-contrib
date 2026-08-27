@@ -3,7 +3,7 @@ package event
 import (
 	"encoding/json"
 
-	"github.com/pedidopago/wabaman-contrib/fbgraph"
+	"github.com/pedidopago/wabaman-contrib/v2/fbgraph"
 )
 
 type TemplateEventKind string

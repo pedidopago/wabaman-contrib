@@ -3,7 +3,7 @@ package util_test
 import (
 	"testing"
 
-	"github.com/pedidopago/wabaman-contrib/util"
+	"github.com/pedidopago/wabaman-contrib/v2/util"
 )
 
 func TestCountAndValidateTemplateVariables(t *testing.T) {

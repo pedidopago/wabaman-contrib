@@ -1,10 +1,11 @@
 package fbgraph
 
 import (
+	"errors"
 	"strconv"
 	"strings"
 
-	"github.com/pedidopago/wabaman-contrib/util"
+	"github.com/pedidopago/wabaman-contrib/v2/util"
 )
 
 // valid types:
@@ -258,13 +259,17 @@ func (er *GraphError) Error() string {
 	return sb.String()
 }
 
+// AsGraphError reports whether err is, or wraps, a *GraphError.
+//
+// It walks the chain via errors.As. It used to be a bare type assertion, which
+// made the Graph error's position in the chain part of the contract: any
+// caller-visible wrapping broke every switch on it, silently. Consumers had
+// already started reaching for errors.As directly to work around that.
 func AsGraphError(err error) (*GraphError, bool) {
-	if err == nil {
-		return nil, false
+	if ge, ok := errors.AsType[*GraphError](err); ok {
+		return ge, true
 	}
-	if e, ok := err.(*GraphError); ok {
-		return e, true
-	}
+
 	return nil, false
 }
 

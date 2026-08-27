@@ -3,7 +3,7 @@ package wsapi
 import (
 	"encoding/json"
 
-	types "github.com/pedidopago/wabaman-contrib/shared-types"
+	types "github.com/pedidopago/wabaman-contrib/v2/shared-types"
 
 	"github.com/pedidopago/go-common/mariadb"
 )

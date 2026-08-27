@@ -2,9 +2,12 @@ package fbgraph
 
 import (
 	"bytes"
+	"cmp"
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"mime/multipart"
@@ -54,9 +57,15 @@ func (c *Client) LastErrorRawBody() string {
 // SendMessageFn is a function type for sending messages.
 // (*Client).SendMessage is the default implementation of this function.
 // (*Client).SendMarketingMessage is a specialized implementation for marketing messages.
-type SendMessageFn func(phoneID string, msg *MessageObject) (*MessageObjectResult, error)
+type SendMessageFn func(ctx context.Context, phoneID string, msg *MessageObject) (*MessageObjectResult, error)
 
-func (c *Client) SendMessage(phoneID string, msg *MessageObject) (*MessageObjectResult, error) {
+// SendMessage is not idempotent. A context cancelled between the write and the
+// response returns an error for a message Meta may already have delivered, so
+// context.Canceled here does not mean "not sent" and must not trigger a resend.
+func (c *Client) SendMessage(ctx context.Context, phoneID string, msg *MessageObject) (*MessageObjectResult, error) {
+	c.lastGraphError = nil
+	c.lastErrorRawBody = ""
+
 	if msg == nil {
 		return nil, fmt.Errorf("message is nil")
 	}
@@ -75,7 +84,7 @@ func (c *Client) SendMessage(phoneID string, msg *MessageObject) (*MessageObject
 	if DebugTrace {
 		println("fbgraph SendMessage", url, "\n", buf.String())
 	}
-	req, err := NewRequest(http.MethodPost, url, buf)
+	req, err := NewRequestWithContext(ctx, http.MethodPost, url, buf)
 	if err != nil {
 		return nil, fmt.Errorf("new request: %w", err)
 	}
@@ -100,7 +109,10 @@ func (c *Client) SendMessage(phoneID string, msg *MessageObject) (*MessageObject
 // You need to have access to the Marketing Messages API and have the appropriate permissions.
 //
 // See https://developers.facebook.com/documentation/business-messaging/whatsapp/marketing-messages/overview
-func (c *Client) SendMarketingMessage(phoneID string, msg *MessageObject) (*MessageObjectResult, error) {
+func (c *Client) SendMarketingMessage(ctx context.Context, phoneID string, msg *MessageObject) (*MessageObjectResult, error) {
+	c.lastGraphError = nil
+	c.lastErrorRawBody = ""
+
 	if msg == nil {
 		return nil, fmt.Errorf("message is nil")
 	}
@@ -119,7 +131,7 @@ func (c *Client) SendMarketingMessage(phoneID string, msg *MessageObject) (*Mess
 	if DebugTrace {
 		println("fbgraph SendMarketingMessage", url, "\n", buf.String())
 	}
-	req, err := NewRequest(http.MethodPost, url, buf)
+	req, err := NewRequestWithContext(ctx, http.MethodPost, url, buf)
 	if err != nil {
 		return nil, fmt.Errorf("new request: %w", err)
 	}
@@ -146,7 +158,22 @@ func escapeQuotes(s string) string {
 	return quoteEscaper.Replace(s)
 }
 
-func (c *Client) UploadMedia(phoneID string, mimeType string, r io.Reader, fsize int64, filename string) (id string, err error) {
+// UploadMedia streams r to Meta as a multipart upload and returns the media id.
+//
+// fsize must be the exact length of r. It is checked against the bytes actually
+// copied, because a reader that simply ends reports io.EOF rather than an error
+// -- so without it a short read is indistinguishable from a complete upload and
+// Meta stores a truncated file under an id the caller has no reason to distrust.
+// Pass 0 only when the length is genuinely unknown, which disables the check.
+//
+// ctx bounds the HTTP request, not r. A source reader that blocks forever
+// blocks this call: cancellation has nothing to interrupt inside r.Read.
+func (c *Client) UploadMedia(ctx context.Context, phoneID string, mimeType string, r io.Reader, fsize int64, filename string) (id string, err error) {
+	// The cleanup defer below can set these, so a failed upload would otherwise
+	// leave its Graph error readable after a later successful one.
+	c.lastGraphError = nil
+	c.lastErrorRawBody = ""
+
 	pr, pw := io.Pipe()
 	mw := multipart.NewWriter(pw)
 
@@ -157,31 +184,85 @@ func (c *Client) UploadMedia(phoneID string, mimeType string, r io.Reader, fsize
 
 	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/media", apiVersion, phoneID)
 
+	// Built before the goroutine on purpose. It does not read the body, and
+	// doing it here means an unusable context -- a nil one, say -- fails while
+	// nothing is writing to the pipe yet. Built inside the goroutine instead,
+	// that failure leaves the multipart writer below parked on a pipe no one
+	// will ever read, and UploadMedia never returns at all.
+	req, err := NewRequestWithContext(ctx, http.MethodPost, url, pr)
+	if err != nil {
+		return "", fmt.Errorf("new request: %w", err)
+	}
+	req.ContentLength = -1
+	//TODO: calculate content length like in https://gist.github.com/cryptix/9dd094008b6236f4fc57
+	req.Header.Set("Content-Type", mw.FormDataContentType())
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken))
+
 	// do the request concurrently
 	var resp *http.Response
-	done := make(chan error)
+	// Every exit path below now drains this -- the success path reads it, and
+	// the cleanup defer reads it for the rest -- so the buffer is not load
+	// bearing today, and no test can tell it apart from an unbuffered channel.
+	// It stays as cheap insurance: this send is inside a goroutine, so an early
+	// return added later that skips the drain would park it for the life of the
+	// process, which is the exact defect this function already had once.
+	done := make(chan error, 1)
 	go func() {
-		req, err := NewRequest(http.MethodPost, url, pr)
-		if err != nil {
-			done <- fmt.Errorf("new request: %w", err)
-			return
-		}
-		req.ContentLength = -1
-		//TODO: calculate content length like in https://gist.github.com/cryptix/9dd094008b6236f4fc57
-		req.Header.Set("Content-Type", mw.FormDataContentType())
-		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken))
-		resp, err = c.HTTPClient.Do(req)
-		if err != nil {
-			done <- fmt.Errorf("request failed: %w", err)
+		var rerr error
+		resp, rerr = c.HTTPClient.Do(req)
+		if rerr != nil {
+			done <- fmt.Errorf("request failed: %w", rerr)
+
 			return
 		}
 		done <- nil
 	}()
+
 	allok := false
 	defer func() {
 		if !allok {
+			// Poison the pipe before closing the writer. mw.Close writes the
+			// terminating boundary, so the other order sends a complete,
+			// parseable multipart body that the server accepts at a clean EOF
+			// -- a truncated upload it has no way to recognise as truncated.
+			// This ordering is the whole truncation defense.
+			// cmp.Or, because CloseWithError(nil) degrades to a plain Close --
+			// a clean EOF, which is the truncation this ordering exists to
+			// prevent. err is non-nil on every ordinary arrival here, but a
+			// panic between the goroutine starting and allok reaches this with
+			// nothing set.
+			_ = pw.CloseWithError(cmp.Or(err, errUploadAborted))
 			_ = mw.Close()
-			_ = pw.Close()
+
+			// The request can still have succeeded: net/http prefers a received
+			// response over a request-body write error, so a server that
+			// answers early -- a 400 on a bad phone id, an oversized file --
+			// leaves a response here that none of these paths reach the <-done
+			// to own. Unclaimed, its connection and read loop stay pinned until
+			// the peer gives up.
+			switch rerr := <-done; {
+			case rerr != nil:
+				// The request itself failed, and the pipe error the caller is
+				// holding is only the local symptom of it. Keep both: a dead
+				// connection reads as transient local I/O otherwise, exactly
+				// the mislabel this block exists to prevent.
+				err = errors.Join(err, rerr)
+			case resp != nil:
+				// The server's own reason beats the pipe error that surfaced
+				// locally: a 400 for a bad phone id is permanent, while
+				// "read/write on closed pipe" reads as transient and gets
+				// retried forever. This also populates LastGraphError.
+				if resp.StatusCode != http.StatusOK {
+					// Both causes, not just the server's: the write-side error
+					// is the only thing that says which stage failed and, for a
+					// short read, how many bytes actually arrived. Safe to wrap
+					// now that AsGraphError walks the chain. The nesting is for
+					// readability, not line count -- GraphError.Error() is
+					// multi-line, so nothing here is single-line either way.
+					err = fmt.Errorf("%w (graph: %w)", err, c.errorFromResponse(resp))
+				}
+				_ = resp.Body.Close()
+			}
 		}
 	}()
 
@@ -190,21 +271,30 @@ func (c *Client) UploadMedia(phoneID string, mimeType string, r io.Reader, fsize
 	fh.Set("Content-Disposition", fmt.Sprintf(`form-data; name="%s"; filename="%s"`, escapeQuotes("file"), escapeQuotes(filename)))
 	fpart, err := mw.CreatePart(fh)
 	if err != nil {
-		return "", fmt.Errorf("create form file: %w", err)
+		return "", uploadWriteErr(ctx, "create form file", err)
 	}
-	if _, err := io.Copy(fpart, r); err != nil {
-		return "", fmt.Errorf("copy file: %w", err)
+	written, err := io.Copy(fpart, r)
+	if err != nil {
+		return "", uploadWriteErr(ctx, "copy file", err)
+	}
+	// Short only: rejecting a longer stream would fail uploads whose recorded
+	// size merely lags the bytes. A zero or negative fsize disables the check on
+	// its own, since written is never negative.
+	if written < fsize {
+		return "", fmt.Errorf("copy file: read %d of %d bytes", written, fsize)
 	}
 	if err := mw.WriteField("messaging_product", "whatsapp"); err != nil {
-		return "", fmt.Errorf("write field: %w", err)
+		return "", uploadWriteErr(ctx, "write field", err)
 	}
-	allok = true
 	if err := mw.Close(); err != nil {
 		return "", fmt.Errorf("close multipart writer: %w", err)
 	}
-	if err := pw.Close(); err != nil {
-		return "", fmt.Errorf("close pipe writer: %w", err)
-	}
+	// io.PipeWriter.Close never fails, so there is nothing to check here.
+	_ = pw.Close()
+	// Only now: both closes can fail, and setting this above them skipped the
+	// cleanup on exactly those paths -- pipe left open, done never drained, a
+	// live response left unclaimed.
+	allok = true
 	if err := <-done; err != nil {
 		return "", fmt.Errorf("request: %w", err)
 	}
@@ -221,14 +311,40 @@ func (c *Client) UploadMedia(phoneID string, mimeType string, r io.Reader, fsize
 	return idstruct.ID, nil
 }
 
-func (c *Client) GetMedia(mediaID string) (*GetMediaResult, error) {
+// errUploadAborted marks a body abandoned without an error of its own, so the
+// pipe is still closed with a failure rather than a clean end.
+var errUploadAborted = errors.New("upload aborted before completion")
+
+// uploadWriteErr prefers the context error while writing the multipart body.
+// When the request fails, net/http closes the pipe reader plainly, so the
+// writer only ever sees io.ErrClosedPipe -- the cancellation that actually
+// caused it would never reach the caller, who then cannot tell a dead context
+// from a genuine media failure and drops the job instead of retrying it.
+func uploadWriteErr(ctx context.Context, stage string, err error) error {
+	// ctx is never nil here: NewRequestWithContext rejects that before the pipe
+	// exists, so this is only ever reached with a usable context.
+	if cerr := ctx.Err(); cerr != nil {
+		// Both causes, not just the context: a source stream that genuinely
+		// died while the context happened to be dead would otherwise read as a
+		// clean cancellation, and the caller would retry media that can never
+		// succeed. Formatted on one line so logs stay greppable.
+		return fmt.Errorf("%s: %w (context: %w)", stage, err, cerr)
+	}
+
+	return fmt.Errorf("%s: %w", stage, err)
+}
+
+func (c *Client) GetMedia(ctx context.Context, mediaID string) (*GetMediaResult, error) {
+	c.lastGraphError = nil
+	c.lastErrorRawBody = ""
+
 	apiVersion := DefaultGraphAPIVersion
 	if c.GraphAPIVersion != "" {
 		apiVersion = c.GraphAPIVersion
 	}
 
 	url := fmt.Sprintf("https://graph.facebook.com/%s/%s", apiVersion, mediaID)
-	req, err := NewRequest(http.MethodGet, url, nil)
+	req, err := NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, fmt.Errorf("new request: %w", err)
 	}
@@ -249,8 +365,11 @@ func (c *Client) GetMedia(mediaID string) (*GetMediaResult, error) {
 	return result, nil
 }
 
-func (c *Client) DownloadMedia(mr *GetMediaResult, out io.Writer) (nwritten int64, err error) {
-	req, err := NewRequest(http.MethodGet, mr.URL, nil)
+func (c *Client) DownloadMedia(ctx context.Context, mr *GetMediaResult, out io.Writer) (nwritten int64, err error) {
+	c.lastGraphError = nil
+	c.lastErrorRawBody = ""
+
+	req, err := NewRequestWithContext(ctx, http.MethodGet, mr.URL, nil)
 	if err != nil {
 		return 0, fmt.Errorf("new request: %w", err)
 	}
@@ -314,7 +433,7 @@ type NewUploadSessionParams struct {
 	SessionType string `json:"session_type"`
 }
 
-func (c *Client) NewUploadSession(fbAppID string, params NewUploadSessionParams) (id string, err error) {
+func (c *Client) NewUploadSession(ctx context.Context, fbAppID string, params NewUploadSessionParams) (id string, err error) {
 	c.lastGraphError = nil
 	c.lastErrorRawBody = ""
 
@@ -332,7 +451,7 @@ func (c *Client) NewUploadSession(fbAppID string, params NewUploadSessionParams)
 	if err := json.NewEncoder(buf).Encode(params); err != nil {
 		return "", fmt.Errorf("encode message: %w", err)
 	}
-	req, err := NewRequest(http.MethodPost, url, buf)
+	req, err := NewRequestWithContext(ctx, http.MethodPost, url, buf)
 	if err != nil {
 		return "", fmt.Errorf("new request: %w", err)
 	}
@@ -363,7 +482,7 @@ func (c *Client) NewUploadSession(fbAppID string, params NewUploadSessionParams)
 	return idstruct.ID, nil
 }
 
-func (c *Client) UploadHeaderHandle(uploadSessionID string, r io.Reader) (h string, err error) {
+func (c *Client) UploadHeaderHandle(ctx context.Context, uploadSessionID string, r io.Reader) (h string, err error) {
 	c.lastGraphError = nil
 	c.lastErrorRawBody = ""
 
@@ -373,7 +492,7 @@ func (c *Client) UploadHeaderHandle(uploadSessionID string, r io.Reader) (h stri
 	}
 
 	url := fmt.Sprintf("https://graph.facebook.com/%s/%s", apiVersion, uploadSessionID)
-	req, err := NewRequest(http.MethodPost, url, r)
+	req, err := NewRequestWithContext(ctx, http.MethodPost, url, r)
 	if err != nil {
 		return "", fmt.Errorf("new request: %w", err)
 	}

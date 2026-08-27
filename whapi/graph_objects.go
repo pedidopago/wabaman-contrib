@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/pedidopago/wabaman-contrib/fbgraph"
-	wtypes "github.com/pedidopago/wabaman-contrib/shared-types"
-	"github.com/pedidopago/wabaman-contrib/wsapi"
+	"github.com/pedidopago/wabaman-contrib/v2/fbgraph"
+	wtypes "github.com/pedidopago/wabaman-contrib/v2/shared-types"
+	"github.com/pedidopago/wabaman-contrib/v2/wsapi"
 	"github.com/rs/zerolog/log"
 )
 

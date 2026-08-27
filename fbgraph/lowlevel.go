@@ -7,6 +7,10 @@ import (
 	"net/http"
 )
 
+// Deprecated: use NewRequestWithContext. A request built without a context
+// ignores cancellation, so the caller waits out the client timeout -- 120s on
+// DefaultHTTPClient -- on work that is already doomed. No caller inside this
+// package uses this any more.
 func NewRequest(method string, url string, body io.Reader) (*http.Request, error) {
 	request, err := http.NewRequest(method, url, body)
 

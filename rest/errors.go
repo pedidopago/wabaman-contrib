@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/pedidopago/wabaman-contrib/fbgraph"
+	"github.com/pedidopago/wabaman-contrib/v2/fbgraph"
 )
 
 type ErrorCode int

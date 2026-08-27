@@ -1,6 +1,6 @@
 package msgdriver
 
-import "github.com/pedidopago/wabaman-contrib/fbgraph"
+import "github.com/pedidopago/wabaman-contrib/v2/fbgraph"
 
 // SendMessage is an object with the necessary information for the driver to send a message to a client.
 type SendMessage struct {

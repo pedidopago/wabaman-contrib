@@ -191,6 +191,9 @@ type WhatsappSettings struct {
 }
 
 func (c *Client) GetWhatsappSettings(ctx context.Context, whatsappID string) (*WhatsappSettings, error) {
+	c.lastGraphError = nil
+	c.lastErrorRawBody = ""
+
 	apiVersion := DefaultGraphAPIVersion
 	if c.GraphAPIVersion != "" {
 		apiVersion = c.GraphAPIVersion
@@ -294,6 +297,9 @@ const (
 )
 
 func (c *Client) GetMessagingLimitingTier(ctx context.Context, whatsappID string) (MessageLimitingTier, error) {
+	c.lastGraphError = nil
+	c.lastErrorRawBody = ""
+
 	apiVersion := DefaultGraphAPIVersion
 	if c.GraphAPIVersion != "" {
 		apiVersion = c.GraphAPIVersion
@@ -681,6 +687,9 @@ type CallPermissionLimit struct {
 }
 
 func (c *Client) GetCallPermissions(ctx context.Context, phoneNumberID, userWAID string) (*CallPermissionsResponse, error) {
+	c.lastGraphError = nil
+	c.lastErrorRawBody = ""
+
 	apiVersion := DefaultGraphAPIVersion
 	if c.GraphAPIVersion != "" {
 		apiVersion = c.GraphAPIVersion
@@ -712,7 +721,7 @@ func (c *Client) GetCallPermissions(ctx context.Context, phoneNumberID, userWAID
 	return result, nil
 }
 
-func (c *Client) SendCallPermissionRequest(phoneNumberID, to, bodyText string) (*MessageObjectResult, error) {
+func (c *Client) SendCallPermissionRequest(ctx context.Context, phoneNumberID, to, bodyText string) (*MessageObjectResult, error) {
 	msgObj := &MessageObject{
 		MessagingProduct: "whatsapp",
 		To:               to,
@@ -727,7 +736,7 @@ func (c *Client) SendCallPermissionRequest(phoneNumberID, to, bodyText string) (
 	if bodyText != "" {
 		msgObj.Interactive.Body = &InteractiveTextObject{Text: bodyText}
 	}
-	return c.SendMessage(phoneNumberID, msgObj)
+	return c.SendMessage(ctx, phoneNumberID, msgObj)
 }
 
 func IsSubscribedToCalls(objs []WebhookObject, minVersion string) (bool, error) {

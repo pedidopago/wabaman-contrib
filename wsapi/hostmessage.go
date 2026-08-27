@@ -3,7 +3,7 @@ package wsapi
 import (
 	"time"
 
-	"github.com/pedidopago/wabaman-contrib/fbgraph"
+	"github.com/pedidopago/wabaman-contrib/v2/fbgraph"
 )
 
 // HostMessage is a message sent from the business (agent) to a WhatsApp client.

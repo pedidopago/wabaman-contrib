@@ -24,6 +24,9 @@ type SMBAppDataResult struct {
 // This endpoint is used as part of messaging history synchronization process when onboarding
 // business customers who have a WhatsApp Business app account and phone number.
 func (c *Client) PostSMBAppData(ctx context.Context, whatsappID string, syncType SMBSyncType) (*SMBAppDataResult, error) {
+	c.lastGraphError = nil
+	c.lastErrorRawBody = ""
+
 	apiVersion := "v23.0"
 	if c.GraphAPIVersion != "" {
 		apiVersion = c.GraphAPIVersion

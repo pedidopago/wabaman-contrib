@@ -8,8 +8,8 @@ import (
 
 	"github.com/pedidopago/go-common/mariadb"
 	"github.com/pedidopago/go-common/util"
-	"github.com/pedidopago/wabaman-contrib/fbgraph"
-	"github.com/pedidopago/wabaman-contrib/wsapi"
+	"github.com/pedidopago/wabaman-contrib/v2/fbgraph"
+	"github.com/pedidopago/wabaman-contrib/v2/wsapi"
 )
 
 type MessageType string

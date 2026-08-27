@@ -68,11 +68,10 @@ func (c *Client) CreateDataset(ctx context.Context, wabaID string) (datasetID st
 
 	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/dataset", c.graphVersion(), wabaID)
 
-	req, err := NewRequest(http.MethodPost, url, nil)
+	req, err := NewRequestWithContext(ctx, http.MethodPost, url, nil)
 	if err != nil {
 		return "", fmt.Errorf("new request: %w", err)
 	}
-	req = req.WithContext(ctx)
 	req.Header.Set("Authorization", "Bearer "+c.AccessToken)
 
 	resp, err := c.HTTPClient.Do(req)
@@ -104,11 +103,10 @@ func (c *Client) GetDatasetID(ctx context.Context, wabaID string) (datasetID str
 
 	url := fmt.Sprintf("https://graph.facebook.com/%s/%s/dataset", c.graphVersion(), wabaID)
 
-	req, err := NewRequest(http.MethodGet, url, nil)
+	req, err := NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return "", fmt.Errorf("new request: %w", err)
 	}
-	req = req.WithContext(ctx)
 	req.Header.Set("Authorization", "Bearer "+c.AccessToken)
 
 	resp, err := c.HTTPClient.Do(req)
@@ -156,11 +154,10 @@ func (c *Client) SendConversionEvents(ctx context.Context, datasetID string, eve
 		return 0, fmt.Errorf("encode: %w", err)
 	}
 
-	req, err := NewRequest(http.MethodPost, url, buf)
+	req, err := NewRequestWithContext(ctx, http.MethodPost, url, buf)
 	if err != nil {
 		return 0, fmt.Errorf("new request: %w", err)
 	}
-	req = req.WithContext(ctx)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+c.AccessToken)
 
