@@ -61,7 +61,12 @@ const (
 	// NewMessageStatusBlockedByDiscardWindowClosed, which sent every reader
 	// looking at conversation windows instead of at the whitelist.
 	NewMessageStatusBlockedByTemplateNotWhitelisted NewMessageStatus = "blocked_by_template_not_whitelisted"
-	NewMessageStatusUnknown                         NewMessageStatus = "unknown"
+	// NewMessageStatusAutoQueued means the message was accepted and held (see
+	// AutoQueue). Nothing has reached Meta yet, so NewMessageResponse.MessageID
+	// is "held:<id>" rather than a wamid, and ID is the held message's id --
+	// the handle for the held-message list, cancel and flush endpoints.
+	NewMessageStatusAutoQueued NewMessageStatus = "auto_queued"
+	NewMessageStatusUnknown    NewMessageStatus = "unknown"
 )
 
 // Wabaman will use the components defined in here if the template
@@ -125,6 +130,13 @@ type NewMessageRequest struct {
 	SkipPhoneValidation   bool            `json:"skip_phone_validation,omitempty" description:"If set, Wabaman will not validate the phone number before sending the message."`
 	Schedule              MessageSchedule `json:"schedule,omitzero" description:"Schedule this message to be sent at a specific time"`
 	ContactTags           *ContactTagsMod `json:"contact_tags,omitempty"`
+	// AutoQueue asks Wabaman to hold this text for a few seconds so it can be
+	// merged with the same agent's next texts into a single Meta message (Meta
+	// bills every service message from 2026-10-01). It is a request, not a
+	// command: Wabaman sends immediately anyway unless the message is a plain
+	// agent-authored text on a WABA phone with holding enabled. When it is
+	// held, the response carries NewMessageStatusAutoQueued and no wamid.
+	AutoQueue bool `json:"auto_queue,omitempty" description:"Ask Wabaman to hold this text briefly so consecutive texts from the same agent are merged into one Meta message. Ignored unless the message qualifies."`
 }
 
 type ContactTagsMod struct {

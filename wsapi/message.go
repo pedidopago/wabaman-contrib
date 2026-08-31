@@ -27,26 +27,33 @@ const (
 	MessageTypeMessageUpdated             MessageType = 14 // server sends this to the clients
 	MessageTypeScheduledMessage           MessageType = 15 // server sends this to the clients
 	MessageTypeCancelledScheduledMessages MessageType = 16 // server sends this to the clients
-	MessageTypePresenceViewClient         MessageType = 20 // js/ts client sends this to the server
-	MessageTypePresenceTypingToClient     MessageType = 21 // js/ts client sends this to the server
-	MessageTypePresenceRequest            MessageType = 22 // js/ts client sends this to the server
-	MessageTypePresenceResponse           MessageType = 23 // server sends this to the clients
-	MessageTypeGetUnreadMessagesRequest   MessageType = 24 // js/ts client sends this to the server
-	MessageTypeGetUnreadMessagesResponse  MessageType = 25 // server sends this to the clients
-	MessageTypeIncomingCallFromClient     MessageType = 30 // server sends this to the clients
-	MessageTypeSetupCallFromBrowser       MessageType = 31 // js/ts client sends this to the server
-	MessageTypeTerminateCall              MessageType = 32 // js/ts client sends this to the server (and the server sends it to the clients)
-	MessageTypeCallConsumed               MessageType = 33 // server sends this to the clients
-	MessageTypeAcceptCall                 MessageType = 34 // js/ts client sends this to the server
-	MessageTypeRejectCall                 MessageType = 35 // js/ts client sends this to the server
-	MessageTypeSendBrowserCandidate       MessageType = 36 // BIDIRECTIONAL - js/ts client sends this to the server (and the server sends it to the clients)
-	MessageTypeCallStarted                MessageType = 37 // server sends this to the clients
-	MessageTypeCallEnded                  MessageType = 38 // server sends this to the clients
-	MessageTypeCallOnAnswerSDP            MessageType = 39 // server sends this to the clients
-	MessageTypeCallStartTimer             MessageType = 40 // server sends this to the clients
-	MessageTypeReconnectCall              MessageType = 41 // js/ts client sends this to the server
-	MessageTypeActiveCallNotification     MessageType = 42 // server sends this to the clients
-	MessageTypeCallAnswerIntent           MessageType = 43 // js/ts client sends this to the server (and the server sends it to the clients)
+
+	// Message holding (PPS-8544): an agent's text parked for a few seconds so
+	// consecutive texts merge into one Meta message. A held message appears
+	// with 17 and leaves with 18, which says why -- sent, cancelled or failed.
+	MessageTypeHeldMessage          MessageType = 17 // server sends this to the clients
+	MessageTypeHeldMessagesResolved MessageType = 18 // server sends this to the clients
+
+	MessageTypePresenceViewClient        MessageType = 20 // js/ts client sends this to the server
+	MessageTypePresenceTypingToClient    MessageType = 21 // js/ts client sends this to the server
+	MessageTypePresenceRequest           MessageType = 22 // js/ts client sends this to the server
+	MessageTypePresenceResponse          MessageType = 23 // server sends this to the clients
+	MessageTypeGetUnreadMessagesRequest  MessageType = 24 // js/ts client sends this to the server
+	MessageTypeGetUnreadMessagesResponse MessageType = 25 // server sends this to the clients
+	MessageTypeIncomingCallFromClient    MessageType = 30 // server sends this to the clients
+	MessageTypeSetupCallFromBrowser      MessageType = 31 // js/ts client sends this to the server
+	MessageTypeTerminateCall             MessageType = 32 // js/ts client sends this to the server (and the server sends it to the clients)
+	MessageTypeCallConsumed              MessageType = 33 // server sends this to the clients
+	MessageTypeAcceptCall                MessageType = 34 // js/ts client sends this to the server
+	MessageTypeRejectCall                MessageType = 35 // js/ts client sends this to the server
+	MessageTypeSendBrowserCandidate      MessageType = 36 // BIDIRECTIONAL - js/ts client sends this to the server (and the server sends it to the clients)
+	MessageTypeCallStarted               MessageType = 37 // server sends this to the clients
+	MessageTypeCallEnded                 MessageType = 38 // server sends this to the clients
+	MessageTypeCallOnAnswerSDP           MessageType = 39 // server sends this to the clients
+	MessageTypeCallStartTimer            MessageType = 40 // server sends this to the clients
+	MessageTypeReconnectCall             MessageType = 41 // js/ts client sends this to the server
+	MessageTypeActiveCallNotification    MessageType = 42 // server sends this to the clients
+	MessageTypeCallAnswerIntent          MessageType = 43 // js/ts client sends this to the server (and the server sends it to the clients)
 
 	// Business-initiated calling (PPS-4460). Numbers continue the call block.
 	MessageTypeRequestCallEligibility     MessageType = 44 // js/ts client sends this to the server
@@ -117,6 +124,8 @@ type Message struct {
 	PresenceResponse           *PresenceResponse           `json:"presence_response,omitempty"`
 	ScheduledMessage           *ScheduledMessageStub       `json:"scheduled_message,omitempty"`
 	CancelledScheduledMessages *CancelledScheduledMessages `json:"cancelled_scheduled_messages,omitempty"`
+	HeldMessage                *HeldMessageStub            `json:"held_message,omitempty"`
+	HeldMessagesResolved       *HeldMessagesResolved       `json:"held_messages_resolved,omitempty"`
 	GetUnreadMessagesRequest   *GetUnreadMessagesRequest   `json:"get_unread_messages_request,omitempty"`
 	GetUnreadMessagesResponse  *GetUnreadMessagesResponse  `json:"get_unread_messages_response,omitempty"`
 	IncomingCallFromClient     *IncomingCallFromClient     `json:"incoming_call_from_client,omitempty"`
@@ -494,6 +503,53 @@ type UnreadCountChanged struct {
 	ContactID     uint64 `json:"contact_id"`
 	WABAContactID string `json:"waba_contact_id,omitzero"`
 	Count         int    `json:"count"`
+}
+
+// HeldMessageStub is broadcast when an agent's text is held instead of sent, so
+// every agent watching the conversation -- not only the author -- can see that a
+// block is open. That matters because anyone else sending to this contact
+// flushes it.
+type HeldMessageStub struct {
+	ID            uint64 `json:"id"`
+	PhoneID       uint   `json:"phone_id"`
+	BranchID      string `json:"branch_id,omitempty"`
+	WABAContactID string `json:"waba_contact_id"`
+	ContactID     uint64 `json:"contact_id,omitempty"`
+	AgentID       string `json:"agent_id,omitempty"`
+	AgentName     string `json:"agent_name,omitempty"`
+	Body          string `json:"body"`
+	// CreatedAt and FlushAt are RFC3339. FlushAt is the current deadline, which
+	// moves when a message is appended to or cancelled from the block near it,
+	// so a client rendering a countdown should follow the newest value.
+	CreatedAt string `json:"created_at"`
+	FlushAt   string `json:"flush_at"`
+}
+
+// HeldMessageResolution says why a held message stopped being held.
+type HeldMessageResolution string
+
+const (
+	HeldMessageResolutionSent      HeldMessageResolution = "sent"
+	HeldMessageResolutionCancelled HeldMessageResolution = "cancelled"
+	HeldMessageResolutionFailed    HeldMessageResolution = "failed"
+)
+
+// HeldMessagesResolved is broadcast when held messages leave the queue, by any
+// route. Clients should drop the listed stubs from the conversation: on "sent"
+// the merged message arrives separately as a host message identified by
+// WABAMessageID, on "cancelled" the author gets the text back in their compose
+// box, and on "failed" nothing reached the customer.
+type HeldMessagesResolved struct {
+	PhoneID        uint                  `json:"phone_id"`
+	BranchID       string                `json:"branch_id,omitempty"`
+	WABAContactID  string                `json:"waba_contact_id"`
+	ContactID      uint64                `json:"contact_id,omitempty"`
+	HeldMessageIDs []uint64              `json:"held_message_ids"`
+	Resolution     HeldMessageResolution `json:"resolution"`
+	// WABAMessageID is the merged message's wamid, set only when Resolution is
+	// "sent". Error is set only when it is "failed".
+	WABAMessageID string `json:"waba_message_id,omitempty"`
+	Error         string `json:"error,omitempty"`
 }
 
 // CancelledScheduledMessages is broadcast when one or more scheduled messages are cancelled.
