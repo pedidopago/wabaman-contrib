@@ -532,13 +532,22 @@ const (
 	HeldMessageResolutionSent      HeldMessageResolution = "sent"
 	HeldMessageResolutionCancelled HeldMessageResolution = "cancelled"
 	HeldMessageResolutionFailed    HeldMessageResolution = "failed"
+	// HeldMessageResolutionDeferred means the merged text was accepted for
+	// delivery but has not reached Meta: the 24h window closed while it was
+	// held, so it is parked and will be sent when the window reopens. There is
+	// no wamid yet and no message in the conversation, which is why it is not
+	// "sent" -- reporting it as sent shows the agent a delivery that has not
+	// happened, and reporting it as failed makes them retype a message that is
+	// still on its way.
+	HeldMessageResolutionDeferred HeldMessageResolution = "deferred"
 )
 
 // HeldMessagesResolved is broadcast when held messages leave the queue, by any
 // route. Clients should drop the listed stubs from the conversation: on "sent"
 // the merged message arrives separately as a host message identified by
 // WABAMessageID, on "cancelled" the author gets the text back in their compose
-// box, and on "failed" nothing reached the customer.
+// box, on "failed" nothing reached the customer, and on "deferred" the text is
+// accepted but waiting for the conversation window to reopen.
 type HeldMessagesResolved struct {
 	PhoneID        uint                  `json:"phone_id"`
 	BranchID       string                `json:"branch_id,omitempty"`
