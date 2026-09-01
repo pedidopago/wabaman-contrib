@@ -31,6 +31,11 @@ var DefaultHTTPClient = &http.Client{
 // Client is not safe for concurrent use. Each goroutine must use its own
 // Client instance; shared instances require external synchronization.
 type Client struct {
+	// HTTPClient must use a transport that honours httptrace -- the stdlib
+	// *http.Transport, or a wrapper that forwards to one. ErrSendOutcomeUnknown
+	// is decided from httptrace.WroteRequest, and a transport that never fires
+	// it reports every failed send as one that never left, which is the reading
+	// that resends a message Meta may already have delivered.
 	HTTPClient      *http.Client
 	AccessToken     string
 	GraphAPIVersion string // use this to override the default API version (check DefaultGraphAPIVersion)
@@ -59,9 +64,10 @@ func (c *Client) LastErrorRawBody() string {
 // (*Client).SendMarketingMessage is a specialized implementation for marketing messages.
 type SendMessageFn func(ctx context.Context, phoneID string, msg *MessageObject) (*MessageObjectResult, error)
 
-// SendMessage is not idempotent. A context cancelled between the write and the
-// response returns an error for a message Meta may already have delivered, so
-// context.Canceled here does not mean "not sent" and must not trigger a resend.
+// SendMessage is not idempotent. A failure after the request reaches the wire
+// leaves a message Meta may already have delivered, so those errors carry
+// ErrSendOutcomeUnknown and must not be resent; see that sentinel for what to
+// check before retrying.
 func (c *Client) SendMessage(ctx context.Context, phoneID string, msg *MessageObject) (*MessageObjectResult, error) {
 	c.lastGraphError = nil
 	c.lastErrorRawBody = ""
@@ -84,6 +90,7 @@ func (c *Client) SendMessage(ctx context.Context, phoneID string, msg *MessageOb
 	if DebugTrace {
 		println("fbgraph SendMessage", url, "\n", buf.String())
 	}
+	ctx, wrote := watchRequestWritten(ctx)
 	req, err := NewRequestWithContext(ctx, http.MethodPost, url, buf)
 	if err != nil {
 		return nil, fmt.Errorf("new request: %w", err)
@@ -92,7 +99,7 @@ func (c *Client) SendMessage(ctx context.Context, phoneID string, msg *MessageOb
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken))
 	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("request failed: %w", err)
+		return nil, sendErr(wrote, "request failed", err)
 	}
 	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
@@ -100,7 +107,17 @@ func (c *Client) SendMessage(ctx context.Context, phoneID string, msg *MessageOb
 	}
 	result := &MessageObjectResult{}
 	if err := json.NewDecoder(resp.Body).Decode(result); err != nil {
-		return nil, fmt.Errorf("decode response: %w", err)
+		// Meta answered 200, so this one is not merely unknown -- the message
+		// is gone and only its id was lost. Same sentinel, because the caller
+		// needs the same thing from it: do not send this again.
+		//
+		// Tagged unconditionally rather than through sendErr: a 200 is itself
+		// proof the request reached Meta, so consulting the write trace here
+		// would only make a known answer depend on the transport reporting it
+		// -- and a substituted RoundTripper that fabricates a response never
+		// does, which is precisely the caller most likely to be testing that
+		// they never resend.
+		return nil, fmt.Errorf("decode response: %w: %w", ErrSendOutcomeUnknown, err)
 	}
 	return result, nil
 }
@@ -109,6 +126,9 @@ func (c *Client) SendMessage(ctx context.Context, phoneID string, msg *MessageOb
 // You need to have access to the Marketing Messages API and have the appropriate permissions.
 //
 // See https://developers.facebook.com/documentation/business-messaging/whatsapp/marketing-messages/overview
+//
+// It is not idempotent, and reports an ambiguous failure the same way
+// SendMessage does. See ErrSendOutcomeUnknown.
 func (c *Client) SendMarketingMessage(ctx context.Context, phoneID string, msg *MessageObject) (*MessageObjectResult, error) {
 	c.lastGraphError = nil
 	c.lastErrorRawBody = ""
@@ -131,6 +151,7 @@ func (c *Client) SendMarketingMessage(ctx context.Context, phoneID string, msg *
 	if DebugTrace {
 		println("fbgraph SendMarketingMessage", url, "\n", buf.String())
 	}
+	ctx, wrote := watchRequestWritten(ctx)
 	req, err := NewRequestWithContext(ctx, http.MethodPost, url, buf)
 	if err != nil {
 		return nil, fmt.Errorf("new request: %w", err)
@@ -139,7 +160,7 @@ func (c *Client) SendMarketingMessage(ctx context.Context, phoneID string, msg *
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.AccessToken))
 	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("request failed: %w", err)
+		return nil, sendErr(wrote, "request failed", err)
 	}
 	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
@@ -147,7 +168,17 @@ func (c *Client) SendMarketingMessage(ctx context.Context, phoneID string, msg *
 	}
 	result := &MessageObjectResult{}
 	if err := json.NewDecoder(resp.Body).Decode(result); err != nil {
-		return nil, fmt.Errorf("decode response: %w", err)
+		// Meta answered 200, so this one is not merely unknown -- the message
+		// is gone and only its id was lost. Same sentinel, because the caller
+		// needs the same thing from it: do not send this again.
+		//
+		// Tagged unconditionally rather than through sendErr: a 200 is itself
+		// proof the request reached Meta, so consulting the write trace here
+		// would only make a known answer depend on the transport reporting it
+		// -- and a substituted RoundTripper that fabricates a response never
+		// does, which is precisely the caller most likely to be testing that
+		// they never resend.
+		return nil, fmt.Errorf("decode response: %w: %w", ErrSendOutcomeUnknown, err)
 	}
 	return result, nil
 }
