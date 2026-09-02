@@ -14,6 +14,19 @@ const (
 	ErrorCodeGenericInvalidParameter ErrorCode = 100
 	ErrorCodeGenericBadRequest       ErrorCode = 400
 	ErrCodeInternal                  ErrorCode = 500
+
+	// ErrorCodeSendOutcomeUnknown is the REST-side form of
+	// fbgraph.ErrSendOutcomeUnknown: the send reached Meta and the answer never
+	// came back, so the message may already be on the customer's phone. A client
+	// that retries on this code sends the customer the same message twice; it
+	// must treat the send as terminal and leave the decision to a person.
+	//
+	// The value sits outside both the HTTP status range and Meta's Graph error
+	// codes (the largest today is 135000), because Code also carries Meta's code
+	// verbatim through NewRichErrorFromError and a collision there would make
+	// the two indistinguishable. Matching by number rather than by message is
+	// the point: messages are for people and change; this does not.
+	ErrorCodeSendOutcomeUnknown ErrorCode = 900001
 )
 
 type RichError struct {

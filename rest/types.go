@@ -438,10 +438,16 @@ type CheckIntegrationV2Response struct {
 	Phones    []CheckIntegrationPhoneSnippet `json:"phones"`
 }
 
+// ErrorResponse is what rest/client surfaces for a non-200 reply. Code is the
+// RichError.Code the server wrote, when it wrote one -- the server's error
+// handler serialises a *RichError as {"code":…,"message":…}, and this is the
+// only field a client can branch on without parsing Message. It is zero for
+// replies that were not a RichError (echo's default handler, non-JSON bodies).
 type ErrorResponse struct {
-	Message    string `json:"message"`
-	StatusCode int    `json:"status_code,omitempty"`
-	Raw        string `json:"raw,omitempty"`
+	Message    string    `json:"message"`
+	Code       ErrorCode `json:"code,omitempty"`
+	StatusCode int       `json:"status_code,omitempty"`
+	Raw        string    `json:"raw,omitempty"`
 }
 
 func (e *ErrorResponse) Error() string {
