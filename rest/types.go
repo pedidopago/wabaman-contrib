@@ -282,18 +282,21 @@ type UpdateContactResponse struct {
 }
 
 type GetContactsRequest struct {
-	BusinessID      uint     `query:"business_id"`
-	BranchID        string   `query:"branch_id"`
-	PhoneID         uint     `query:"phone_id"`
-	CustomerIDs     []string `query:"customer_id"`
-	WABAContactIDs  []string `query:"waba_contact_id"`
-	Username        string   `query:"username"`
-	HostPhoneNumber string   `query:"host_phone_number"`
-	MaxResults      uint64   `query:"max_results"`
-	Page            uint     `query:"page"`
-	FetchMessages   bool     `query:"fetch_messages"`
-	FetchLastPage   bool     `query:"fetch_last_page"`
-	Origin          string   `query:"origin"`
+	BusinessID     uint     `query:"business_id"`
+	BranchID       string   `query:"branch_id"`
+	PhoneID        uint     `query:"phone_id"`
+	CustomerIDs    []string `query:"customer_id"`
+	WABAContactIDs []string `query:"waba_contact_id"`
+	// ContactPhoneNumbers finds a contact by its real phone (exact), for BSUID
+	// contacts whose waba_contact_id is not a phone.
+	ContactPhoneNumbers []string `query:"contact_phone_number"`
+	Username            string   `query:"username"`
+	HostPhoneNumber     string   `query:"host_phone_number"`
+	MaxResults          uint64   `query:"max_results"`
+	Page                uint     `query:"page"`
+	FetchMessages       bool     `query:"fetch_messages"`
+	FetchLastPage       bool     `query:"fetch_last_page"`
+	Origin              string   `query:"origin"`
 }
 
 func (req GetContactsRequest) BuildQuery() url.Values {
@@ -315,6 +318,11 @@ func (req GetContactsRequest) BuildQuery() url.Values {
 	if iszero, _ := util.IsZero(req.WABAContactIDs); !iszero {
 		for _, id := range req.WABAContactIDs {
 			q.Add("waba_contact_id", id)
+		}
+	}
+	if iszero, _ := util.IsZero(req.ContactPhoneNumbers); !iszero {
+		for _, pn := range req.ContactPhoneNumbers {
+			q.Add("contact_phone_number", pn)
 		}
 	}
 	if iszero, _ := util.IsZero(req.Username); !iszero {
@@ -357,8 +365,13 @@ type GetContactsV2Request struct {
 	CustomerIDs         []string `url:"customer_id,omitempty"`
 	WABAContactIDs      []string `url:"waba_contact_id,omitempty"`
 	ExactWABAContactIDs bool     `url:"exact_waba_contact_ids,omitempty"`
-	ExactNames          []string `url:"exact_name,omitempty"`
-	Name                string   `url:"name,omitempty"`
+	// ContactPhoneNumbers finds a contact by its real phone. A BSUID contact's
+	// waba_contact_id is not a phone, so it cannot be derived from one; this is
+	// the only way in for a caller that holds just the number.
+	ContactPhoneNumbers      []string `url:"contact_phone_number,omitempty"`
+	ExactContactPhoneNumbers bool     `url:"exact_contact_phone_numbers,omitempty"`
+	ExactNames               []string `url:"exact_name,omitempty"`
+	Name                     string   `url:"name,omitempty"`
 	// Username searches contacts by WhatsApp @handle (partial, @-stripped, case-insensitive).
 	Username                 string   `url:"username,omitempty"`
 	HostPhoneNumber          string   `url:"host_phone_number,omitempty"`
