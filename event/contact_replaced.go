@@ -17,11 +17,22 @@ const (
 	// the contact carried across met a contact already sitting on the
 	// destination phone under the same WhatsApp id. Arrives in a burst, one per
 	// casualty, at the end of the migration.
+	//
+	// This reason carries a WEAKER guarantee than an identity collision: only
+	// the contact identity is superseded. The replaced contact's held messages,
+	// open conversation windows, tags and notes are NOT moved to the survivor --
+	// they are destroyed along with it. Re-point your own rows by all means, but
+	// do not assume ms-wabaman kept its side of the history.
 	ContactReplacedPhoneDataMigration = "phone_data_migration"
 )
 
 // ContactReplacedEvent announces that OldContactID no longer exists and that
-// NewContactID inherited its history, its messages and its FK references.
+// NewContactID supersedes it.
+//
+// How much NewContactID actually inherited depends on Reason, and the two are
+// not equivalent -- see the reason constants. An identity collision moves the
+// replaced contact's history, messages and FK references onto the survivor; a
+// phone data migration supersedes the identity only and destroys the rest.
 //
 // Consumers must re-point anything keyed by OldContactID. The event is emitted
 // after ms-wabaman has already committed the merge, so it describes a completed
