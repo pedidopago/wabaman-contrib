@@ -5,8 +5,9 @@ import (
 	"time"
 )
 
-// Reasons a contact was replaced. Both are collisions against the
-// UNIQUE (phone_id, waba_contact_id) key -- never a deliberate operator action.
+// Reasons a contact was replaced. Both are uniqueness collisions -- never a
+// deliberate operator action. A contact is unique on a phone by two keys, its
+// WhatsApp id and its BSUID, and a collision on either one replaces it.
 const (
 	// ContactReplacedIdentityCollision: the contact's WhatsApp identity changed
 	// (phone number rewritten by Meta, or a BSUID adopted) to a value another
