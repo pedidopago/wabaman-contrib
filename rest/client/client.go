@@ -135,8 +135,20 @@ func (c *Client) GetContactByID(ctx context.Context, id uint64) (*rest.Contact, 
 }
 
 func (c *Client) GetContactByBranchIDAndWABAContactID(ctx context.Context, branchID, wabaContactID string) (*rest.Contact, error) {
+	return c.getContactByBranchID(ctx, branchID, "waba_contact_id", wabaContactID)
+}
+
+// GetContactByBranchIDAndRawWABAContactID looks the contact up without letting the
+// server apply any text transformation to the id. Use it for ids that are not
+// phone numbers (BSUIDs, e-mails) when the caller wants an exact match.
+func (c *Client) GetContactByBranchIDAndRawWABAContactID(ctx context.Context, branchID, wabaContactID string) (*rest.Contact, error) {
+	return c.getContactByBranchID(ctx, branchID, "raw_waba_contact_id", wabaContactID)
+}
+
+func (c *Client) getContactByBranchID(ctx context.Context, branchID, idParam, wabaContactID string) (*rest.Contact, error) {
+	q := url.Values{"branch_id": {branchID}, idParam: {wabaContactID}}
 	resp := &rest.Contact{}
-	if err := c.get(ctx, fmt.Sprintf("/api/v1/contact/0?branch_id=%s&waba_contact_id=%s", branchID, wabaContactID), resp); err != nil {
+	if err := c.get(ctx, "/api/v1/contact/0?"+q.Encode(), resp); err != nil {
 		return nil, err
 	}
 	return resp, nil
