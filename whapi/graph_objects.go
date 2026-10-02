@@ -47,7 +47,10 @@ type WebhookObject struct {
 }
 
 type EntryObject struct {
-	ID      string         `json:"id"` // WHATSAPP-BUSINESS-ACCOUNT-ID
+	ID string `json:"id"` // WHATSAPP-BUSINESS-ACCOUNT-ID
+	// Time is the unix time (seconds) Meta stamped on the entry. Sent on
+	// account-level fields such as account_update; absent (zero) on messages.
+	Time    int64          `json:"time,omitzero"`
 	Changes []ChangeObject `json:"changes"`
 }
 

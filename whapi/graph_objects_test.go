@@ -87,3 +87,25 @@ func TestUserChangedUserIDSystemMessageUnmarshal(t *testing.T) {
 		t.Errorf("System.ParentUserID = %q", m.System.ParentUserID)
 	}
 }
+
+func TestEntryTimeUnmarshal(t *testing.T) {
+	input := `{
+		"object": "whatsapp_business_account",
+		"entry": [{
+			"id": "110729168243459",
+			"time": 1790883985,
+			"changes": [{"field": "account_update", "value": {"event": "ACCOUNT_OFFBOARDED"}}]
+		}]
+	}`
+
+	var w WebhookObject
+	if err := json.Unmarshal([]byte(input), &w); err != nil {
+		t.Fatal(err)
+	}
+	if len(w.Entry) != 1 {
+		t.Fatalf("len(Entry) = %d, want 1", len(w.Entry))
+	}
+	if w.Entry[0].Time != 1790883985 {
+		t.Errorf("Time = %d, want 1790883985", w.Entry[0].Time)
+	}
+}
