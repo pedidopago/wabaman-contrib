@@ -719,7 +719,6 @@ func TestUploadSessionHappyPaths(t *testing.T) {
 		type seen struct {
 			method, path, auth, ctype string
 			body                      map[string]any
-			ctxLive                   bool
 		}
 		got := make(chan seen, 1)
 
