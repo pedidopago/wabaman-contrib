@@ -87,3 +87,65 @@ func TestUserChangedUserIDSystemMessageUnmarshal(t *testing.T) {
 		t.Errorf("System.ParentUserID = %q", m.System.ParentUserID)
 	}
 }
+func TestSystemMessageNumberChange(t *testing.T) {
+	tests := []struct {
+		name  string
+		input string
+		want  string
+	}{
+		{
+			name: "user_changed_number (v12+): new number in wa_id",
+			input: `{
+				"from": "5511900000001",
+				"from_user_id": "BR.1000000000000001",
+				"id": "wamid.X",
+				"system": {
+					"type": "user_changed_number",
+					"body": "User A changed from 5511900000001 to 5511900000002",
+					"identity": "",
+					"new_wa_id": "",
+					"wa_id": "5511900000002",
+					"customer": "",
+					"user_id": "BR.1000000000000001"
+				},
+				"timestamp": "1791221040",
+				"type": "system"
+			}`,
+			want: "5511900000002",
+		},
+		{
+			name: "customer_changed_number (v11-): new number in new_wa_id",
+			input: `{
+				"from": "5511900000001",
+				"id": "wamid.Y",
+				"system": {
+					"type": "customer_changed_number",
+					"body": "User A changed from 5511900000001 to 5511900000002",
+					"new_wa_id": "5511900000002",
+					"customer": "5511900000001"
+				},
+				"timestamp": "1791221040",
+				"type": "system"
+			}`,
+			want: "5511900000002",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var m MessageObject
+			if err := json.Unmarshal([]byte(tt.input), &m); err != nil {
+				t.Fatal(err)
+			}
+			if m.System == nil || !m.System.IsNumberChange() {
+				t.Fatalf("IsNumberChange() = false for %+v", m.System)
+			}
+			if got := m.System.NewNumber(); got != tt.want {
+				t.Errorf("NewNumber() = %q, want %q", got, tt.want)
+			}
+		})
+	}
+
+	if (MessageObjectSystem{Type: SysMsgTypeUserChangedUserID}).IsNumberChange() {
+		t.Error("user_changed_user_id must not be a number change")
+	}
+}

@@ -528,13 +528,32 @@ type MessageObjectSystem struct {
 	ParentUserID string `json:"parent_user_id,omitempty"`
 }
 
+// IsNumberChange reports whether this update is a phone number change, under
+// either webhook version's type name.
+func (s MessageObjectSystem) IsNumberChange() bool {
+	return s.Type == SysMsgTypeUserChangedNumber || s.Type == SysMsgTypeCustomerChangedNumber
+}
+
+// NewNumber returns the customer's new WhatsApp ID on a phone number change:
+// WaId on webhook v12 and above, NewWaId on v11 and below.
+func (s MessageObjectSystem) NewNumber() string {
+	if s.WaId != "" {
+		return s.WaId
+	}
+	return s.NewWaId
+}
+
 type MessageObjectLocation = fbgraph.LocationObject
 
 type SystemMessageType string
 
 const (
-	// A customer changed their phone number
+	// A customer changed their phone number (webhook v11 and below). The new
+	// number is in NewWaId.
 	SysMsgTypeCustomerChangedNumber SystemMessageType = "customer_changed_number"
+	// A customer changed their phone number (webhook v12 and above). The
+	// message's From is the previous number and the new one is in WaId.
+	SysMsgTypeUserChangedNumber SystemMessageType = "user_changed_number"
 	// A customer changed their profile information
 	SysMsgTypeCustomerIdentityChanged SystemMessageType = "customer_identity_changed"
 	// A customer's business-scoped user ID (BSUID) changed, e.g. after a phone number change
