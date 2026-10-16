@@ -149,3 +149,23 @@ func TestSystemMessageNumberChange(t *testing.T) {
 		t.Error("user_changed_user_id must not be a number change")
 	}
 }
+
+func TestValueObjectMessageTemplateIDNumberOrString(t *testing.T) {
+	for _, input := range []string{
+		`{"event":"APPROVED","message_template_id":1234567890123,"metadata":{"phone_number_id":"1"}}`,
+		`{"event":"APPROVED","message_template_id":"1234567890123","metadata":{"phone_number_id":"1"}}`,
+	} {
+		var v ValueObject
+		if err := json.Unmarshal([]byte(input), &v); err != nil {
+			t.Fatalf("unmarshal %s: %v", input, err)
+		}
+		if v.MessageTemplateID != 1234567890123 || v.Event != "APPROVED" || v.Metadata.PhoneNumberID != "1" {
+			t.Errorf("got id=%d event=%q phone=%q from %s", v.MessageTemplateID, v.Event, v.Metadata.PhoneNumberID, input)
+		}
+	}
+
+	var v ValueObject
+	if err := json.Unmarshal([]byte(`{"message_template_id":"abc"}`), &v); err == nil {
+		t.Error("want error for non-numeric message_template_id")
+	}
+}
