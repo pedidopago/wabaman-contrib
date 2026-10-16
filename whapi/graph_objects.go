@@ -3,6 +3,7 @@ package whapi
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"github.com/pedidopago/wabaman-contrib/v2/fbgraph"
 	wtypes "github.com/pedidopago/wabaman-contrib/v2/shared-types"
@@ -139,6 +140,29 @@ type ValueObject struct {
 	// account_update specific fields. The event name itself arrives in Event,
 	// which template updates also use.
 	WABAInfo *WABAInfoObject `json:"waba_info,omitempty"`
+}
+
+// UnmarshalJSON accepts message_template_id as either a JSON number or a
+// quoted string: Meta sends both, and a string failed the whole webhook
+// payload.
+func (v *ValueObject) UnmarshalJSON(data []byte) error {
+	type plain ValueObject
+	aux := struct {
+		*plain
+		MessageTemplateID json.Number `json:"message_template_id,omitempty"`
+	}{plain: (*plain)(v)}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	if aux.MessageTemplateID == "" {
+		return nil
+	}
+	id, err := strconv.ParseUint(aux.MessageTemplateID.String(), 10, 64)
+	if err != nil {
+		return fmt.Errorf("parse message_template_id %q: %w", aux.MessageTemplateID, err)
+	}
+	v.MessageTemplateID = id
+	return nil
 }
 
 // GetContactProfileName returns the contact profile name for the given waid or userID.
