@@ -90,6 +90,7 @@ type NewMessageRequest struct {
 	ToNumber         string                            `json:"to_number,omitempty"`
 	ToCustomerID     string                            `json:"to_customer_id,omitempty" description:"If set, Wabaman will use the CustomerID (instead of 'to_number') to send the message."`
 	ToUserID         string                            `json:"to_user_id,omitempty" description:"If set, Wabaman will use the business-scoped user ID (BSUID) to look up the contact and resolve 'to_number'. Required for users who adopted WhatsApp usernames."`
+	TicketID         string                            `json:"ticket_id,omitempty" description:"Ticket the message belongs to (for Pedido Pago, the inquiry id). When empty, Wabaman copies it from the contact metadata if the account is configured to."`
 	Type             MessageType                       `json:"type"`
 	Text             *fbgraph.TextObject               `json:"text,omitempty"`
 	Template         *NewMessageRequestTemplate        `json:"template,omitempty"`
@@ -677,6 +678,7 @@ type NewNoteRequest struct {
 	TitleIcon     string                 `json:"title_icon,omitempty"`
 	Description   string                 `json:"description,omitempty"`
 	Metadata      map[string]any         `json:"metadata,omitempty"`
+	TicketID      string                 `json:"ticket_id,omitempty" description:"Ticket the note belongs to (for Pedido Pago, the inquiry id). When empty, Wabaman copies it from the contact metadata if the account is configured to."`
 }
 
 type NewNoteResponse wsapi.HostNote
@@ -885,6 +887,7 @@ type RegisterDriverMessageRequest struct {
 	RawIdentifiers  bool        `json:"raw_identifiers" description:"If true, the identifiers will be sent as is, without any processing"`
 	PhoneID         uint        `json:"phone_id" description:"Phone ID"`
 	MessageID       string      `json:"message_id" description:"External Message ID (formerly known as whatsapp_id)"`
+	TicketID        string      `json:"ticket_id,omitempty" description:"Ticket the message belongs to (for Pedido Pago, the inquiry id). When empty, Wabaman copies it from the contact metadata if the account is configured to."`
 	From            string      `json:"from" description:"Sender"`
 	FromProfileName string      `json:"from_profile_name" description:"Sender Profile Name (optional if 'from' = wabaman.phone)"`
 	To              string      `json:"to" description:"Recipient"`

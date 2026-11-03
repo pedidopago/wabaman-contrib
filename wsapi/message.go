@@ -351,14 +351,17 @@ type HostNote struct {
 	Images  []HostNoteImage  `json:"images,omitempty"`
 	Custom  json.RawMessage  `json:"custom,omitempty"`
 
-	AgentID       string         `json:"agent_id"`
-	AgentName     string         `json:"agent_name,omitempty"`
-	Origin        string         `json:"origin,omitempty"`
-	Type          string         `json:"type"` // subtype
-	CreatedAt     time.Time      `json:"created_at"`
-	CreatedAtNano int64          `json:"created_at_nano"`
-	Metadata      map[string]any `json:"metadata,omitempty"`
-	ObjectType    string         `json:"object_type,omitempty"`
+	AgentID       string    `json:"agent_id"`
+	AgentName     string    `json:"agent_name,omitempty"`
+	Origin        string    `json:"origin,omitempty"`
+	Type          string    `json:"type"` // subtype
+	CreatedAt     time.Time `json:"created_at"`
+	CreatedAtNano int64     `json:"created_at_nano"`
+	// TicketID is the ticket this note belongs to (for Pedido Pago, the
+	// ms-inquiry inquiry id). Empty = not linked.
+	TicketID   string         `json:"ticket_id,omitempty"`
+	Metadata   map[string]any `json:"metadata,omitempty"`
+	ObjectType string         `json:"object_type,omitempty"`
 }
 
 // GetID returns the internal ID of the host note.

@@ -19,7 +19,10 @@ type HostMessage struct {
 	// The id (phone number) of the recipient (client).
 	WABARecipientID string `json:"waba_recipient_id"`
 	// The business-scoped user ID (BSUID) of the recipient.
-	UserID                  string                            `json:"user_id,omitempty"`
+	UserID string `json:"user_id,omitempty"`
+	// TicketID is the ticket this message belongs to (for Pedido Pago, the
+	// ms-inquiry inquiry id). Empty = not linked.
+	TicketID                string                            `json:"ticket_id,omitempty"`
 	WABATimestamp           time.Time                         `json:"waba_timestamp"`
 	OriginalFailedMessageID string                            `json:"original_failed_message_id,omitempty"`
 	FailedMessageRetryChain uint                              `json:"failed_message_retry_chain,omitempty"`
