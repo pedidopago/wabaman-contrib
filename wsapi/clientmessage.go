@@ -18,6 +18,9 @@ type ClientMessage struct {
 	WABAFromID string `json:"waba_from_id"`
 	// The business-scoped user ID (BSUID) of the sender.
 	UserID string `json:"user_id,omitempty"`
+	// TicketID is the ticket this message belongs to (for Pedido Pago, the
+	// ms-inquiry inquiry id). Empty = not linked.
+	TicketID string `json:"ticket_id,omitempty"`
 	// The profile name of the sender.
 	WABAProfileName string    `json:"waba_profile_name"`
 	WABATimestamp   time.Time `json:"waba_timestamp"`
