@@ -506,6 +506,14 @@ type UnreadCountChanged struct {
 	ContactID     uint64 `json:"contact_id"`
 	WABAContactID string `json:"waba_contact_id,omitzero"`
 	Count         int    `json:"count"`
+	// WaitingSince is when the customer started waiting for a reply: the
+	// oldest unread message received after the last message sent to them,
+	// while the last message of the conversation is theirs. Always present on
+	// the wire; null means the customer is not waiting (read, replied or no
+	// unread message). Sending a message ends the wait but does not emit this
+	// event, so consumers clear the waiting clock on their own sent-message
+	// event.
+	WaitingSince *time.Time `json:"waiting_since"`
 }
 
 // HeldMessageStub is broadcast when an agent's text is held instead of sent, so
