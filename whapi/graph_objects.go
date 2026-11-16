@@ -140,6 +140,9 @@ type ValueObject struct {
 	// account_update specific fields. The event name itself arrives in Event,
 	// which template updates also use.
 	WABAInfo *WABAInfoObject `json:"waba_info,omitempty"`
+	// PartnerClientCertificationInfo is set on
+	// PARTNER_CLIENT_CERTIFICATION_STATUS_UPDATE.
+	PartnerClientCertificationInfo *PartnerClientCertificationInfoObject `json:"partner_client_certification_info,omitempty"`
 }
 
 // UnmarshalJSON accepts message_template_id as either a JSON number or a
@@ -968,7 +971,30 @@ const (
 	// business having accepted the Terms of Service. Recording it as a
 	// signature stamps a legal act nobody observed.
 	AccountUpdateAdAccountLinked AccountUpdateEvent = "AD_ACCOUNT_LINKED"
+	// AccountUpdatePartnerClientCertificationStatusUpdate carries the result of
+	// a partner-led business verification (PLBV) submission, in
+	// ValueObject.PartnerClientCertificationInfo.
+	AccountUpdatePartnerClientCertificationStatusUpdate AccountUpdateEvent = "PARTNER_CLIENT_CERTIFICATION_STATUS_UPDATE"
 )
+
+// PartnerClientCertificationStatus is the PLBV result.
+type PartnerClientCertificationStatus string
+
+const (
+	PartnerClientCertificationApproved PartnerClientCertificationStatus = "APPROVED"
+	PartnerClientCertificationFailed   PartnerClientCertificationStatus = "FAILED"
+)
+
+// PartnerClientCertificationInfoObject is the PLBV result for one client
+// business portfolio.
+type PartnerClientCertificationInfoObject struct {
+	// ClientBusinessID is the client's business portfolio id (the WABA's
+	// owner_business_id), not the WABA id.
+	ClientBusinessID string                           `json:"client_business_id"`
+	Status           PartnerClientCertificationStatus `json:"status"`
+	// RejectionReasons is ["NONE"] on approval; Meta always sends the field.
+	RejectionReasons []string `json:"rejection_reasons"`
+}
 
 // WABAInfoObject identifies the account an account_update event is about.
 //

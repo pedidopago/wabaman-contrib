@@ -192,3 +192,17 @@ func TestValueObjectMessageTemplateIDNumberOrString(t *testing.T) {
 		t.Error("want error for non-numeric message_template_id")
 	}
 }
+
+func TestPartnerClientCertificationUnmarshal(t *testing.T) {
+	input := `{"event":"PARTNER_CLIENT_CERTIFICATION_STATUS_UPDATE","partner_client_certification_info":{"client_business_id":"2729063490586005","status":"FAILED","rejection_reasons":["LEGAL_NAME_NOT_FOUND_IN_DOCUMENTS"]}}`
+	var v ValueObject
+	if err := json.Unmarshal([]byte(input), &v); err != nil {
+		t.Fatal(err)
+	}
+	info := v.PartnerClientCertificationInfo
+	if AccountUpdateEvent(v.Event) != AccountUpdatePartnerClientCertificationStatusUpdate || info == nil ||
+		info.ClientBusinessID != "2729063490586005" || info.Status != PartnerClientCertificationFailed ||
+		len(info.RejectionReasons) != 1 || info.RejectionReasons[0] != "LEGAL_NAME_NOT_FOUND_IN_DOCUMENTS" {
+		t.Errorf("got event=%q info=%+v", v.Event, info)
+	}
+}
