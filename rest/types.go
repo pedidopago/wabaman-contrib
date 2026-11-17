@@ -124,13 +124,17 @@ type NewMessageRequest struct {
 	// ForceMetaUpload, when true, makes the WABA driver upload any by-link media to
 	// Meta and send by media ID instead of by link (see ms-wabaman ADR-0002). Set on
 	// the 502 "weblink failed" retry; survives the Redis send queue.
-	ForceMetaUpload       bool            `json:"force_meta_upload,omitempty"`
-	ContactDisplayName    string          `json:"contact_display_name,omitempty"`
-	MessageMetadata       map[string]any  `json:"message_metadata,omitempty"`
-	OverridePhoneByDriver string          `json:"override_phone_by_driver,omitempty" description:"If set, Wabaman might override the branch_id (and subsequently the phone_id) used if the contact is found in a branch that has this driver."`
-	SkipPhoneValidation   bool            `json:"skip_phone_validation,omitempty" description:"If set, Wabaman will not validate the phone number before sending the message."`
-	Schedule              MessageSchedule `json:"schedule,omitzero" description:"Schedule this message to be sent at a specific time"`
-	ContactTags           *ContactTagsMod `json:"contact_tags,omitempty"`
+	ForceMetaUpload       bool           `json:"force_meta_upload,omitempty"`
+	ContactDisplayName    string         `json:"contact_display_name,omitempty"`
+	MessageMetadata       map[string]any `json:"message_metadata,omitempty"`
+	OverridePhoneByDriver string         `json:"override_phone_by_driver,omitempty" description:"If set, Wabaman might override the branch_id (and subsequently the phone_id) used if the contact is found in a branch that has this driver."`
+	SkipPhoneValidation   bool           `json:"skip_phone_validation,omitempty" description:"If set, Wabaman will not validate the phone number before sending the message."`
+	// Direct Send (text or interactive only): see fbgraph.MessageObject.
+	Category         fbgraph.DirectSendCategory `json:"category,omitempty" description:"Direct Send: utility or authentication. A text or interactive message goes out as a template Meta generates, even with the 24h window closed."`
+	DirectSendConfig *fbgraph.DirectSendConfig  `json:"direct_send_config,omitempty" description:"Direct Send (utility only): template_name to create or reuse instead of auto-matching."`
+	TTLSeconds       int                        `json:"ttl_seconds,omitempty" description:"Direct Send only: seconds Meta keeps trying to deliver (utility 30..43200, authentication 30..900)."`
+	Schedule         MessageSchedule            `json:"schedule,omitzero" description:"Schedule this message to be sent at a specific time"`
+	ContactTags      *ContactTagsMod            `json:"contact_tags,omitempty"`
 	// AutoQueue asks Wabaman to hold this text for a few seconds so it can be
 	// merged with the same agent's next texts into a single Meta message (Meta
 	// bills every service message from 2026-10-01). It is a request, not a
