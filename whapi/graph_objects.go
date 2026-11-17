@@ -143,6 +143,25 @@ type ValueObject struct {
 	// PartnerClientCertificationInfo is set on
 	// PARTNER_CLIENT_CERTIFICATION_STATUS_UPDATE.
 	PartnerClientCertificationInfo *PartnerClientCertificationInfoObject `json:"partner_client_certification_info,omitempty"`
+
+	// Conversation Routing.
+
+	// ConversationContext is Meta's AI summary of the thread so far, sent on a
+	// messages webhook (or a control_passed handover) when we pick up a thread
+	// another responder was handling.
+	ConversationContext *ConversationContextObject `json:"conversation_context,omitempty"`
+
+	// messaging_handovers fields. Type is control_passed or control_taken.
+	Sender        *HandoverSenderObject    `json:"sender,omitempty"`
+	Recipient     *HandoverRecipientObject `json:"recipient,omitempty"`
+	Type          HandoverType             `json:"type,omitempty"`
+	Timestamp     string                   `json:"timestamp,omitempty"`
+	ControlPassed *HandoverControlObject   `json:"control_passed,omitempty"`
+	ControlTaken  *HandoverControlObject   `json:"control_taken,omitempty"`
+
+	// Standby is the standby field: activity on a thread another responder
+	// owns. We must not reply to it.
+	Standby *StandbyObject `json:"standby,omitempty"`
 }
 
 // UnmarshalJSON accepts message_template_id as either a JSON number or a
@@ -1317,3 +1336,81 @@ const (
 // 133009 – PIN inserido muito rapidamente
 
 // A solicitação de registro foi feita com muita rapidez.
+
+// Conversation Routing webhook fields.
+const (
+	FieldMessagingHandovers = "messaging_handovers"
+	FieldStandby            = "standby"
+)
+
+// HandoverType is a messaging_handovers notification type.
+type HandoverType string
+
+const (
+	// HandoverControlPassed: a pass made us the thread owner.
+	HandoverControlPassed HandoverType = "control_passed"
+	// HandoverControlTaken: the escalation partner took a thread we owned.
+	HandoverControlTaken HandoverType = "control_taken"
+)
+
+// HandoverSenderObject is the WhatsApp user a handover is about. PhoneNumber
+// is omitted when the user's number is unavailable (username adopters).
+type HandoverSenderObject struct {
+	PhoneNumber string `json:"phone_number,omitempty"`
+	UserID      string `json:"user_id,omitempty"`
+}
+
+// HandoverRecipientObject is the business phone number the thread is on.
+type HandoverRecipientObject struct {
+	PhoneNumberID      string `json:"phone_number_id"`
+	DisplayPhoneNumber string `json:"display_phone_number"`
+}
+
+// HandoverControlObject is control_passed or control_taken. Every field is
+// optional; key ownership on the role fields (the app id fields are
+// deprecated by Meta and not modelled).
+type HandoverControlObject struct {
+	PreviousOwnerRole   fbgraph.RoutingRole        `json:"previous_owner_role,omitempty"`
+	NewOwnerRole        fbgraph.RoutingRole        `json:"new_owner_role,omitempty"`
+	Metadata            string                     `json:"metadata,omitempty"`
+	ConversationContext *ConversationContextObject `json:"conversation_context,omitempty"`
+}
+
+// ConversationContextObject carries a model-generated summary; treat Text as
+// prose, not structured data.
+type ConversationContextObject struct {
+	Type    string `json:"type"`
+	Summary *struct {
+		Text string `json:"text"`
+	} `json:"summary,omitempty"`
+}
+
+// SummaryText returns the summary, or "".
+func (c *ConversationContextObject) SummaryText() string {
+	if c == nil || c.Summary == nil {
+		return ""
+	}
+	return c.Summary.Text
+}
+
+// StandbyObject holds one of: Messages (the user wrote on a thread we do not
+// own), MessageEchoes (another responder sent a message) or Statuses
+// (receipts for another responder's messages). Same schemas as the messages
+// field.
+type StandbyObject struct {
+	Contacts      []ContactObject            `json:"contacts,omitempty"`
+	Messages      []MessageObject            `json:"messages,omitempty"`
+	MessageEchoes []StandbyMessageEchoObject `json:"message_echoes,omitempty"`
+	Statuses      []StatusObject             `json:"statuses,omitempty"`
+}
+
+// StandbyMessageEchoObject is a message another responder sent. Message is
+// the exact body it passed to POST /messages; Template and Flow carry the
+// definitions for template and flow messages.
+type StandbyMessageEchoObject struct {
+	ID        string                 `json:"id"`
+	Timestamp string                 `json:"timestamp"`
+	Message   *fbgraph.MessageObject `json:"message,omitempty"`
+	Template  json.RawMessage        `json:"template,omitempty"`
+	Flow      json.RawMessage        `json:"flow,omitempty"`
+}
