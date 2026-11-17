@@ -42,8 +42,32 @@ type MessageObject struct {
 	Context       *MessageContext           `json:"context,omitempty"`
 
 	Reaction *ReactionObject `json:"reaction,omitempty"`
+
+	// Direct Send: a text or interactive message with Category utility or
+	// authentication goes out as a template Meta generates, outside the 24h
+	// window. Empty Category is a normal (service) message.
+	// https://developers.facebook.com/documentation/business-messaging/whatsapp/direct-send
+	Category         DirectSendCategory `json:"category,omitempty"`
+	DirectSendConfig *DirectSendConfig  `json:"direct_send_config,omitempty"`
+	// TTLSeconds is only accepted with a Category (utility 30..43200,
+	// authentication 30..900).
+	TTLSeconds int `json:"ttl_seconds,omitempty"`
 	// TODO: add more objects at:
 	// https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages#text-object
+}
+
+// DirectSendCategory is the category field of a Direct Send message.
+type DirectSendCategory string
+
+const (
+	DirectSendUtility        DirectSendCategory = "utility"
+	DirectSendAuthentication DirectSendCategory = "authentication"
+)
+
+// DirectSendConfig names the template Direct Send creates or reuses (utility
+// only; ^[a-z0-9_]+$, unique in the WABA) instead of auto-matching one.
+type DirectSendConfig struct {
+	TemplateName string `json:"template_name,omitempty"`
 }
 
 // routeBSUIDRecipient moves a BSUID identifier out of the `to` field into the
