@@ -2,6 +2,7 @@ package whapi
 
 import (
 	"encoding/json"
+	"github.com/pedidopago/wabaman-contrib/v2/fbgraph"
 	"testing"
 )
 
@@ -204,5 +205,66 @@ func TestPartnerClientCertificationUnmarshal(t *testing.T) {
 		info.ClientBusinessID != "2729063490586005" || info.Status != PartnerClientCertificationFailed ||
 		len(info.RejectionReasons) != 1 || info.RejectionReasons[0] != "LEGAL_NAME_NOT_FOUND_IN_DOCUMENTS" {
 		t.Errorf("got event=%q info=%+v", v.Event, info)
+	}
+}
+
+func TestHandoverUnmarshal(t *testing.T) {
+	passed := `{"messaging_product":"whatsapp","sender":{"phone_number":"5511999990000"},"recipient":{"phone_number_id":"123","display_phone_number":"+55 11 3000-0000"},"type":"control_passed","timestamp":"1794917311","control_passed":{"previous_owner_app_id":"1","previous_owner_app_role":"meta_business_agent","previous_owner_role":"ai_agent","new_owner_role":"escalation","metadata":"user asked for a human","conversation_context":{"type":"summary","summary":{"text":"wants a refund"}}}}`
+	var v ValueObject
+	if err := json.Unmarshal([]byte(passed), &v); err != nil {
+		t.Fatal(err)
+	}
+	cp := v.ControlPassed
+	if v.Type != HandoverControlPassed || v.Sender == nil || v.Sender.PhoneNumber != "5511999990000" ||
+		v.Recipient == nil || v.Recipient.PhoneNumberID != "123" || v.Timestamp != "1794917311" || cp == nil ||
+		cp.PreviousOwnerRole != fbgraph.RoutingRoleAIAgent || cp.NewOwnerRole != fbgraph.RoutingRoleEscalation ||
+		cp.Metadata != "user asked for a human" || cp.ConversationContext.SummaryText() != "wants a refund" {
+		t.Errorf("control_passed: got %+v / %+v", v, cp)
+	}
+
+	taken := `{"messaging_product":"whatsapp","sender":{"phone_number":"5511999990000"},"recipient":{"phone_number_id":"123","display_phone_number":"x"},"type":"control_taken","timestamp":"1794917312","control_taken":{"previous_owner_role":"customer_service","new_owner_role":"escalation"}}`
+	v = ValueObject{}
+	if err := json.Unmarshal([]byte(taken), &v); err != nil {
+		t.Fatal(err)
+	}
+	if v.Type != HandoverControlTaken || v.ControlTaken == nil || v.ControlTaken.PreviousOwnerRole != fbgraph.RoutingRoleCustomerService ||
+		v.ControlTaken.ConversationContext.SummaryText() != "" {
+		t.Errorf("control_taken: got %+v", v.ControlTaken)
+	}
+}
+
+func TestStandbyUnmarshal(t *testing.T) {
+	in := `{"messaging_product":"whatsapp","metadata":{"display_phone_number":"x","phone_number_id":"123"},"standby":{"contacts":[{"profile":{"name":"Ana"},"wa_id":"5511999990000","user_id":"BR.1"}],"messages":[{"from":"5511999990000","from_user_id":"BR.1","id":"wamid.in","timestamp":"1","type":"text","text":{"body":"oi"}}]}}`
+	var v ValueObject
+	if err := json.Unmarshal([]byte(in), &v); err != nil {
+		t.Fatal(err)
+	}
+	if v.Standby == nil || len(v.Standby.Messages) != 1 || v.Standby.Messages[0].ID != "wamid.in" || len(v.Standby.Contacts) != 1 {
+		t.Fatalf("standby messages: got %+v", v.Standby)
+	}
+
+	echo := `{"messaging_product":"whatsapp","metadata":{"display_phone_number":"x","phone_number_id":"123"},"standby":{"message_echoes":[{"id":"wamid.out","timestamp":"2","message":{"messaging_product":"whatsapp","to":"5511999990000","recipient_type":"individual","type":"text","text":{"body":"seu pedido saiu","preview_url":true},"context":{"message_id":"wamid.in"}},"template":{"name":"t"}}]}}`
+	v = ValueObject{}
+	if err := json.Unmarshal([]byte(echo), &v); err != nil {
+		t.Fatal(err)
+	}
+	if v.Standby == nil || len(v.Standby.MessageEchoes) != 1 {
+		t.Fatalf("standby echoes: got %+v", v.Standby)
+	}
+	e := v.Standby.MessageEchoes[0]
+	if e.ID != "wamid.out" || e.Message == nil || e.Message.To != "5511999990000" || e.Message.Text == nil ||
+		e.Message.Text.Body != "seu pedido saiu" || e.Message.Context == nil || e.Message.Context.MessageID != "wamid.in" || len(e.Template) == 0 {
+		t.Errorf("echo: got %+v", e)
+	}
+}
+
+func TestConversationContextOnMessages(t *testing.T) {
+	in := `{"messaging_product":"whatsapp","messages":[{"from":"1","id":"wamid.x","timestamp":"1","type":"text","text":{"body":"oi"}}],"conversation_context":{"type":"summary","summary":{"text":"resumo"}}}`
+	var v ValueObject
+	if err := json.Unmarshal([]byte(in), &v); err != nil {
+		t.Fatal(err)
+	}
+	if v.ConversationContext.SummaryText() != "resumo" || len(v.Messages) != 1 {
+		t.Errorf("got %+v", v.ConversationContext)
 	}
 }
