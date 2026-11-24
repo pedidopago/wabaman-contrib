@@ -213,6 +213,8 @@ type ParsedTemplateHeader struct {
 	ContentExample string             `json:"content_example"`
 	Content        string             `json:"content"`
 	Type           string             `json:"type"`
+	// Filename is the document header's filename, when the sender provided one.
+	Filename string `json:"filename,omitempty"`
 }
 
 // TplCard is a single card within a carousel template message.
