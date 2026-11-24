@@ -471,13 +471,14 @@ func (c *Client) doRequest(ctx context.Context, method, suffix string, input, ou
 	if resp.StatusCode != http.StatusOK {
 		return c.errorFromResponse(ctx, resp)
 	}
+	// AIDEV-NOTE: BogusOutput must be checked before the JSON decode: a non-nil
+	// output reaching Decode has its body consumed into a struct with no
+	// exported fields, and GetMessageByID then sees an empty body.
+	if bo, ok := output.(BogusOutput); ok {
+		bo.CopyFn(resp.Body)
+		return nil
+	}
 	if output == nil {
-		// check if output implements BogusOutput
-		if bo, ok := output.(BogusOutput); ok {
-			bo.CopyFn(resp.Body)
-			return nil
-		}
-
 		_, _ = io.Copy(io.Discard, resp.Body)
 		return nil
 	}
